@@ -1,0 +1,9 @@
+# requirements.in
+flask
+flask_bootstrap
+flask_wtf
+gitpython
+flask-sqlalchemy
+flask-migrate
+flask-login
+is-safe-url

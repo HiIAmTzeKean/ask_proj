@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {{ super() }}Personnel List
+{% endblock %}
+
+{% block styles %}
+<style>
+.btn-success {
+    background-color: #228B22;
+    border-color: #228B22
+}
+
+.btn-danger {
+    background-color: #8B0000;
+    border-color: #8B0000
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col">
+            <h1 class="font-weight-bold">Personnel List for {{ fmw_name }}</h1>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Insert Personnel</h5>
+                    <form action="" method="post">
+                        {{ add_form.hidden_tag() }}
+                        <div class="form-row ">
+                            <div class="col-md-4 form-inline">
+                                {{ add_form.rank.label(class_="col-form-label mr-3 font-weight-bold") }}
+                                {{ add_form.rank(class_="form-control") }}
+                            </div>
+
+                            <div class="col-md-4 form-inline">
+                                {{ add_form.name.label(class_="col-form-label mr-3 font-weight-bold") }}
+                                {{ add_form.name(class_="form-control") }}
+                            </div>
+
+                            <div class="col-md-2">
+                                {{ add_form.submit(class_="form-control btn btn-dark") }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+
+            <table class="table mt-3">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">No.</th>
+                        <th scope="col">Rank</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">FMW</th>
+                        <th scope="col">Active</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for person in personnels %}
+                    <tr>
+                        <th scope="row">{{ loop.index }}</th>
+                        <td>{{ person.rank }}</td>
+                        <td>{{ person.name }}</td>
+                        <td>{{ person.fmw.name }}</td>
+                        <td>{{ person.active }}</td>
+                        <td>
+                            {% if person.active %}
+                            <button type="button" class="btn btn-dark w-100" data-toggle="modal"
+                                    data-target="#deactivate-personnel-modal"
+                                    data-rank="{{ person.rank }}" data-name="{{ person.name }}" data-personnelid="{{ person.id }}">
+                                Deactivate
+                            </button>
+                            {% else %}
+                            <button type="button" class="btn btn-success w-100" data-toggle="modal"
+                                    data-target="#activate-personnel-modal"
+                                    data-rank="{{ person.rank }}" data-name="{{ person.name }}" data-personnelid="{{ person.id }}">
+                                Activate
+                            </button>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger w-100" data-toggle="modal"
+                                    data-target="#delete-personnel-modal"
+                                    data-rank="{{ person.rank }}" data-name="{{ person.name }}" data-personnelid="{{ person.id }}">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% for action in ('activate', 'deactivate', 'delete') %}
+    <div class="modal fade" id="{{ action }}-personnel-modal" data-keyboard="false"
+         aria-hidden="true" aria-labelledby="{{ action }}-personnel-modal-label">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ action|capitalize }} a Personnel</h5>
+                </div>
+                <div class="modal-body">
+                    <p class="font-weight-bold">Rank: <span class="font-weight-normal" id="{{ action }}-modal-rank"></span></p>
+                    <p class="font-weight-bold">Name: <span class="font-weight-normal" id="{{ action }}-modal-name"></span></p>
+                    <p class="font-weight-bold">FMW: <span class="font-weight-normal">{{ fmw_name }}</span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" data-dismiss="modal">Cancel</button>
+                    <form action="" method="post">
+                        {{ action_form.csrf_token() }}
+                        {{ action_form.action(value=action) }}
+                        {{ action_form.personnel_id() }}
+                        {{ action_form.submit(value=action.capitalize(), class="btn btn-dark") }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const actions = ['activate', 'deactivate', 'delete']
+    for (const action of actions) {
+        $('#' + action + '-personnel-modal').on('show.bs.modal', function (event) {
+            let button = $(event.relatedTarget) // Button that triggered the modal
+
+            // Extract info from data-* attributes
+            let personnel_id = button.data('personnelid')
+            let rank = button.data('rank');
+            let name = button.data('name');
+
+            let modal = $(this)
+            modal.find('#personnel_id').val(personnel_id)
+            document.getElementById(action + '-modal-rank').innerHTML = rank;
+            document.getElementById(action + '-modal-name').innerHTML = name;
+        })
+    }
+
+
+    /*$('#deactivate-personnel-modal').on('show.bs.modal', function (event) {
+        let button = $(event.relatedTarget) // Button that triggered the modal
+
+        // Extract info from data-* attributes
+        let personnel_id = button.data('personnelid')
+        let rank = button.data('rank');
+        let name = button.data('name');
+
+        let modal = $(this)
+        modal.find('#personnel_id').val(personnel_id)
+        document.getElementById('deactivate-modal-rank').innerHTML = rank;
+        document.getElementById('deactivate-modal-name').innerHTML = name;
+    })*/
+</script>
+{% endblock %}

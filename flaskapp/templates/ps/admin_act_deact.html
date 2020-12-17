@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h3>{% block title %}Activate/Deactivate Personnel{% endblock %}</h3>
+{% endblock %}
+
+{% block content %}
+  <div>
+    <a href="{{ url_for('ps.admin_add_del') }}">Add/Delete Personnel</a>
+    <a href="{{ url_for('ps.admin_act_deact') }}">Activate/Deactivate Personnel</a>
+    <a href="{{ url_for('ps.admin_generate_excel') }}">Generate Excel</a>
+  </div>
+
+    {% if act_deact == 1 %}
+      <h3>Activated a new member</h3>
+    {% elif act_deact == 0 %}
+      <h3>Deactivated a member</h3>
+    {% endif %}
+
+    {% if act_deact %}
+    <table border="">
+      <tr>
+        <td>Rank</td>
+        <td>Name</td>
+        <td>FMW</td>
+      </tr>
+      <tr>
+        {% if personnel %}
+        <td>{{ personnel.rank }}</td>
+        <td>{{ personnel.name }}</td>
+        <td>{{ personnel.fmw }}</td>
+        {% endif %}
+      </tr>
+    </table>
+
+    {% else %}
+    <form method="POST">
+    {{ form.hidden_tag() }}
+    <li>{{ form.rank.label }} {{ form.rank() }}</li>
+    <li>{{ form.name.label }} {{ form.name() }}</li>
+    {% if form.fmw %}
+    <li>{{ form.fmw.label }} {{ form.fmw() }}</li>
+    {% endif %}
+    <li>{{ form.act_deact.label }} {{ form.act_deact() }}</li>
+    <li>{{ form.submit() }}</li>
+    </form>
+    {% endif %}
+{% endblock %}

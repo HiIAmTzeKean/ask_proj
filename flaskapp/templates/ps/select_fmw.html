@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {{ super() }}Select FMW
+{% endblock %}
+
+{% block content %}
+    <div class="d-flex full-height justify-content-center align-items-center">
+        <div class="modal-dialog">
+            <div class="modal-content px-lg-4 py-lg-4">
+                <div class="modal-body">
+                    <form action="" method="post">
+                        {{ form.hidden_tag() }}
+                        <h5 class="ml-lg-1 text-center">Please select your FMW:</h5>
+                        <div class="form-row mx-1 mt-3">
+                            <div class="col-md-3 font-weight-bold">
+                                {{ form.fmw.label(class_="col-form-label") }}
+                            </div>
+                            <div class="col-md-9">
+                                {{ form.fmw(class_="form-control custom-select") }}
+                            </div>
+                        </div>
+
+                        <div class="form-row mx-1 mt-3">
+                            {{ form.submit(class_="form-control btn btn-dark") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

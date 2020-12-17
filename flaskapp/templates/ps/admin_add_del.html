@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if add_del == 'add' %}
+      <h3>Adding a new member</h3>
+    {% elif add_del == 'del' %}
+      <h3>Deleting a member</h3>
+    {% endif %}
+
+    <table border="">
+      <tr>
+        <td>Rank</td>
+        <td>Name</td>
+        <td>FMW</td>
+      </tr>
+      <tr>
+        <td>{{ rank }}</td>
+        <td>{{ personnel_name }}</td>
+        <td>{{ fmw_name}}</td>
+      </tr>
+      <tr>
+        <td>
+        <form action="" method="POST">
+          {{ form.hidden_tag() }}
+          {{ form.submit }}
+        </form>
+        </td>
+        <td><a href="{{ url_for('ps.strengthviewer',cancel_request=True, fmw_id=fmw_id) }}">Cancel</a></td>
+      </tr>
+    </table>
+{% endblock %}
+
+
+
+
