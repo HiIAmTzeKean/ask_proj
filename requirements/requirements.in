@@ -1,9 +1,11 @@
 # requirements.in
 flask
 flask_bootstrap
-flask_wtf
+flask-script
+python-dotenv
 gitpython
 flask-sqlalchemy
 flask-migrate
 flask-login
 is-safe-url
+psycopg2

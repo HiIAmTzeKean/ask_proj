@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Dojo Select{% endblock %}
+
+{% block content %}
+<form method="POST">
+  {{ form.hidden_tag() }}
+  <div class="form-row">
+    <div class="col-md-3 font-weight-bold">
+      {{ form.dojoName.label(class_="col-form-label") }}
+    </div>
+  </div>
+
+  <div class="form-row">
+    {{ form.dojoName(class_="form-control custom-select") }}
+  </div>
+
+  <div class="form-row mt-3">
+    <div class="col">
+      {{ form.submit(class_="form-control btn btn-dark") }}
+    </div>
+  </div>
+</form>
+
+{% endblock %}

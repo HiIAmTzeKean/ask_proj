@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Viewer{% endblock %}
+
+{% block styles %}
+<style>
+    .form-popup {
+        position: absolute;
+        left: 50%;
+        top: 17%;
+        margin-left: -202px;
+        display: none;
+        border: 3px solid #f1f1f1;
+    }
+
+    .form-container {
+        max-width: 300px;
+        min-width: 250px;
+        padding: 10px 50px;
+        border: 2px solid gray;
+        border-radius: 10px;
+        background-color: blue;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>Class of {{ dojoName }}</h2>
+<h2>Instructor: {{ dojoInstructor }}</h2>
+
+<table class="table">
+<thead class="thead-dark">
+    <tr>
+        <th scope="col">{{ Add_DelStudent.name.label }}</th>
+        <th scope="col">{{ Add_DelStudent.name }}</th>
+        <th scope="col">{{ Add_DelStudent.belt.label }}</th>
+        <th scope="col">{{ Add_DelStudent.belt }}</th>
+        <th scope="col">{{ Add_DelStudent.lastGrading.label }}</th>
+        <th scope="col">{{ Add_DelStudent.lastGrading }}</th>
+        <th scope="col">{{ Add_DelStudent.submit }}</th>
+    </tr>
+</thead>
+</table>
+
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Belt</th>
+            <th scope="col">Last grading</th>
+            <th scope="col">Active</th>
+            <th scope="col">Performance grade</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in student_list %}
+        <tr id={{ student.id }}>
+            <th scope="col">#</th>
+            <th scope="col">{{ student.name }}</th>
+            <th scope="col">{{ student.belt }}</th>
+            <th scope="col">{{ student.lastGrading }}</th>
+            <th scope="col">{{ student.active }}</th>
+
+            <th scope="col">
+            <button class="btn btn-secondary" onclick="openForm()">
+                gradePerformance</button>
+            </th>
+
+            <th scope="col">
+            {% if student.active == True %}
+            <a href="{{ url_for('attendance.attendanceAct_DeactStudent', student_id=student.id, act_deact='deact') }}" class="btn btn-danger">
+                    Deactivate</a>
+            {% else %}
+            <a href="{{ url_for('attendance.attendanceAct_DeactStudent', student_id=student.id, act_deact='act') }}" class="btn btn-success">
+                activate</a>
+            {% endif %}
+            </th>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="form-popup" id="performanaceForm">
+    <form action="#" class="container">
+        <h2>Contact Us</h2>
+        <hr>
+        <input name="name" placeholder="Name" type="text">
+        <input name="email" placeholder="Email" type="text">
+        <textarea name="message" placeholder="Message"></textarea>
+        <button class="btn btn-secondary">
+            Submit</button>
+        <button class="btn btn-secondary" onclick="closeForm()">
+            Close</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function openForm() {
+        document.getElementById("performanaceForm").style.display = "block";
+    }
+
+    function closeForm() {
+        document.getElementById("performanaceForm").style.display = "none";
+    }
+</script>
+{% endblock %}
