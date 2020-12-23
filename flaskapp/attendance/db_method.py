@@ -13,7 +13,11 @@ def get_dojoInstructor(dojo_id):
     return dojoInstructor
 
 
-def get_dojoInfo(dojo_id):
+def get_dojoInfo(dojo_id,dojoName=False,dojoInstructor=False):
+    if dojoName == True:
+        return get_dojoName(dojo_id)
+    if dojoInstructor == True:
+        return get_dojoInstructor(dojo_id)
     return get_dojoName(dojo_id), get_dojoInstructor(dojo_id)
 
 
@@ -64,5 +68,25 @@ def update_Act_DeactStudent(student_id, act_deact):
 def insert_newStudent(name, lastGrading, dojo_id, belt='0'):
     record = student(name, lastGrading, dojo_id, active=True, belt=belt)
     db.session.add(record)
+    db.session.commit()
+    return
+
+
+def get_student(student_id):
+    return db.session.query(student).filter_by(id=student_id).first()
+
+
+def delete_student(student_id):
+    record = get_student(student_id)
+    db.session.delete(record)
+    db.session.commit()
+    return
+
+def update_student(student_id, name, belt, lastGrading, dojo_id):
+    record = get_student(student_id)
+    record.name = name
+    record.belt = belt
+    record.lastGrading = lastGrading
+    record.dojo_id = dojo_id
     db.session.commit()
     return

@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager
 
 
@@ -16,7 +17,7 @@ except OSError:
 
 # load config
 app.config.from_object(os.environ['APP_SETTINGS'])
-
+csrf = CSRFProtect(app)
 
 # connect database to app
 from flask_sqlalchemy import SQLAlchemy

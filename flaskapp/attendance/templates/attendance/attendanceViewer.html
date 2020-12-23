@@ -3,23 +3,16 @@
 {% block title %}Viewer{% endblock %}
 
 {% block styles %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 <style>
-    .form-popup {
-        position: absolute;
-        left: 50%;
-        top: 17%;
-        margin-left: -202px;
-        display: none;
-        border: 3px solid #f1f1f1;
+    .modal-header, h4, .close {
+      background-color: #5c96b8;
+      color:white !important;
+      text-align: center;
+      font-size: 30px;
     }
-
-    .form-container {
-        max-width: 300px;
-        min-width: 250px;
-        padding: 10px 50px;
-        border: 2px solid gray;
-        border-radius: 10px;
-        background-color: blue;
+    .modal-footer {
+      background-color: #f9f9f9;
     }
 </style>
 {% endblock %}
@@ -28,19 +21,29 @@
 <h2>Class of {{ dojoName }}</h2>
 <h2>Instructor: {{ dojoInstructor }}</h2>
 
-<table class="table">
-<thead class="thead-dark">
-    <tr>
-        <th scope="col">{{ Add_DelStudent.name.label }}</th>
-        <th scope="col">{{ Add_DelStudent.name }}</th>
-        <th scope="col">{{ Add_DelStudent.belt.label }}</th>
-        <th scope="col">{{ Add_DelStudent.belt }}</th>
-        <th scope="col">{{ Add_DelStudent.lastGrading.label }}</th>
-        <th scope="col">{{ Add_DelStudent.lastGrading }}</th>
-        <th scope="col">{{ Add_DelStudent.submit }}</th>
-    </tr>
-</thead>
-</table>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Add New Student</th>
+            </tr>
+        </thead>
+        <tr>
+            <th scope="col">{{ form.name.label }}</th>
+            <td>{{ form.name(placeholder='Student Name') }}</td>
+        </tr>
+        <tr>
+            <th scope="col">{{ form.belt.label }}</th>
+            <td>{{ form.belt }}</td>
+        </tr>
+
+        <tr>
+            <td>{{ form.submit(class="btn btn-success", value='Add User') }}</td>
+        </tr>
+    </table>
+</form>
 
 
 <table class="table">
@@ -58,54 +61,74 @@
     <tbody>
         {% for student in student_list %}
         <tr id={{ student.id }}>
-            <th scope="col">#</th>
-            <th scope="col">{{ student.name }}</th>
-            <th scope="col">{{ student.belt }}</th>
-            <th scope="col">{{ student.lastGrading }}</th>
-            <th scope="col">{{ student.active }}</th>
+            <th scope="col">1</th>
+            <td>{{ student.name }}</td>
+            <td>{{ student.belt }}</td>
+            <td>{{ student.lastGrading }}</td>
+            <td>{{ student.active }}</td>
 
-            <th scope="col">
-            <button class="btn btn-secondary" onclick="openForm()">
-                gradePerformance</button>
-            </th>
+            <td>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">
+                    gradePerformance</button>
+            </td>
 
-            <th scope="col">
-            {% if student.active == True %}
-            <a href="{{ url_for('attendance.attendanceAct_DeactStudent', student_id=student.id, act_deact='deact') }}" class="btn btn-danger">
+            <td>
+                {% if student.active == True %}
+                <a href="{{ url_for('attendance.attendanceAct_DeactStudent', student_id=student.id, act_deact='deact') }}"
+                    class="btn btn-danger">
                     Deactivate</a>
-            {% else %}
-            <a href="{{ url_for('attendance.attendanceAct_DeactStudent', student_id=student.id, act_deact='act') }}" class="btn btn-success">
-                activate</a>
-            {% endif %}
-            </th>
+                {% else %}
+                <a href="{{ url_for('attendance.attendanceAct_DeactStudent', student_id=student.id, act_deact='act') }}"
+                    class="btn btn-success">
+                    activate</a>
+                {% endif %}
+                <a href="{{ url_for('attendance.attendanceEditStudent', student_id=student.id) }}"
+                    class="btn btn-success">
+                    Edit</a>
+                <a href="{{ url_for('attendance.attendanceAdd_DelStudent', student_id=student.id, add_del='del') }}"
+                    class="btn btn-success">
+                    Del</a>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
-<div class="form-popup" id="performanaceForm">
-    <form action="#" class="container">
-        <h2>Contact Us</h2>
-        <hr>
-        <input name="name" placeholder="Name" type="text">
-        <input name="email" placeholder="Email" type="text">
-        <textarea name="message" placeholder="Message"></textarea>
-        <button class="btn btn-secondary">
-            Submit</button>
-        <button class="btn btn-secondary" onclick="closeForm()">
-            Close</button>
-    </form>
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header" style="padding:35px 50px;">
+          <h4>Grade Student</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+    
+        </div>
+        <div class="modal-body" style="padding:40px 50px;">
+          <form role="form">
+            <div class="form-group">
+              <label for="usrname">Technique</label>
+              <input type="text" class="form-control" id="usrname" placeholder="Enter email">
+            </div>
+            <div class="form-group">
+              <label for="psw"> Password</label>
+              <input type="text" class="form-control" id="psw" placeholder="Enter password">
+            </div>
+              <button type="submit" class="btn btn-success btn-block">Submit</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger btn-default" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+      
+    </div>
+  </div> 
 </div>
+
 {% endblock %}
 
 {% block scripts %}
-<script>
-    function openForm() {
-        document.getElementById("performanaceForm").style.display = "block";
-    }
-
-    function closeForm() {
-        document.getElementById("performanaceForm").style.display = "none";
-    }
-</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 {% endblock %}

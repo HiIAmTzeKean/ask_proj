@@ -18,22 +18,26 @@
 <tbody>
     <!-- list for below constitute records from (studentStatus, student) -->
     {% for student in marked_list %}
+
     {% if student.studentStatus.status != True %}
     <tr class="table-danger" id={{ student.student.id }}>
     {% else %}
     <tr class="table-success" id={{ student.student.id }}>
     {% endif %}
-        <th scope="col">#</th>
-        <th scope="col">{{ student.student.name }}</th>
-        <th scope="col">{{ student.studentStatus.status }}</th>
-        <th scope="col">
 
+        <th scope="col">#</th>
+        <td>{{ student.student.name }}</td>
+        <td>{{ student.studentStatus.status }}</td>
+
+        <td>
+        {% if student.studentStatus.status != True %}
         <a href="{{ url_for('attendance.attendancePresent', student_id=student.student.id, dojo_id=student.student.dojo_id, present=True) }}" class="btn btn-success">
             Mark present</a>
-
+        {% else %}
         <a href="{{ url_for('attendance.attendancePresent', student_id=student.student.id, dojo_id=student.student.dojo_id, present=False) }}" class="btn btn-danger">
-            Mark absent</a>   
-        </th>
+            Mark absent</a>
+        {% endif %}
+        </td>
     </tr>
     {% endfor %}
 
@@ -41,16 +45,14 @@
     {% for student in unmarked_list %}
     <tr class="table-danger" id={{ student.id }}>
         <th scope="col">#</th>
-        <th scope="col">{{ student.name }}</th>
-        <th scope="col">Unmarked</th>
-        <th scope="col">
-
+        <td>{{ student.name }}</td>
+        <td>Unmarked</td>
+        <td>
         <a href="{{ url_for('attendance.attendancePresent', student_id=student.id, dojo_id=student.dojo_id, present=True) }}" class="btn btn-success">
             Mark present</a>
-
         <a href="{{ url_for('attendance.attendancePresent', student_id=student.id, dojo_id=student.dojo_id, present=False) }}" class="btn btn-danger">
             Mark absent</a>   
-        </th>
+        </td>
     </tr>
     {% endfor %}  
 </tbody>

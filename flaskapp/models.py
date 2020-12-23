@@ -68,7 +68,7 @@ class student(db.Model):
     dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id'), nullable=False)
     dojo = db.relationship('dojo', back_populates='student')
     
-    studentStatus = db.relationship('studentStatus', back_populates='student')
+    studentStatus = db.relationship('studentStatus', back_populates='student',cascade="all, delete", passive_deletes=True)
 
     def __init__(self, name, lastGrading, dojo_id, active=True, belt='0'):
         self.name = name
@@ -96,7 +96,7 @@ class studentStatus(db.Model):
     performance = db.Column(JSON)
     term = db.Column(JSON, nullable=False)
 
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="CASCADE"), nullable=False)
     student = db.relationship('student', back_populates='studentStatus')
 
     dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id'), nullable=False)

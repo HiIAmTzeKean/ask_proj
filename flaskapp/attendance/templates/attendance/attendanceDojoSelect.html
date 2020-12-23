@@ -3,7 +3,7 @@
 {% block title %}Dojo Select{% endblock %}
 
 {% block content %}
-<form method="POST">
+<form action='{{ url_for('attendance.attendanceDojoSelect') }}' method="POST">
   {{ form.hidden_tag() }}
   <div class="form-row">
     <div class="col-md-3 font-weight-bold">

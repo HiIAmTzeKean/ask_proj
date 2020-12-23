@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Student{% endblock %}
+
+{% block content %}
+<h2>Update {{ student.name }} Particulars</h2>
+
+<form method="POST" action="{{ url_for('attendance.attendanceEditStudent', student_id=student.id) }}">
+{{ form.hidden_tag() }}
+<table class="table">
+  <tbody>
+    {% for field, errors in form.errors.items() %}
+    {{ form[field].label }}: {{ ', '.join(errors) }}
+    {% endfor %}
+    <tr>
+      <th scope="row">{{ form.name.label(class="col-form-label")}}</th>
+      <td>{{ form.name(class="form-control")}}</td>
+    </tr>
+    <tr>
+      <th scope="row">{{ form.belt.label(class="col-form-label") }}</th>
+      <td>{{ form.belt(class="form-control") }}</td>
+    </tr>
+    <tr>
+      <th scope="row">{{ form.lastGrading.label(class="col-form-label") }}</th>
+      <td>{{ form.lastGrading(class="form-control") }}</td>
+    </tr>
+    <tr>
+      <th scope="row">{{ form.dojo_id.label(class="col-form-label") }}</th>
+      <td>{{ form.dojo_id(class="form-control select") }}</td>
+    </tr>
+    <tr>
+      <td><a href="{{ url_for('attendance.attendanceViewer') }}" class="btn btn-danger">Back</a></td>
+      <td>{{ form.submit(class="btn btn-success") }}</td>
+    </tr>
+  </tbody>
+</table>
+</form>
+{% endblock %}
