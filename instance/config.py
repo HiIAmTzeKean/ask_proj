@@ -15,7 +15,7 @@ class Config:
 
 class ProductionConfig(Config):
     ENV = 'production'
-    SQLALCHEMY_DATABASE_URI = mysql://HiIAmTzeKean:pppppppp@server/db
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'flaskapp.db')
     DEBUG = False
 
 
