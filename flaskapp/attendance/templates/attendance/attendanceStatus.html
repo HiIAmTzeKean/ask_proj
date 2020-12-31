@@ -3,60 +3,73 @@
 {% block title %}Status{% endblock %}
 
 {% block content %}
-<h2>Class of {{ dojoName }}</h2>
-<h2>Instructor: {{ dojoInstructor }}</h2>
 
-<table class="table">
-<thead class="thead-dark">
-    <tr>
-        <th scope="col">#</th>
-        <th scope="col">Name</th>
-        <th scope="col">Present</th>
-        <th scope="col">Actions</th>
-    </tr>
-</thead>
-<tbody>
-    <!-- list for below constitute records from (studentStatus, student) -->
-    {% for student in marked_list %}
+{% if request.cookies.get('lessonStart') == 'False' %}
+    <h2>Class of {{ dojoName }}</h2>
+    <h2>Instructor: - </h2>
 
-    {% if student.studentStatus.status != True %}
-    <tr class="table-danger" id={{ student.student.id }}>
-    {% else %}
-    <tr class="table-success" id={{ student.student.id }}>
-    {% endif %}
+    <!-- Submit start lesson form -->
+    <form method="POST">
+    {{ form.hidden_tag() }}
+    <table>
+        <tr>
+            <td scope="col" colspan="3">Please select the date of class and the instructor taking the class</td>
+        </tr>
+        <tr>
+            <th scope="col" colspan="2">{{ form.date.label(class="col-form-label") }}</th>
+            <td>{{ form.date(class="form-control") }}</td>
+        </tr>
+        <tr>
+            <th scope="col" colspan="2">{{ form.instructor_id.label(class="col-form-label") }}</th>
+            <td>{{ form.instructor_id(class="form-control") }}</td>
+            {{ form.errors.items() }}
+        </tr>
+        <tr><td>{{ form.submit(class="btn btn-success") }}</td></tr>
+    </table>
+    </form>
+    
+{% else %}
+    <table class="table table-sm">
+        <tr scope="row"><td>Class of {{ dojoName }}</td></tr>
+        <tr scope="row"><td>Instructor: {{ dojoInstructor }}</td></tr>
+        <tr><td>Date: {{ lessonDate }}</td></tr>
+    </table>
 
-        <th scope="col">#</th>
-        <td>{{ student.student.name }}</td>
-        <td>{{ student.studentStatus.status }}</td>
+    <table class="table table-sm">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Present</th>
+            <th scope="col" colspan="2">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for studentstatus in student_list %}
 
-        <td>
-        {% if student.studentStatus.status != True %}
-        <a href="{{ url_for('attendance.attendancePresent', student_id=student.student.id, dojo_id=student.student.dojo_id, present=True) }}" class="btn btn-success">
-            Mark present</a>
+        {% if studentstatus.status != True %}
+        <tr class="table-danger" id={{ studentstatus.student_id }}>
         {% else %}
-        <a href="{{ url_for('attendance.attendancePresent', student_id=student.student.id, dojo_id=student.student.dojo_id, present=False) }}" class="btn btn-danger">
-            Mark absent</a>
+        <tr class="table-success" id={{ studentstatus.student_id }}>
         {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
 
-    <!-- list for below only constitute records from student -->
-    {% for student in unmarked_list %}
-    <tr class="table-danger" id={{ student.id }}>
-        <th scope="col">#</th>
-        <td>{{ student.name }}</td>
-        <td>Unmarked</td>
-        <td>
-        <a href="{{ url_for('attendance.attendancePresent', student_id=student.id, dojo_id=student.dojo_id, present=True) }}" class="btn btn-success">
-            Mark present</a>
-        <a href="{{ url_for('attendance.attendancePresent', student_id=student.id, dojo_id=student.dojo_id, present=False) }}" class="btn btn-danger">
-            Mark absent</a>   
-        </td>
-    </tr>
-    {% endfor %}  
-</tbody>
-</table>
+            <th scope="row">{{ loop.index }}</th>
+            <td>{{ studentstatus.student.name }}</td>
+            <td>{{ studentstatus.status }}</td>
+
+            <td colspan="2">
+            {% if studentstatus.status != True %}
+            <a href="{{ url_for('attendance.attendancePresent', student_id=studentstatus.student.id, lesson_id=request.cookies.get('lesson_id'), present=True) }}" class="btn btn-success">
+                Mark present</a>
+            {% else %}
+            <a href="{{ url_for('attendance.attendancePresent', student_id=studentstatus.student.id, lesson_id=request.cookies.get('lesson_id'), present=False) }}" class="btn btn-danger">
+                Mark absent</a>
+            {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endif %}
 {% endblock %}
 
 

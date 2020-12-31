@@ -2,14 +2,19 @@ from random import randint
 
 # generate dojo
 def generateDojo():
-    for i in range(10):
-        print('({},\'Dojo{}\',\'Robin\'),'.format(i, i))
+    for i in range(11):
+        print('({},\'Dojo{}\',\'Location{}\', 0),'.format(i, i, i))
 
 
 def generateStudent():
     for i in range(100):
-        print('(\'Person{}\',\'{} Kyu\',True,{}),'.format(
-            i, randint(1, 10), randint(1, 10)))
+        print('({},\'Person{}\',\'{} Kyu\',True),'.format(
+            i, i, randint(0, 10)))
+
+def generateEnrollment():
+    for i in range(100):
+        print('({},{}),'.format(
+            i, randint(0, 10)))
 
 def findDate():
   import datetime
@@ -17,4 +22,4 @@ def findDate():
   print(todayDate.month)
 
 if __name__ == "__main__":
-    findDate()
+    generateDojo()

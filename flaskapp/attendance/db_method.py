@@ -1,67 +1,47 @@
 from flaskapp import db
-from flaskapp.models import dojo, studentStatus, student
+from flaskapp.models import dojo, studentStatus, student, enrollment
 
 
-def get_dojoName(dojo_id):
-    dojoName = db.session.query(dojo.name).filter_by(id=dojo_id).scalar()
-    return dojoName
-
-
-def get_dojoInstructor(dojo_id):
+def get_dojoInstructorName(dojo_id):
+    # get instructor id from dojo table
+    found_id = db.session.query(
+        dojo.instructor_id).filter_by(id=dojo_id).scalar()
+    # get name from student table
     dojoInstructor = db.session.query(
-        dojo.instructor).filter_by(id=dojo_id).scalar()
+        student.name).filter_by(id=found_id).scalar()
     return dojoInstructor
 
 
-def get_dojoInfo(dojo_id,dojoName=False,dojoInstructor=False):
-    if dojoName == True:
-        return get_dojoName(dojo_id)
-    if dojoInstructor == True:
-        return get_dojoInstructor(dojo_id)
-    return get_dojoName(dojo_id), get_dojoInstructor(dojo_id)
+def get_dojoInstructorId(dojo_id):
+    # get instructor id from dojo table
+    found_id = db.session.query(
+        dojo.instructor_id).filter_by(id=dojo_id).scalar()
+    return found_id
 
 
-def insert_attendancePresent(date, status, term, student_id, dojo_id):
-    presentFlag = get_attendancePresent(date, student_id)
-    if presentFlag:
-        update_attendancePresent(record=presentFlag, status=status)
-        return
-    record = studentStatus(date, status, term, student_id, dojo_id)
+def insert_studentStausRecord(status,student_id,lesson_id):
+    record = studentStatus(status, student_id, lesson_id)
     db.session.add(record)
     db.session.commit()
     return
 
 
-def update_attendancePresent(record, status):
+def update_attendancePresent(status,student_id,lesson_id):
+    record = db.session.query(studentStatus).filter_by(student_id=student_id, lesson_id=lesson_id).first()
     record.status = status
     db.session.commit()
     return
 
 
-def get_attendancePresent(date, student_id):
-    return db.session.query(studentStatus).filter_by(date=date, student_id=student_id).first()
-
-
-def update_activateStudent(record):
-    record.active = True
-    db.session.commit()
-    return
-
-
-def update_deactivateStudent(record):
-    record.active = False
-    db.session.commit()
-    return
-
-
-def update_Act_DeactStudent(student_id, act_deact):
-    record = db.session.query(student).filter_by(id=student_id).first()
+def update_Act_DeactEnrollment(student_id, dojo_id, act_deact):
+    record = db.session.query(enrollment).filter_by(student_id=student_id,dojo_id=dojo_id).first()
     if act_deact == 'act':
-        update_activateStudent(record)
+        record.active = True
     elif act_deact == 'deact':
-        update_deactivateStudent(record)
+        record.active = False
     else:
         pass
+    db.session.commit()
     return
 
 
@@ -72,18 +52,26 @@ def insert_newStudent(name, lastGrading, dojo_id, belt='0'):
     return
 
 
-def get_student(student_id):
+def insert_newEnrollment(student_id,dojo_id):
+    record = enrollment(student_id,dojo_id)
+    db.session.add(record)
+    db.session.commit()
+    return
+
+
+def get_studentRecord(student_id):
     return db.session.query(student).filter_by(id=student_id).first()
 
 
-def delete_student(student_id):
-    record = get_student(student_id)
+def delete_studentEnrollmentRecord(student_id,dojo_id):
+    record = db.session.query(enrollment).filter_by(student_id=student_id,dojo_id=dojo_id).first()
     db.session.delete(record)
     db.session.commit()
     return
 
-def update_student(student_id, name, belt, lastGrading, dojo_id):
-    record = get_student(student_id)
+
+def update_student(student_id, name, belt, lastGrading, dojo_id): # Currently not in use
+    record = get_studentRecord(student_id)
     record.name = name
     record.belt = belt
     record.lastGrading = lastGrading

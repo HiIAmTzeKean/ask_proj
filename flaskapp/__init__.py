@@ -37,9 +37,15 @@ app.register_blueprint(attendance.attendance_bp)
 app.add_url_rule('/', endpoint='attendance.attendanceDojoSelect')
 
 
+from .performance import performance
+app.register_blueprint(performance.performance_bp)
+
+
 from .auth import auth
 app.register_blueprint(auth.auth_bp)
 
+from .test import test
+app.register_blueprint(test.test_bp)
 
 # a simple page that says hello
 @app.route('/hello')

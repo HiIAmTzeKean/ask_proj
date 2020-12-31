@@ -9,5 +9,4 @@ flask-migrate
 flask-login
 is-safe-url
 psycopg2
-gunicorn
-flask-heroku
+flask_wtf

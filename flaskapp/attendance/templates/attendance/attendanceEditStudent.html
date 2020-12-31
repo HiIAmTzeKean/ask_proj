@@ -3,34 +3,39 @@
 {% block title %}Edit Student{% endblock %}
 
 {% block content %}
-<h2>Update {{ student.name }} Particulars</h2>
+<h2>Update {{ studentRecord.name }} Particulars</h2>
 
-<form method="POST" action="{{ url_for('attendance.attendanceEditStudent', student_id=student.id) }}">
+<form method="POST" action="{{ url_for('attendance.attendanceEditStudent', student_id=studentRecord.id) }}">
 {{ form.hidden_tag() }}
 <table class="table">
   <tbody>
     {% for field, errors in form.errors.items() %}
-    {{ form[field].label }}: {{ ', '.join(errors) }}
+      {{ form.field.label }}: {{ ', '.join(errors) }}
     {% endfor %}
     <tr>
       <th scope="row">{{ form.name.label(class="col-form-label")}}</th>
-      <td>{{ form.name(class="form-control")}}</td>
+      <td colspan="2">{{ form.name(class="form-control")}}</td>
     </tr>
     <tr>
       <th scope="row">{{ form.belt.label(class="col-form-label") }}</th>
-      <td>{{ form.belt(class="form-control") }}</td>
+      <td colspan="2">{{ form.belt(class="form-control") }}</td>
     </tr>
     <tr>
       <th scope="row">{{ form.lastGrading.label(class="col-form-label") }}</th>
-      <td>{{ form.lastGrading(class="form-control") }}</td>
+      <td colspan="2">{{ form.lastGrading(class="form-control") }}</td>
     </tr>
     <tr>
       <th scope="row">{{ form.dojo_id.label(class="col-form-label") }}</th>
-      <td>{{ form.dojo_id(class="form-control select") }}</td>
+      <td colspan="2">{{ form.dojo_id(class="form-control select") }}</td>
     </tr>
     <tr>
       <td><a href="{{ url_for('attendance.attendanceViewer') }}" class="btn btn-danger">Back</a></td>
       <td>{{ form.submit(class="btn btn-success") }}</td>
+      <td>
+        <a href="{{ url_for('attendance.attendanceAdd_DelStudent', student_id=studentRecord.id, dojo_id=enrollementRecord.dojo_id, add_del='del') }}"
+                    class="btn btn-success">
+                    Delete Student</a>
+      </td>
     </tr>
   </tbody>
 </table>

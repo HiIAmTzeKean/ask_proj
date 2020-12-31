@@ -2,49 +2,63 @@
 
 {% block title %}Viewer{% endblock %}
 
-{% block styles %}
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-<style>
-    .modal-header, h4, .close {
-      background-color: #5c96b8;
-      color:white !important;
-      text-align: center;
-      font-size: 30px;
-    }
-    .modal-footer {
-      background-color: #f9f9f9;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<h2>Class of {{ dojoName }}</h2>
-<h2>Instructor: {{ dojoInstructor }}</h2>
+<table>
+  <tr><td>Class of {{ dojoRecord.name }}</td></tr>
+  <tr><td>Instructor: {{ dojoRecord.instructor.name }}</td></tr>
+  <tr>
+    <td><a href="#" data-toggle="modal" data-target='#addStudent' class="btn btn-primary">Add New Student</a></td>
+    <td><a href="{{ url_for('attendance.attendanceSearchStudent') }}" class="btn btn-primary">Add Existing Student</a></td>
+    <td><a href="{{ url_for('attendance.attendanceEditDojo', dojo_id=dojoRecord.id) }}" class="btn btn-primary">Edit Dojo</a></td>
+    <td><a href="{{ url_for('attendance.attendanceEditStudent', student_id=dojoRecord.instructor.id) }}" class="btn btn-primary">Edit Instructor</a></td>
+  </tr>
+</table>
 
-
-<form method="POST">
-    {{ form.hidden_tag() }}
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Add New Student</th>
-            </tr>
-        </thead>
-        <tr>
-            <th scope="col">{{ form.name.label }}</th>
-            <td>{{ form.name(placeholder='Student Name') }}</td>
-        </tr>
-        <tr>
-            <th scope="col">{{ form.belt.label }}</th>
-            <td>{{ form.belt }}</td>
-        </tr>
-
-        <tr>
-            <td>{{ form.submit(class="btn btn-success", value='Add User') }}</td>
-        </tr>
-    </table>
-</form>
-
+<!--Adding new student form-->
+<!-- Modal -->
+<div class="modal fade" id="addStudent" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add New Student</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <!--Modal Body with form-->
+      <form method="POST">
+      {{ form.hidden_tag() }}
+      <div class="modal-body">
+        <table class="table">
+        <tbody>
+          <tr>
+              <th scope="col">{{ form.name.label(class="col-form-label") }}</th>
+              <td>{{ form.name(placeholder='Student Name', class="form-control") }}</td>
+          </tr>
+          <tr>
+              <th scope="col">{{ form.belt.label(class="col-form-label") }}</th>
+              <td>{{ form.belt(placeholder='8 Kyu', class="form-control") }}</td>
+          </tr>
+          <tr>
+              <th scope="col">{{ form.lastGrading.label(class="col-form-label") }}</th>
+              <td>{{ form.lastGrading(class="form-control") }}</td>
+          </tr>
+          <tr>
+              <th scope="col">{{ form.dojo_id.label(class="col-form-label") }}</th>
+              <td>{{ form.dojo_id(class="form-control") }}</td>
+          </tr>
+        </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="position-relative top-0 start-0 btn btn-secondary" data-dismiss="modal">Close</button>
+        {{ form.submit(class="position-relative start-100 btn btn-success", value='Add User') }}
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!--End of adding new student form-->
 
 <table class="table">
     <thead class="thead-dark">
@@ -54,26 +68,19 @@
             <th scope="col">Belt</th>
             <th scope="col">Last grading</th>
             <th scope="col">Active</th>
-            <th scope="col">Performance grade</th>
             <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>
         {% for student in student_list %}
         <tr id={{ student.id }}>
-            <th scope="col">1</th>
+            <th scope="col">{{ loop.index }}</th>
             <td>{{ student.name }}</td>
             <td>{{ student.belt }}</td>
             <td>{{ student.lastGrading }}</td>
-            <td>{{ student.active }}</td>
-
+            <td>{{ student.enrollment.studentActive }}</td>
             <td>
-                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">
-                    gradePerformance</button>
-            </td>
-
-            <td>
-                {% if student.active == True %}
+                {% if student.enrollment.studentActive == True %}
                 <a href="{{ url_for('attendance.attendanceAct_DeactStudent', student_id=student.id, act_deact='deact') }}"
                     class="btn btn-danger">
                     Deactivate</a>
@@ -85,50 +92,9 @@
                 <a href="{{ url_for('attendance.attendanceEditStudent', student_id=student.id) }}"
                     class="btn btn-success">
                     Edit</a>
-                <a href="{{ url_for('attendance.attendanceAdd_DelStudent', student_id=student.id, add_del='del') }}"
-                    class="btn btn-success">
-                    Del</a>
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-
-<div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header" style="padding:35px 50px;">
-          <h4>Grade Student</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-    
-        </div>
-        <div class="modal-body" style="padding:40px 50px;">
-          <form role="form">
-            <div class="form-group">
-              <label for="usrname">Technique</label>
-              <input type="text" class="form-control" id="usrname" placeholder="Enter email">
-            </div>
-            <div class="form-group">
-              <label for="psw"> Password</label>
-              <input type="text" class="form-control" id="psw" placeholder="Enter password">
-            </div>
-              <button type="submit" class="btn btn-success btn-block">Submit</button>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-danger btn-default" data-dismiss="modal">Cancel</button>
-        </div>
-      </div>
-      
-    </div>
-  </div> 
-</div>
-
-{% endblock %}
-
-{% block scripts %}
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 {% endblock %}

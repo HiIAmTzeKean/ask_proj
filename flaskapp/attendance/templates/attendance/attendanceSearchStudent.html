@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Search student{% endblock %}
+
+{% block content %}
+<form class="form-inline my-2 my-lg-0" method="POST">
+  {{ form.hidden_tag() }}
+  {{ form.name.label(class="col-form-label")}}
+  {{ form.name(class="form-control mr-sm-2", type="search", placeholder="Search")}}
+  {{ form.submit(class="btn btn-success") }}
+</form>
+
+<table class="table" id="studentTable">
+  <thead class="thead-dark">
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Belt</th>
+        <th scope="col">Last grading</th>
+        <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for student in student_list %}
+    <tr id={{ student.id }}>
+        <th scope="col">{{ loop.index }}</th>
+        <td>{{ student.name }}</td>
+        <td>{{ student.belt }}</td>
+        <td>{{ student.lastGrading }}</td>
+        <td><a href="{{ url_for('attendance.attendanceAdd_DelStudent', student_id=student.id, dojo_id=request.cookies.get('dojo_id'), add_del='addExisting') }}" class="btn btn-success">Add to Dojo</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

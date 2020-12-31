@@ -6,30 +6,39 @@ import datetime
 
 
 class formDojoSelection(FlaskForm):
-    dojoName = SelectField(label='Dojo Name', choices='',
-                           validators=[DataRequired()])
+    dojo_id = SelectField(label='Dojo Name', choices='',validators=[DataRequired()],coerce=int)
     submit = SubmitField('Submit')
 
 
 class formAdd_DelStudent(FlaskForm):
     name = StringField(label='Name', validators=[DataRequired()])
     belt = StringField(label='Belt', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    lastGrading = DateField(label='Last Grading Date', validators=[validators.Optional()])
+    dojo_id = SelectField(label='Dojo Name', choices='',validators=[DataRequired()],coerce=int)
+    submit = SubmitField('Add student')
 
 
 class formEditStudent(FlaskForm):
     name = StringField(label='Name', validators=[DataRequired()])
     belt = StringField(label='Belt', validators=[DataRequired()])
-    lastGrading = DateField(label='lastGrading', validators=[validators.Optional()])
-    dojo_id = SelectField(label='Dojo Name', choices='',validators=[DataRequired()])
-    submit = SubmitField(label='Save')
+    lastGrading = DateField(label='Last Grading Date', validators=[validators.Optional()])
+    dojo_id = SelectField(label='Dojo Name', choices='',validators=[DataRequired()],coerce=int)
+    submit = SubmitField(label='Save Changes')
 
 
-class formGradePerformance(FlaskForm):
-    formChoice = [(1, '1'),(2, '2'),(3, '3'),(4, '4'),(5, '5'),]
-    Technique = SelectField(label='Technique', choices=formChoice,validators=[DataRequired()])
-    Ukemi = SelectField(label='Technique', choices=formChoice,validators=[DataRequired()])
-    Discipline = SelectField(label='Technique', choices=formChoice,validators=[DataRequired()])
-    Coordination = SelectField(label='Technique', choices=formChoice,validators=[DataRequired()])
-    Knowledge = SelectField(label='Technique', choices=formChoice,validators=[DataRequired()])
-    Spirit = SelectField(label='Technique', choices=formChoice,validators=[DataRequired()])
+class formSearchStudent(FlaskForm):
+    name = StringField(label='Name', validators=[DataRequired()])
+    submit = SubmitField(label='Save Changes')
+
+class formEditDojo(FlaskForm):
+    name = StringField(label='Dojo Name', validators=[DataRequired()])
+    location = StringField(label='Dojo Location', validators=[DataRequired()])
+    instructor_id = SelectField(label='Instructor Name', choices='',validators=[DataRequired()],coerce=int)
+
+    submit = SubmitField(label='Save Changes')
+
+
+class formStartLesson(FlaskForm):
+    instructor_id = SelectField(label='Instructor', choices='',validators=[DataRequired()],coerce=int)
+    date = DateField(label='Lesson Date', default=datetime.date.today(), validators=[DataRequired()])
+    submit = SubmitField('Start Lesson')
