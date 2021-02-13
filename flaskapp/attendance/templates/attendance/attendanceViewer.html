@@ -1,19 +1,27 @@
 {% extends 'base.html' %}
 
 {% block title %}Viewer{% endblock %}
-
 {% block content %}
-<table>
-  <tr><td>Class of {{ dojoRecord.name }}</td></tr>
-  <tr><td>Instructor: {{ dojoRecord.instructor.name }}</td></tr>
-  <tr>
-    <td><a href="#" data-toggle="modal" data-target='#addStudent' class="btn btn-primary">Add New Student</a></td>
-    <td><a href="{{ url_for('attendance.attendanceSearchStudent') }}" class="btn btn-primary">Add Existing Student</a></td>
-    <td><a href="{{ url_for('attendance.attendanceEditDojo', dojo_id=dojoRecord.id) }}" class="btn btn-primary">Edit Dojo</a></td>
-    <td><a href="{{ url_for('attendance.attendanceEditStudent', student_id=dojoRecord.instructor.id) }}" class="btn btn-primary">Edit Instructor</a></td>
-  </tr>
-</table>
+<div>
+  <div>
+    <h4>Class of {{ dojoName }}</h4>
+  </div>
+  <div>
+    <h4>Instructor: {{ instructorName }}</h4>
+  </div>
+  <div>
+    <a href="{{ url_for('attendance.attendanceSearchStudent') }}" class="btn btn btn-secondary btn-outline-dark btn-md btn-block">Add Existing Student</a>
+  </div>
+  <div>
+    <a href="#" data-toggle="modal" data-target='#addStudent' class="btn btn btn-secondary btn-md btn-outline-dark btn-block">Add New Student</a>
+  </div>
+  <div>
+    <a href="{{ url_for('attendance.attendanceEditDojo', dojo_id=dojoRecord.id) }}" class="btn btn btn-secondary btn-outline-dark btn-md btn-block">Edit
+      Dojo</a>
+  </div>
+</div>
 
+<br>
 <!--Adding new student form-->
 <!-- Modal -->
 <div class="modal fade" id="addStudent" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
@@ -26,7 +34,7 @@
         </button>
       </div>
       <!--Modal Body with form-->
-      <form method="POST">
+      <form method="POST" action="{{ url_for('attendance.attendanceAdd_DelStudent', add_del='addNew') }}">
       {{ form.hidden_tag() }}
       <div class="modal-body">
         <table class="table">
@@ -62,39 +70,40 @@
 
 <table class="table">
     <thead class="thead-dark">
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Belt</th>
-            <th scope="col">Last grading</th>
-            <th scope="col">Active</th>
-            <th scope="col">Actions</th>
-        </tr>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Belt</th>
+        <th scope="col">Last grading</th>
+        <th scope="col">Active</th>
+        <th scope="col">Actions</th>
+      </tr>
     </thead>
     <tbody>
-        {% for student in student_list %}
-        <tr id={{ student.id }}>
-            <th scope="col">{{ loop.index }}</th>
-            <td>{{ student.name }}</td>
-            <td>{{ student.belt }}</td>
-            <td>{{ student.lastGrading }}</td>
-            <td>{{ student.enrollment.studentActive }}</td>
-            <td>
-                {% if student.enrollment.studentActive == True %}
-                <a href="{{ url_for('attendance.attendanceAct_DeactStudent', student_id=student.id, act_deact='deact') }}"
-                    class="btn btn-danger">
-                    Deactivate</a>
-                {% else %}
-                <a href="{{ url_for('attendance.attendanceAct_DeactStudent', student_id=student.id, act_deact='act') }}"
-                    class="btn btn-success">
-                    activate</a>
-                {% endif %}
-                <a href="{{ url_for('attendance.attendanceEditStudent', student_id=student.id) }}"
-                    class="btn btn-success">
-                    Edit</a>
-            </td>
-        </tr>
-        {% endfor %}
+      {% for student in student_list %}
+      <!-- Record from a join query (enrollment, student)-->
+      <tr id={{ student.student.id }}>
+        <th scope="col">{{ loop.index }}</th>
+        <td>{{ student.student.name }}</td>
+        <td>{{ student.student.belt }}</td>
+        <td>{{ student.student.lastGrading }}</td>
+        <td>{{ student.studentActive }}</td>
+        <td>
+            {% if student.studentActive == True %}
+            <a href="{{ url_for('attendance.attendanceAct_DeactEnrollment', student_id=student.student.id, dojo_id=request.cookies.get('dojo_id'), act_deact='deact') }}"
+                class="btn btn-danger">
+                Deactivate</a>
+            {% else %}
+            <a href="{{ url_for('attendance.attendanceAct_DeactEnrollment', student_id=student.student.id, dojo_id=request.cookies.get('dojo_id'), act_deact='act') }}"
+                class="btn btn-success">
+                activate</a>
+            {% endif %}
+            <a href="{{ url_for('attendance.attendanceEditStudent', student_id=student.student.id) }}"
+                class="btn btn-success">
+                Edit</a>
+        </td>
+      </tr>
+      {% endfor %}
     </tbody>
 </table>
 {% endblock %}

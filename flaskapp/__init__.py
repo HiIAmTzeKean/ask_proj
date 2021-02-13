@@ -40,6 +40,8 @@ app.add_url_rule('/', endpoint='attendance.attendanceDojoSelect')
 from .performance import performance
 app.register_blueprint(performance.performance_bp)
 
+from .instructor import instructor
+app.register_blueprint(instructor.instructor_bp)
 
 from .auth import auth
 app.register_blueprint(auth.auth_bp)

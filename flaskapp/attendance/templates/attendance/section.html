@@ -1,0 +1,14 @@
+<td>{{ studentstatus.student.name }}</td>
+<td>{{ studentstatus.status }}</td>
+
+{% if studentstatus.status != True %}
+<td colspan="2" class="table-danger">
+    <button class="btn btn-success updateButton" student_id="{{ studentstatus.student_id }}" 
+        lesson_id="{{ lessonRecord.id }}" status="True">Mark present</button>
+</td>
+{% else %}
+<td colspan="2" class="table-success">
+    <button class="btn btn-danger updateButton" student_id={{ studentstatus.student_id }}
+        lesson_id={{ lessonRecord.id }} status="False">Mark absent</button>
+</td>
+{% endif %}

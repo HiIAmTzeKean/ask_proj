@@ -3,73 +3,68 @@
 {% block title %}Status{% endblock %}
 
 {% block content %}
-
-{% if request.cookies.get('lessonStart') == 'False' %}
-    <h2>Class of {{ dojoName }}</h2>
-    <h2>Instructor: - </h2>
-
-    <!-- Submit start lesson form -->
-    <form method="POST">
-    {{ form.hidden_tag() }}
-    <table>
-        <tr>
-            <td scope="col" colspan="3">Please select the date of class and the instructor taking the class</td>
-        </tr>
-        <tr>
-            <th scope="col" colspan="2">{{ form.date.label(class="col-form-label") }}</th>
-            <td>{{ form.date(class="form-control") }}</td>
-        </tr>
-        <tr>
-            <th scope="col" colspan="2">{{ form.instructor_id.label(class="col-form-label") }}</th>
-            <td>{{ form.instructor_id(class="form-control") }}</td>
-            {{ form.errors.items() }}
-        </tr>
-        <tr><td>{{ form.submit(class="btn btn-success") }}</td></tr>
-    </table>
-    </form>
-    
-{% else %}
+<div>
     <table class="table table-sm">
         <tr scope="row"><td>Class of {{ dojoName }}</td></tr>
-        <tr scope="row"><td>Instructor: {{ dojoInstructor }}</td></tr>
+        <tr scope="row"><td>Instructor: {{ instructorName }}</td></tr>
         <tr><td>Date: {{ lessonDate }}</td></tr>
+        <tr><td><a href="{{ url_for('attendance.attendanceStatusSummary') }}" class="btn btn-primary">End Class</a></td></tr>
     </table>
-
-    <table class="table table-sm">
-    <thead class="thead-dark">
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Present</th>
-            <th scope="col" colspan="2">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
+</div>
+<div>
+    <table class="table table-sm table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Present</th>
+                <th scope="col" colspan="2">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
         {% for studentstatus in student_list %}
-
-        {% if studentstatus.status != True %}
-        <tr class="table-danger" id={{ studentstatus.student_id }}>
-        {% else %}
-        <tr class="table-success" id={{ studentstatus.student_id }}>
-        {% endif %}
-
-            <th scope="row">{{ loop.index }}</th>
-            <td>{{ studentstatus.student.name }}</td>
-            <td>{{ studentstatus.status }}</td>
-
-            <td colspan="2">
-            {% if studentstatus.status != True %}
-            <a href="{{ url_for('attendance.attendancePresent', student_id=studentstatus.student.id, lesson_id=request.cookies.get('lesson_id'), present=True) }}" class="btn btn-success">
-                Mark present</a>
-            {% else %}
-            <a href="{{ url_for('attendance.attendancePresent', student_id=studentstatus.student.id, lesson_id=request.cookies.get('lesson_id'), present=False) }}" class="btn btn-danger">
-                Mark absent</a>
-            {% endif %}
-            </td>
-        </tr>
+            <tr id="section{{ studentstatus.student_id }}">
+                <td>{{ studentstatus.student.name }}</td>
+                <td>{{ studentstatus.status }}</td>
+            
+                {% if studentstatus.status != True %}
+                <td colspan="2" class="table-danger">
+                    <button class="btn btn-success updateButton" student_id="{{ studentstatus.student_id }}"
+                        lesson_id="{{ lessonRecord.id }}" status="True">Mark present</button>
+                </td>
+                {% else %}
+                <td colspan="2" class="table-success">
+                    <button class="btn btn-danger updateButton" student_id={{ studentstatus.student_id }} lesson_id={{
+                        lessonRecord.id }} status="False">Mark absent</button>
+                </td>
+                {% endif %}
+            </tr>
         {% endfor %}
+        </tbody>
     </table>
-{% endif %}
+</div>
 {% endblock %}
 
 
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    $(document).on('click', '.updateButton', function(){
+        var csrf_token = "{{ csrf_token() }}";
+        var student_id = $(this).attr('student_id');
+        var status = $(this).attr('status');
+        var lesson_id = $(this).attr('lesson_id');
+    
+        $.ajax({
+          url: "{{ url_for('attendance.attendancePresent')}}",
+          type: "POST",
+          headers: {"X-CSRFToken": csrf_token,},
+          data: {student_id: student_id, status: status, lesson_id: lesson_id},
+          success: function(data){
+            $('#section'+student_id).fadeOut(100).fadeIn(100)
+            $('#section'+student_id).html(data)
+          }
+        });
+    });
+});
+</script>
+{% endblock %} 

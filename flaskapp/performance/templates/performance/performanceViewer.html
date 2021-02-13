@@ -3,8 +3,8 @@
 {% block title %}Viewer{% endblock %}
 
 {% block content %}
-<h2>Class of {{ dojoName }}</h2>
-<h2>Instructor: {{ dojoInstructor }}</h2>
+<h2>Class of {{ dojoRecord.name }}</h2>
+<h2>Instructor: {{ dojoRecord.instructor.name }}</h2>
 
 
 <table class="table" id="students">
@@ -21,51 +21,19 @@
     </thead>
     <tbody>
         {% for student in student_list %}
-        <tr id={{ student.id }}>
+        <tr id={{ student.student.id }}>
             <th scope="col">{{ loop.index }}</th>
-            <td>{{ student.name }}</td>
-            <td>{{ student.belt }}</td>
-            <td>{{ student.lastGrading }}</td>
-            <td>{{ student.active }}</td>
-
+            <td>{{ student.student.name }}</td>
+            <td>{{ student.student.belt }}</td>
+            <td>{{ student.student.lastGrading }}</td>
+            <td>{{ student.studentActive  }}</td>
             <td>
-                <a href="#" data-toggle="modal" data-target='#exampleModalLong{{ student.id }}' class="btn btn-primary">gradePerformance<a>
+                <a href="{{ url_for('performance.performanceGradePerformance', student_id=student.student.id) }}" class="btn btn-primary">gradePerformance<a>
+            </td>
+            <td>
+                <a href="{{ url_for('performance.performanceChartView', student_id=student.student.id) }}" class="btn btn-primary">Chart View<a>
             </td>
         </tr>
-        <!-- Modal for grading performance -->
-        <div class="modal fade" id="exampleModalLong{{ student.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">Grade Performance for {{ student.name }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
-              </div>
-              <form method="POST" action="{{ url_for('performance.performanceGrading') }}">
-              {{ gradePerformanceform.hidden_tag() }}
-              <div class="modal-body">
-                {{ gradePerformanceform.technique.label(class="col-form-label") }}
-                {{ gradePerformanceform.technique(class="form-control") }}
-                {{ gradePerformanceform.ukemi.label(class="col-form-label") }}
-                {{ gradePerformanceform.ukemi(class="form-control") }}
-                {{ gradePerformanceform.discipline.label(class="col-form-label") }}
-                {{ gradePerformanceform.discipline(class="form-control") }}
-                {{ gradePerformanceform.coordination.label(class="col-form-label") }}
-                {{ gradePerformanceform.coordination(class="form-control") }}
-                {{ gradePerformanceform.knowledge.label(class="col-form-label") }}
-                {{ gradePerformanceform.knowledge(class="form-control") }}
-                {{ gradePerformanceform.spirit.label(class="col-form-label") }}
-                {{ gradePerformanceform.spirit(class="form-control") }}
-              </div>
-            
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                {{ gradePerformanceform.submit(class="btn btn-primary") }}
-              </div>
-            </form>
-            </div>
-          </div>
-        </div>
-        <!-- end of modal -->
         {% endfor %}
     </tbody>
 </table>

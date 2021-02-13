@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Viewer{% endblock %}
+{% block content %}
+<div>
+  <table>
+    <tr>
+      <td>
+        <a href="{{ url_for('attendance.attendanceSearchStudent') }}" class="btn btn-primary">Add Instructor</a>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Belt</th>
+        <th scope="col">Last grading</th>
+        <th scope="col">Active</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for instructor in instructor_list %}
+      <tr id={{ instructor.id }}>
+        <th scope="col">{{ loop.index }}</th>
+        <td>{{ instructor.name }}</td>
+        <td>{{ instructor.belt }}</td>
+        <td>{{ instructor.lastGrading }}</td>
+        <td>{{ instructor.active }}</td>
+        <td>
+            <a href="{{ url_for('instructor.instructorEditInstructor', instructor_id=instructor.id) }}"
+                class="btn btn-success">
+                Edit</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

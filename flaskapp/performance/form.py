@@ -5,12 +5,13 @@ from wtforms.validators import DataRequired, InputRequired, Optional
 import datetime
 
 
-class formGradePerformance(FlaskForm):
-    formChoice = [(1, '1'),(2, '2'),(3, '3'),(4, '4'),(5, '5'),]
-    technique = SelectField(label='Technique', choices=formChoice,validators=[DataRequired()])
-    ukemi = SelectField(label='Ukemi', choices=formChoice,validators=[DataRequired()])
-    discipline = SelectField(label='discipline', choices=formChoice,validators=[DataRequired()])
-    coordination = SelectField(label='coordination', choices=formChoice,validators=[DataRequired()])
-    knowledge = SelectField(label='knowledge', choices=formChoice,validators=[DataRequired()])
-    spirit = SelectField(label='spirit', choices=formChoice,validators=[DataRequired()])
+class gradePerformanceform(FlaskForm):
+    lesson_id = SelectField(label='Last Lesson', choices='',validators=[DataRequired()])
+    formChoice = [(i, str(i)) for i in range(1,11)]
+    technique = SelectField(label='Technique', choices=formChoice,validators=[DataRequired()], default=5)
+    ukemi = SelectField(label='Ukemi', choices=formChoice,validators=[DataRequired()], default=5)
+    discipline = SelectField(label='discipline', choices=formChoice,validators=[DataRequired()], default=5)
+    coordination = SelectField(label='coordination', choices=formChoice,validators=[DataRequired()], default=5)
+    knowledge = SelectField(label='knowledge', choices=formChoice,validators=[DataRequired()], default=5)
+    spirit = SelectField(label='spirit', choices=formChoice,validators=[DataRequired()], default=5)
     submit = SubmitField('Submit')

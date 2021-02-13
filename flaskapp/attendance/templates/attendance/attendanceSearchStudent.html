@@ -3,13 +3,30 @@
 {% block title %}Search student{% endblock %}
 
 {% block content %}
-<form class="form-inline my-2 my-lg-0" method="POST">
+<div>
+  <form method="POST">
   {{ form.hidden_tag() }}
-  {{ form.name.label(class="col-form-label")}}
-  {{ form.name(class="form-control mr-sm-2", type="search", placeholder="Search")}}
+  <div class="form-group row">
+    {{ form.name.label(class="col-sm-2 col-form-label")}}
+    <div class="col-sm-10">
+    {{ form.name(class="form-control", type="search", placeholder="Search")}}
+    </div>
+  </div>
+  <div class="form-group row">
+    {{ form.belt.label(class="col-sm-2 col-form-label")}}
+    <div class="col-sm-10">
+    {{ form.belt(class="form-control")}}
+    </div>
+  </div>
+  <div class="form-group">
   {{ form.submit(class="btn btn-success") }}
-</form>
+  <a href="{{ url_for('attendance.attendanceViewer') }}" class="btn btn-danger">Back</a>
+  </div>
+</div>
 
+<br>
+
+<div>
 <table class="table" id="studentTable">
   <thead class="thead-dark">
     <tr>
@@ -32,6 +49,7 @@
     {% endfor %}
   </tbody>
 </table>
+</div>
 {% endblock %}
 
 {% block scripts %}

@@ -4,7 +4,7 @@ from sqlalchemy.orm import validates
 from sqlalchemy.dialects.postgresql import JSON
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
-
+import json
 
 class user(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -90,15 +90,16 @@ class instructor(student):
 class studentStatus(db.Model):
     __tablename__ = 'studentStatus'
     status = db.Column(db.Boolean, nullable=False, default=True)
-    performance = db.Column(JSON)
+    performance = db.Column(JSON, nullable=True)
+    evaluated = db.Column(db.Boolean, nullable=False, default=False)
 
     student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="CASCADE"), primary_key=True)
     student = db.relationship('student', back_populates='studentStatus')
 
     lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id', ondelete="CASCADE"), primary_key=True)
     lesson = db.relationship('lesson', back_populates='studentStatus')
-
-    def __init__(self, status, student_id, lesson_id, performance = None):
+    performance_defaultValue = {"technique": "5", "ukemi": "5", "discipline": "5", "coordination": "5", "knowledge": "5", "spirit": "5"}
+    def __init__(self, status, student_id, lesson_id, performance = json.dumps(performance_defaultValue)):
         self.status = status
         self.performance = performance
         self.student_id = student_id
@@ -132,6 +133,7 @@ class lesson(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False)
     term =  db.Column(db.Integer, nullable=False)
+    completed = db.Column(db.Boolean, nullable=False, default=False)
 
     dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id'), nullable=False)
     dojo = db.relationship('dojo', back_populates='lesson')

@@ -36,11 +36,9 @@ def update_attendancePresent(status,student_id,lesson_id):
 def update_Act_DeactEnrollment(student_id, dojo_id, act_deact):
     record = db.session.query(enrollment).filter_by(student_id=student_id,dojo_id=dojo_id).first()
     if act_deact == 'act':
-        record.active = True
+        record.studentActive = True
     elif act_deact == 'deact':
-        record.active = False
-    else:
-        pass
+        record.studentActive = False
     db.session.commit()
     return
 
@@ -66,15 +64,5 @@ def get_studentRecord(student_id):
 def delete_studentEnrollmentRecord(student_id,dojo_id):
     record = db.session.query(enrollment).filter_by(student_id=student_id,dojo_id=dojo_id).first()
     db.session.delete(record)
-    db.session.commit()
-    return
-
-
-def update_student(student_id, name, belt, lastGrading, dojo_id): # Currently not in use
-    record = get_studentRecord(student_id)
-    record.name = name
-    record.belt = belt
-    record.lastGrading = lastGrading
-    record.dojo_id = dojo_id
     db.session.commit()
     return
