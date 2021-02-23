@@ -11,6 +11,4 @@ gitpython
 is-safe-url
 psycopg2-binary
 flask_wtf
-pandas
-numpy
 matplotlib

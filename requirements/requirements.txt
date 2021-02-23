@@ -59,15 +59,10 @@ markupsafe==1.1.1
 matplotlib==3.3.3
     # via -r requirements.in
 numpy==1.19.5
-    # via
-    #   -r requirements.in
-    #   matplotlib
-    #   pandas
-pandas==1.2.0
-    # via -r requirements.in
+    # via matplotlib
 pillow==8.1.0
     # via matplotlib
-psycopg2==2.8.6
+psycopg2-binary==2.8.6
     # via -r requirements.in
 pyparsing==2.4.7
     # via matplotlib
@@ -75,13 +70,10 @@ python-dateutil==2.8.1
     # via
     #   alembic
     #   matplotlib
-    #   pandas
 python-dotenv==0.15.0
     # via -r requirements.in
 python-editor==1.0.4
     # via alembic
-pytz==2020.5
-    # via pandas
 six==1.15.0
     # via
     #   cycler
