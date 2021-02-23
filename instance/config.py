@@ -8,14 +8,13 @@ class Config:
     TESTING = False
     CSRF_ENABLED = True
     SECRET_KEY = "this_is_trial_run"
-    PERMANENT_SESSION_LIFETIME =  timedelta(minutes=10)
+    PERMANENT_SESSION_LIFETIME = timedelta(minutes=10)
     SESSION_REFRESH_EACH_REQUEST = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-
 class ProductionConfig(Config):
     ENV = 'production'
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'flaskapp.db')
+    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     DEBUG = False
 
 
@@ -23,7 +22,6 @@ class DevelopmentConfig(Config):
     ENV = 'development'
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     DEBUG = True
-
 
 class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
