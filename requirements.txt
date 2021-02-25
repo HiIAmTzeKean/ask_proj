@@ -39,6 +39,8 @@ gitdb==4.0.5
     # via gitpython
 gitpython==3.1.8
     # via -r requirements.in
+gunicorn==20.0.4
+    # via -r requirements.in
 is-safe-url==1.0
     # via -r requirements.in
 itsdangerous==1.1.0
@@ -90,3 +92,6 @@ werkzeug==1.0.1
     # via flask
 wtforms==2.3.3
     # via flask-wtf
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools
