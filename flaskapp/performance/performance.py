@@ -4,7 +4,7 @@ import json
 from flask import (Blueprint, flash, g, make_response, redirect,
                    render_template, request, session, url_for)
 from flaskapp import db
-from flaskapp.attendance.attendance import dojo_required
+from flaskapp.auth.auth import dojo_required
 from flaskapp.models import dojo, enrollment, lesson, student, studentStatus
 from flaskapp.performance.db_method import get_studentRecord
 from flaskapp.performance.form import gradePerformanceform
