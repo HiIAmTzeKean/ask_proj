@@ -1,6 +1,5 @@
 # requirements.in
 flask
-flask_bootstrap
 flask-script
 flask_sqlalchemy
 flask_migrate
