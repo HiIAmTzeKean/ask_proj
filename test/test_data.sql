@@ -1,4 +1,4 @@
-T INTO student
+INSERT INTO student
   (id,name,belt,active)
   VALUES
   (0,'Robin','4 Dan',True),
@@ -100,10 +100,14 @@ T INTO student
   (96,'Person96','3 Kyu',True),
   (97,'Person97','6 Kyu',True),
   (98,'Person98','2 Kyu',True),
-  (99,'Person99','3 Kyu',TrueT INTO instructor
+  (99,'Person99','3 Kyu',True);
+
+INSERT INTO instructor
   (id,username)
   VALUES
-  (0,'Robin123T INTO dojo
+  (0,'Robin123');
+
+INSERT INTO dojo
   (id,name,location,instructor_id)
   VALUES
   (0,'Dojo0','Location0', 0),
@@ -116,7 +120,9 @@ T INTO student
   (7,'Dojo7','Location7', 0),
   (8,'Dojo8','Location8', 0),
   (9,'Dojo9','Location9', 0),
-  (10,'Dojo10','Location10', 0T INTO enrollment
+  (10,'Dojo10','Location10', 0);
+
+INSERT INTO enrollment
 ("studentActive",student_id, dojo_id)
 VALUES
 (TRUE,0,0),
@@ -218,7 +224,9 @@ VALUES
 (TRUE,96,6),
 (TRUE,97,7),
 (TRUE,98,8),
-(TRUE,99,9T INTO lesson
+(TRUE,99,9);
+
+INSERT INTO lesson
 (id,date,term,dojo_id,instructor_id)
 VALUES
 (1,'2021-01-07',1,0,0),

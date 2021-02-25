@@ -11,6 +11,11 @@ def str_to_date(string):
 
 def belt_type():
   return [
+    ('White','White'),
+    ('12 Kyu','12 Kyu'),
+    ('11 Kyu','11 Kyu'),
+    ('10 Kyu','10 Kyu'),
+    ('9 Kyu','9 Kyu'),
     ('8 Kyu','8 Kyu'),
     ('7 Kyu','7 Kyu'),
     ('6 Kyu','6 Kyu'),

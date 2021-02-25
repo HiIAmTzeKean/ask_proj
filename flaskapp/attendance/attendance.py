@@ -182,7 +182,7 @@ def attendanceEditStudent(student_id):
 
 
 @attendance_bp.route('/attendanceEditDojo/<dojo_id>', methods=('GET', 'POST'))
-def attendanceEditDojo(dojo_id): #edit dojo particulars
+def attendanceEditDojo(dojo_id): # edit dojo particulars
     dojoRecord = db.session.query(dojo).filter(dojo.id==dojo_id).first()
     form = formEditDojo(obj=dojoRecord)
     instructor_list = instructor.query.all()
