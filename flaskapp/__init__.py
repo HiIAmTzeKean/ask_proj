@@ -34,7 +34,7 @@ from flaskapp import models
 # register blueprints
 from .attendance import attendance
 app.register_blueprint(attendance.attendance_bp)
-#app.add_url_rule('/', endpoint='attendance.attendanceDojoSelect')
+app.add_url_rule('/', endpoint='attendance.attendanceDojoSelect')
 
 
 from .performance import performance
@@ -50,6 +50,6 @@ from .test import test
 app.register_blueprint(test.test_bp)
 
 # a simple page that says hello
-@app.route('/')
+@app.route('/hello')
 def hello():
     return 'hello world'

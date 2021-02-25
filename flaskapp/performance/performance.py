@@ -4,6 +4,7 @@ import json
 from flask import (Blueprint, flash, g, make_response, redirect,
                    render_template, request, session, url_for)
 from flaskapp import db
+from flaskapp.attendance.attendance import dojo_required
 from flaskapp.models import dojo, enrollment, lesson, student, studentStatus
 from flaskapp.performance.db_method import get_studentRecord
 from flaskapp.performance.form import gradePerformanceform
@@ -13,6 +14,7 @@ performance_bp = Blueprint('performance', __name__,
 
 
 @performance_bp.route('/performanceViewer', methods=('GET', 'POST'))
+@dojo_required
 def performanceViewer():
     dojo_id = request.cookies.get('dojo_id')
     dojoRecord = db.session.query(dojo).filter(dojo.id == dojo_id).first()

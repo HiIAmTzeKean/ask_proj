@@ -1,5 +1,5 @@
 import datetime
-
+import functools
 from flask import (Blueprint, flash, g, make_response, redirect,
                    render_template, request, session, url_for)
 from flaskapp import db
@@ -39,6 +39,7 @@ def attendanceDojoSelect():
 
 
 @attendance_bp.route('/attendanceStatus', methods=('GET', 'POST'))
+@dojo_required
 def attendanceStatus():
     dojo_id = request.cookies.get('dojo_id')
     dojoRecord = db.session.query(dojo).filter_by(id=dojo_id).first()
@@ -104,6 +105,7 @@ def attendancePresent():  # Route to change studentStatus.status
 
 
 @attendance_bp.route('/attendanceViewer', methods=('GET', 'POST'))
+@dojo_required
 def attendanceViewer():
     dojo_id = request.cookies.get('dojo_id')
     dojoRecord = db.session.query(dojo).filter(dojo.id==dojo_id).first()
@@ -203,3 +205,13 @@ def attendanceAct_DeactEnrollment():
 
     update_Act_DeactEnrollment(student_id, dojo_id, act_deact)
     return redirect(url_for('attendance.attendanceViewer'))
+
+
+def dojo_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if request.cookies.get('dojo_id') is None:
+            flash('Please select a Dojo first')
+            return redirect(url_for('attendance.attendanceDojoSelect'))
+        return view(**kwargs)
+    return wrapped_view
