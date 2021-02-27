@@ -132,7 +132,7 @@ class lesson(db.Model):
     __tablename__ = 'lesson'
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False)
-    term =  db.Column(db.Integer, nullable=False)
+    term = db.Column(db.Integer, nullable=False)
     completed = db.Column(db.Boolean, nullable=False, default=False)
 
     dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id'), nullable=False)

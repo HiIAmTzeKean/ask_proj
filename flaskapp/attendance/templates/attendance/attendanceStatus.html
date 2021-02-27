@@ -4,13 +4,12 @@
 
 {% block content %}
 <div>
-    <table class="table table-sm">
-        <tr scope="row"><td>Class of {{ dojoName }}</td></tr>
-        <tr scope="row"><td>Instructor: {{ instructorName }}</td></tr>
-        <tr><td>Date: {{ lessonDate }}</td></tr>
-        <tr><td><a href="{{ url_for('attendance.attendanceStatusSummary') }}" class="btn btn-primary">End Class</a></td></tr>
-    </table>
+    <h2>Class of {{ dojoName }}</h2>
+    <h2>Instructor: {{ instructorName }}</h2>
+    <h2>Date: {{ lessonDate }}</h2>
+    <a href="{{ url_for('attendance.attendanceStatusSummary') }}" class="btn btn-primary">End Class</a>
 </div>
+<hr>
 <div>
     <table class="table table-sm table-bordered">
         <thead class="thead-dark">

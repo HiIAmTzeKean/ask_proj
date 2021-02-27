@@ -47,10 +47,11 @@ def attendanceStatus():
 
     # try get lesson record where dojo equal selection. sort asc.
     # if latest record completed is false, run below
-    if request.cookies.get('lessonStart') == 'True':  # if lesson has started, allow marking of attendance
-        lesson_id = int(request.cookies.get('lesson_id'))
-        lessonRecord = db.session.query(lesson).filter_by(id=lesson_id).first()
-        student_list = db.session.query(studentStatus).filter(studentStatus.lesson_id == lesson_id).order_by(
+    # if lesson has started, allow marking of attendance
+    currentLesson = db.session.query(lesson).filter_by(dojo_id=dojo_id).order_by(lesson.id.desc()).first()
+    if currentLesson is not None and currentLesson.completed == False:
+        lessonRecord = currentLesson
+        student_list = db.session.query(studentStatus).filter(studentStatus.lesson_id == currentLesson.id).order_by(
             studentStatus.status.desc(), studentStatus.student_id.desc()).all()
         return render_template('attendance/attendanceStatus.html', dojoName=dojoRecord.name,
             instructorName=dojoRecord.instructor.name, lessonDate=lessonRecord.date, student_list=student_list,lessonRecord=lessonRecord)
@@ -68,25 +69,24 @@ def attendanceStatus():
                 enrollment.studentActive==True).all()  # create record for all students in that dojo
         for studentId in studentId_list:
             insert_studentStausRecord(status=False,student_id=studentId[0],lesson_id=lessonRecord.id) # mark them all as absent
-        resp = make_response(redirect(url_for('attendance.attendanceStatus')))
-        resp.set_cookie('lessonStart', 'True')
-        resp.set_cookie('lesson_id', str(lessonRecord.id))
-        return resp
+        # resp = make_response(redirect(url_for('attendance.attendanceStatus')))
+        return redirect(url_for('attendance.attendanceStatus'))
     return render_template('attendance/PreattendanceStatus.html', dojoName=dojoRecord.name, form=form)
 
 
 @attendance_bp.route('/attendanceStatusSummary', methods=('GET', 'POST'))
 def attendanceStatusSummary():
-    lesson_id = int(request.cookies.get('lesson_id') )  # Find out how many students present and absent
-    lessonRecord = db.session.query(lesson).filter_by(id=lesson_id).first()
+    dojo_id = request.cookies.get('dojo_id')
+    currentLesson = db.session.query(lesson).filter_by(dojo_id=dojo_id).order_by(lesson.id.desc()).first()
+    currentLesson.completed = True
+    db.session.commit()
+
     present_list = db.session.query(studentStatus.status).filter(
-            studentStatus.lesson_id == lesson_id, studentStatus.status == True).all()
+            studentStatus.lesson_id == currentLesson.id, studentStatus.status == True).all()
     absent_list = db.session.query(studentStatus.status).filter(
-            studentStatus.lesson_id == lesson_id, studentStatus.status == False).all()
+            studentStatus.lesson_id == currentLesson.id, studentStatus.status == False).all()
     resp = make_response(render_template('attendance/attendanceStatusSummary.html', absentCount=len(absent_list),
-            presentCount=len(present_list), instructorName=lessonRecord.instructor.name, dojoName=lessonRecord.dojo.name))
-    resp.set_cookie('lessonStart', 'False')
-    resp.set_cookie('lesson_id', str(0))
+            presentCount=len(present_list), instructorName=currentLesson.instructor.name, dojoName=currentLesson.dojo.name))
     return resp
 
 
@@ -136,14 +136,16 @@ def attendanceAdd_DelStudent(add_del):
         db.session.commit()
         # Add student record to enrollemnt per dojo_id
         insert_newEnrollment(record.id, dojo_id)
-    elif add_del == 'del':  # remove relation student to enrollment
-        student_id = int(request.args.get('student_id'))
-        dojo_id = int(request.args.get('dojo_id'))
-        delete_studentEnrollmentRecord(student_id, dojo_id)
     elif add_del == 'addExisting':
         student_id = int(request.args.get('student_id'))
         dojo_id = int(request.args.get('dojo_id'))
         insert_newEnrollment(student_id, dojo_id)
+    return redirect(url_for('attendance.attendanceViewer'))
+
+@attendance_bp.route('/attendanceRemoveStudent/<int:student_id>/<int:dojo_id>', methods=('GET', 'POST'))
+def attendanceRemoveStudent(student_id,dojo_id):
+    # remove relation student to enrollment
+    delete_studentEnrollmentRecord(student_id, dojo_id)
     return redirect(url_for('attendance.attendanceViewer'))
 
 #todo allow for search by belt
