@@ -3,21 +3,24 @@
 {% block title %}Status{% endblock %}
 
 {% block content %}
-    <table>
-        <tr scope="row"><td>Class of {{ dojoName }}</td></tr>
-        <tr scope="row"><td>Instructor: {{ instructorName }}</td></tr>
-        <tr scope="row"><td>Class has ended!</td></tr>
-        <tr scope="row">
-          <td>number of students present is {{ presentCount }}</td>
-        </tr>
-        <tr scope="row">
-          <td>number of students absent is {{ absentCount }}</td>
-        </tr>
-        <tr>
-          <td><a href="{{ url_for('attendance.attendanceStatus') }}" class="btn btn-danger">Back</a></td>
-        </tr>
-    </table>
-
+<div>
+  <div>
+    <h2>Class of {{ dojoName }}</h2>
+  </div>
+  <div>
+    <h2>Instructor: {{ instructorName }}</h2>
+  </div>
+  <hr>
+  <div>
+    <p><strong>Number of students present is:</strong> {{ presentCount }}</p>
+    <p>Number of students absent is: {{ absentCount }}</p>
+  </div>
+  <div>
+    <a href="{{ url_for('attendance.attendanceStatus') }}" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Head back to attendance view">
+      Back
+    </a>
+  </div>
+</div>
 {% endblock %}
 
 

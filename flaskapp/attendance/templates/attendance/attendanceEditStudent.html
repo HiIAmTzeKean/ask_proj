@@ -28,9 +28,9 @@
       <td><a href="{{ url_for('attendance.attendanceViewer') }}" class="btn btn-danger">Back</a></td>
       <td>{{ form.submit(class="btn btn-success") }}</td>
       <td>
-        <a href="{{ url_for('attendance.attendanceAdd_DelStudent', student_id=studentRecord.id, dojo_id=enrollementRecord.dojo_id, add_del='del') }}"
+        <a href="{{ url_for('attendance.attendanceRemoveStudent', student_id=studentRecord.id, dojo_id=enrollementRecord.dojo_id) }}"
                     class="btn btn-success">
-                    Delete Student</a>
+                    Remove Student</a>
       </td>
     </tr>
   </tbody>
