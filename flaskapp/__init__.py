@@ -43,6 +43,9 @@ app.register_blueprint(performance.performance_bp)
 from .instructor import instructor
 app.register_blueprint(instructor.instructor_bp)
 
+from .dojo import dojo
+app.register_blueprint(dojo.dojo_bp)
+
 from .auth import auth
 app.register_blueprint(auth.auth_bp)
 

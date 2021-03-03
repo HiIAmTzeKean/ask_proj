@@ -39,7 +39,7 @@ class dojo(db.Model):
 
     instructor = db.relationship('instructor', back_populates='dojo')
     enrollment = db.relationship('enrollment', back_populates='dojo',cascade="all, delete", passive_deletes=True)
-    lesson = db.relationship('lesson', back_populates='dojo')
+    lesson = db.relationship('lesson', back_populates='dojo', cascade="all, delete", passive_deletes=True)
 
     def __init__(self, name, location,instructor_id):
         self.name = name
@@ -53,16 +53,18 @@ class dojo(db.Model):
 class student(db.Model):
     __mapper_args__ = {'polymorphic_identity': 'student'}
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Text, nullable=False)
+    firstName = db.Column(db.Text, nullable=False)
+    lastName = db.Column(db.Text, nullable=False)
     belt = db.Column(db.Text, nullable=False)
-    lastGrading = db.Column(db.Date)
+    lastGrading = db.Column(db.Date, nullable=True)
     active = db.Column(db.Boolean, nullable=False, default=True) # active as a student
 
     studentStatus= db.relationship('studentStatus', back_populates='student',cascade="all, delete", passive_deletes=True)
     enrollment = db.relationship('enrollment', back_populates='student',cascade="all, delete", passive_deletes=True)
     
-    def __init__(self, name, lastGrading, active=True, belt='0'):
-        self.name = name
+    def __init__(self, firstName, lastName, lastGrading, active=True, belt='0'):
+        self.firstName = firstName
+        self.lastName = lastName
         self.belt = belt
         self.lastGrading = lastGrading
         self.active = active
@@ -98,6 +100,7 @@ class studentStatus(db.Model):
 
     lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id', ondelete="CASCADE"), primary_key=True)
     lesson = db.relationship('lesson', back_populates='studentStatus')
+    
     performance_defaultValue = {"technique": "5", "ukemi": "5", "discipline": "5", "coordination": "5", "knowledge": "5", "spirit": "5"}
     def __init__(self, status, student_id, lesson_id, performance = json.dumps(performance_defaultValue)):
         self.status = status
@@ -135,7 +138,7 @@ class lesson(db.Model):
     term = db.Column(db.Integer, nullable=False)
     completed = db.Column(db.Boolean, nullable=False, default=False)
 
-    dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id'), nullable=False)
+    dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id', ondelete="CASCADE"), nullable=False)
     dojo = db.relationship('dojo', back_populates='lesson')
 
     instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id'), nullable=False)

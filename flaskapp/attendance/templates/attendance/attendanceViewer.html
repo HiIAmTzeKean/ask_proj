@@ -40,8 +40,12 @@
         <table class="table">
         <tbody>
           <tr>
-              <th scope="col">{{ form.name.label(class="col-form-label") }}</th>
-              <td>{{ form.name(placeholder='Student Name', class="form-control") }}</td>
+              <th scope="col">{{ form.firstName.label(class="col-form-label") }}</th>
+              <td>{{ form.firstName(placeholder='Student Surname', class="form-control") }}</td>
+          </tr>
+          <tr>
+              <th scope="col">{{ form.lastName.label(class="col-form-label") }}</th>
+              <td>{{ form.lastName(placeholder='Student Name', class="form-control") }}</td>
           </tr>
           <tr>
               <th scope="col">{{ form.belt.label(class="col-form-label") }}</th>
@@ -84,7 +88,7 @@
       <!-- Record from a join query (enrollment, student)-->
       <tr id={{ student.student.id }}>
         <th scope="col">{{ loop.index }}</th>
-        <td>{{ student.student.name }}</td>
+        <td>{{ student.student.firstName }}</td>
         <td>{{ student.student.belt }}</td>
         <td>{{ student.student.lastGrading }}</td>
         <td>{{ student.studentActive }}</td>

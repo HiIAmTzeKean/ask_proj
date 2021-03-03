@@ -54,12 +54,12 @@ def attendanceStatus():
         student_list = db.session.query(studentStatus).filter(studentStatus.lesson_id == currentLesson.id).order_by(
             studentStatus.status.desc(), studentStatus.student_id.desc()).all()
         return render_template('attendance/attendanceStatus.html', dojoName=dojoRecord.name,
-            instructorName=dojoRecord.instructor.name, lessonDate=lessonRecord.date, student_list=student_list,lessonRecord=lessonRecord)
+            instructorName=dojoRecord.instructor.firstName, lessonDate=lessonRecord.date, student_list=student_list,lessonRecord=lessonRecord)
 
     lessonRecord = lesson(date=datetime.date.today(), term=findTerm(datetime.date.today()), dojo_id=dojoRecord.id, instructor_id=dojoRecord.instructor_id)
     form = formStartLesson(obj=lessonRecord)  # Load default values
     instructor_list = instructor.query.all()
-    form.instructor_id.choices = [(instructor.id, instructor.name) for instructor in instructor_list]
+    form.instructor_id.choices = [(instructor.id, instructor.firstName) for instructor in instructor_list]
     
     if form.validate_on_submit(): # once form is submitted, return cookie to save lessonStart and lessonID
         form.populate_obj(lessonRecord)
@@ -86,7 +86,7 @@ def attendanceStatusSummary():
     absent_list = db.session.query(studentStatus.status).filter(
             studentStatus.lesson_id == currentLesson.id, studentStatus.status == False).all()
     resp = make_response(render_template('attendance/attendanceStatusSummary.html', absentCount=len(absent_list),
-            presentCount=len(present_list), instructorName=currentLesson.instructor.name, dojoName=currentLesson.dojo.name))
+            presentCount=len(present_list), instructorName=currentLesson.instructor.firstName, dojoName=currentLesson.dojo.name))
     return resp
 
 
@@ -116,7 +116,7 @@ def attendanceViewer():
 
     student_list = db.session.query(enrollment).join(student).filter(enrollment.dojo_id==dojo_id).order_by(enrollment.studentActive.desc()).all()
     return render_template('attendance/attendanceViewer.html', student_list=student_list,
-                           instructorName=dojoRecord.instructor.name,
+                           instructorName=dojoRecord.instructor.firstName,
                            dojoName=dojoRecord.name, dojoRecord=dojoRecord, form=form)
 
 
@@ -171,7 +171,7 @@ def attendanceSearchStudent():
     return render_template('attendance/attendanceSearchStudent.html',student_list=student_list, form=form)
 
 
-@attendance_bp.route('/attendanceEditStudent/<student_id>', methods=('GET', 'POST'))
+@attendance_bp.route('/attendanceEditStudent/<int:student_id>', methods=('GET', 'POST'))
 def attendanceEditStudent(student_id): 
     studentRecord = get_studentRecord(student_id)
     enrollementRecord = db.session.query(enrollment).filter_by(student_id=student_id).first()  # extract dojo student is currently from
@@ -186,7 +186,7 @@ def attendanceEditStudent(student_id):
     return render_template('attendance/attendanceEditStudent.html',studentRecord=studentRecord, enrollementRecord=enrollementRecord,form=form)
 
 
-@attendance_bp.route('/attendanceEditDojo/<dojo_id>', methods=('GET', 'POST'))
+@attendance_bp.route('/attendanceEditDojo/<int:dojo_id>', methods=('GET', 'POST'))
 def attendanceEditDojo(dojo_id): # edit dojo particulars
     dojoRecord = db.session.query(dojo).filter(dojo.id==dojo_id).first()
     form = formEditDojo(obj=dojoRecord)
