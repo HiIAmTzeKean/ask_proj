@@ -4,7 +4,7 @@ from flask import (Blueprint, flash, g, make_response, redirect,
                    render_template, request, session, url_for)
 from flaskapp import db
 from flaskapp.models import (dojo,instructor)
-from flaskapp.dojo.form import formEditDojo
+from flaskapp.dojo.form import formEditDojo, formConfirmAction
 
 dojo_bp = Blueprint('dojo', __name__,
                     template_folder='templates',
@@ -47,10 +47,14 @@ def dojoAddDojo():
     return render_template('dojo/dojoAddDojo.html', form=form)
 
 #create a confirm delete page
-@dojo_bp.route('/dojoDelDojo<int:dojo_id>', methods=('GET', 'POST'))
+@dojo_bp.route('/dojoDelDojo/<int:dojo_id>', methods=('GET', 'POST'))
 def dojoDelDojo(dojo_id):
     dojoRecord = db.session.query(dojo).filter_by(id=dojo_id).first()
-    db.session.delete(dojoRecord)
-    db.session.commit()
-    flash('Successfully deleted!')
-    return redirect(url_for('dojo.dojoViewer'))
+    form = formConfirmAction
+    if form.validate_on_submit():
+        # dojoRecord = db.session.query(dojo).filter_by(id=dojo_id).first()
+        db.session.delete(dojoRecord)
+        db.session.commit()
+        flash('Successfully deleted!')
+        return redirect(url_for('dojo.dojoViewer'))
+    return render_template('dojo/dojoConfirmAction.html', form=form, dojoName=dojoRecord.name)

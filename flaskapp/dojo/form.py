@@ -9,3 +9,6 @@ class formEditDojo(FlaskForm):
     instructor_id = SelectField(
         label='Instructor', choices='', validators=[DataRequired()])
     submit = SubmitField(label='Save Changes')
+
+class formConfirmAction(FlaskForm):
+    submit = SubmitField(label='Proceed')
