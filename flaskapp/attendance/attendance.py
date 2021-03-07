@@ -191,7 +191,7 @@ def attendanceEditDojo(dojo_id): # edit dojo particulars
     dojoRecord = db.session.query(dojo).filter(dojo.id==dojo_id).first()
     form = formEditDojo(obj=dojoRecord)
     instructor_list = instructor.query.all()
-    form.instructor_id.choices = [(instructor.id, instructor.name) for instructor in instructor_list]
+    form.instructor_id.choices = [(instructor.id, instructor.firstName) for instructor in instructor_list]
     if form.validate_on_submit():
         form.populate_obj(dojoRecord)
         db.session.commit()
