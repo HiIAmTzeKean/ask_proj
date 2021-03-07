@@ -34,7 +34,7 @@ def dojoEditDojo(dojo_id):
 
 @dojo_bp.route('/dojoAddDojo', methods=('GET', 'POST'))
 def dojoAddDojo():
-    dojoRecord = dojo('','',None)
+    dojoRecord = dojo(None,None,None)
     form = formEditDojo(obj=dojoRecord)
     instructor_list = instructor.query.all()
     form.instructor_id.choices = [(instructor.id, instructor.firstName) for instructor in instructor_list]
@@ -50,11 +50,7 @@ def dojoAddDojo():
 @dojo_bp.route('/dojoDelDojo/<int:dojo_id>', methods=('GET', 'POST'))
 def dojoDelDojo(dojo_id):
     dojoRecord = db.session.query(dojo).filter_by(id=dojo_id).first()
-    form = formConfirmAction
-    if form.validate_on_submit():
-        # dojoRecord = db.session.query(dojo).filter_by(id=dojo_id).first()
-        db.session.delete(dojoRecord)
-        db.session.commit()
-        flash('Successfully deleted!')
-        return redirect(url_for('dojo.dojoViewer'))
-    return render_template('dojo/dojoConfirmAction.html', form=form, dojoName=dojoRecord.name)
+    db.session.delete(dojoRecord)
+    db.session.commit()
+    flash('Successfully deleted!')
+    return redirect(url_for('dojo.dojoViewer'))

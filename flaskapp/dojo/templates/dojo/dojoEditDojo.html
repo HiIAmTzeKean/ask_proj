@@ -41,7 +41,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Confirm</button>
+        <a href="{{ url_for('dojo.dojoDelDojo', dojo_id=dojoRecord.id) }}" class="btn btn-default">Confirm</a>
       </div>
     </div>
   </div>
