@@ -1,30 +1,82 @@
 {% extends 'base.html' %}
 
 {% block title %}Viewer{% endblock %}
+
 {% block content %}
 <div>
-  <div>
+  <div id="Dojo_details">
     <h4>Class of {{ dojoName }}</h4>
   </div>
   <div>
     <h4>Instructor: {{ instructorName }}</h4>
   </div>
+
   <div>
-    <a href="{{ url_for('attendance.attendanceSearchStudent') }}" class="btn btn btn-secondary btn-outline-dark btn-md btn-block">Add Existing Student</a>
-  </div>
-  <div>
-    <a href="#" data-toggle="modal" data-target='#addStudent' class="btn btn btn-secondary btn-md btn-outline-dark btn-block">Add New Student</a>
-  </div>
-  <div>
-    <a href="{{ url_for('attendance.attendanceEditDojo', dojo_id=dojoRecord.id) }}" class="btn btn btn-secondary btn-outline-dark btn-md btn-block">Edit
+    <a href="{{ url_for('attendance.attendanceSearchStudent') }}"
+      class="btn btn-primary">Add Existing Student</a>
+
+    <a href="#" data-toggle="modal" data-target='#addStudent'
+      class="btn btn-primary">Add New Student</a>
+
+    <a href="{{ url_for('attendance.attendanceEditDojo', dojo_id=dojoRecord.id) }}"
+      class="btn btn-primary">Edit
       Dojo</a>
   </div>
 </div>
 
 <br>
+
+<!-- For future development -->
+<div>
+  <p>Ignore: Previous lesson did techniques... </p>
+  <p>Class average is...</p>
+</div>
+
+<br>
+
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Belt</th>
+      <th scope="col">Last grading</th>
+      <th scope="col">Active</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for student in student_list %}
+    <!-- Record from a join query (enrollment, student)-->
+    <tr id={{ student.student.id }}>
+      <th scope="col">{{ loop.index }}</th>
+      <td>{{ student.student.firstName }}</td>
+      <td>{{ student.student.belt }}</td>
+      <td>{{ student.student.lastGrading }}</td>
+      <td>{{ student.studentActive }}</td>
+      <td>
+        {% if student.studentActive == True %}
+        <a href="{{ url_for('attendance.attendanceAct_DeactEnrollment', student_id=student.student.id, dojo_id=request.cookies.get('dojo_id'), act_deact='deact') }}"
+          class="btn btn-danger">
+          Deactivate</a>
+        {% else %}
+        <a href="{{ url_for('attendance.attendanceAct_DeactEnrollment', student_id=student.student.id, dojo_id=request.cookies.get('dojo_id'), act_deact='act') }}"
+          class="btn btn-success">
+          activate</a>
+        {% endif %}
+        <a href="{{ url_for('attendance.attendanceEditStudent', student_id=student.student.id) }}"
+          class="btn btn-success">
+          Edit</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
 <!--Adding new student form-->
 <!-- Modal -->
-<div class="modal fade" id="addStudent" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+<div class="modal fade" id="addStudent" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+  aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -35,75 +87,41 @@
       </div>
       <!--Modal Body with form-->
       <form method="POST" action="{{ url_for('attendance.attendanceAdd_DelStudent', add_del='addNew') }}">
-      {{ form.hidden_tag() }}
-      <div class="modal-body">
-        <table class="table">
-        <tbody>
-          <tr>
-              <th scope="col">{{ form.name.label(class="col-form-label") }}</th>
-              <td>{{ form.name(placeholder='Student Name', class="form-control") }}</td>
-          </tr>
-          <tr>
-              <th scope="col">{{ form.belt.label(class="col-form-label") }}</th>
-              <td>{{ form.belt(placeholder='8 Kyu', class="form-control") }}</td>
-          </tr>
-          <tr>
-              <th scope="col">{{ form.lastGrading.label(class="col-form-label") }}</th>
-              <td>{{ form.lastGrading(class="form-control") }}</td>
-          </tr>
-          <tr>
-              <th scope="col">{{ form.dojo_id.label(class="col-form-label") }}</th>
-              <td>{{ form.dojo_id(class="form-control") }}</td>
-          </tr>
-        </tbody>
-        </table>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="position-relative top-0 start-0 btn btn-secondary" data-dismiss="modal">Close</button>
-        {{ form.submit(class="position-relative start-100 btn btn-success", value='Add User') }}
-      </div>
+        {{ form.hidden_tag() }}
+        <div class="modal-body">
+          <table class="table">
+            <tbody>
+              <tr>
+                <th scope="col">{{ form.firstName.label(class="col-form-label") }}</th>
+                <td>{{ form.firstName(placeholder='Student Surname', class="form-control") }}</td>
+              </tr>
+              <tr>
+                <th scope="col">{{ form.lastName.label(class="col-form-label") }}</th>
+                <td>{{ form.lastName(placeholder='Student Name', class="form-control") }}</td>
+              </tr>
+              <tr>
+                <th scope="col">{{ form.belt.label(class="col-form-label") }}</th>
+                <td>{{ form.belt(placeholder='8 Kyu', class="form-control") }}</td>
+              </tr>
+              <tr>
+                <th scope="col">{{ form.lastGrading.label(class="col-form-label") }}</th>
+                <td>{{ form.lastGrading(class="form-control") }}</td>
+              </tr>
+              <tr>
+                <th scope="col">{{ form.dojo_id.label(class="col-form-label") }}</th>
+                <td>{{ form.dojo_id(class="form-control") }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="position-relative top-0 start-0 btn btn-secondary"
+            data-dismiss="modal">Close</button>
+          {{ form.submit(class="position-relative start-100 btn btn-success", value='Add User') }}
+        </div>
       </form>
     </div>
   </div>
 </div>
 <!--End of adding new student form-->
-
-<table class="table">
-    <thead class="thead-dark">
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Name</th>
-        <th scope="col">Belt</th>
-        <th scope="col">Last grading</th>
-        <th scope="col">Active</th>
-        <th scope="col">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for student in student_list %}
-      <!-- Record from a join query (enrollment, student)-->
-      <tr id={{ student.student.id }}>
-        <th scope="col">{{ loop.index }}</th>
-        <td>{{ student.student.name }}</td>
-        <td>{{ student.student.belt }}</td>
-        <td>{{ student.student.lastGrading }}</td>
-        <td>{{ student.studentActive }}</td>
-        <td>
-            {% if student.studentActive == True %}
-            <a href="{{ url_for('attendance.attendanceAct_DeactEnrollment', student_id=student.student.id, dojo_id=request.cookies.get('dojo_id'), act_deact='deact') }}"
-                class="btn btn-danger">
-                Deactivate</a>
-            {% else %}
-            <a href="{{ url_for('attendance.attendanceAct_DeactEnrollment', student_id=student.student.id, dojo_id=request.cookies.get('dojo_id'), act_deact='act') }}"
-                class="btn btn-success">
-                activate</a>
-            {% endif %}
-            <a href="{{ url_for('attendance.attendanceEditStudent', student_id=student.student.id) }}"
-                class="btn btn-success">
-                Edit</a>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-</table>
 {% endblock %}

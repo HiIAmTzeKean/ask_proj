@@ -12,8 +12,8 @@ class formDojoSelection(FlaskForm):
 
 
 class formAdd_DelStudent(FlaskForm):
-    name = StringField(label='Name', validators=[DataRequired()])
-    # belt = StringField(label='Belt', validators=[DataRequired()])
+    firstName = StringField(label='Name without Surname', validators=[DataRequired()])
+    lastName = StringField(label='Surname', validators=[DataRequired()])
     belt = SelectField(label='Belt', choices=belt_type(), validators=[DataRequired()])
     lastGrading = DateField(label='Last Grading Date', validators=[validators.Optional()])
     dojo_id = SelectField(label='Dojo Name', choices='', validators=[DataRequired()])
@@ -21,7 +21,8 @@ class formAdd_DelStudent(FlaskForm):
 
 
 class formEditStudent(FlaskForm):
-    name = StringField(label='Name', validators=[DataRequired()])
+    firstName = StringField(label='Name without Surname', validators=[DataRequired()])
+    lastName = StringField(label='Surname', validators=[DataRequired()])
     belt = SelectField(label='Belt', choices=belt_type(),validators=[DataRequired()])
     lastGrading = DateField(label='Last Grading Date',
                             validators=[validators.Optional()])

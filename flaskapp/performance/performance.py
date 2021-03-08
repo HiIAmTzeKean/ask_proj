@@ -71,7 +71,7 @@ def performanceChartView(student_id):
 
     subquery = db.session.query(studentStatus).\
         filter(studentStatus.student_id == studentRecord.id, studentStatus.status == True).\
-        join(lesson, studentStatus.lesson_id == lesson.id).order_by(studentStatus.lesson_id.asc()).all()
+        join(lesson, studentStatus.lesson_id == lesson.id).order_by(lesson.date.asc()).all()
 
     dateLabel = [i.lesson.date.strftime("%x") for i in subquery]
     technique = []

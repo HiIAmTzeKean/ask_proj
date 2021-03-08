@@ -21,9 +21,10 @@
 </head>
 
 <body>
-  </header>{% include 'navbar.html' %}</header>
+  <header>{% include 'navbar.html' %}</header>
 
   <div class="container">
+    
     <div class="mt-2" id="flash-alerts-container">
       {% for message in get_flashed_messages() %}
       <div class="alert alert-warning alert-dismissible fade show" role="alert">

@@ -8,7 +8,7 @@ def get_dojoInstructorName(dojo_id):
         dojo.instructor_id).filter_by(id=dojo_id).scalar()
     # get name from student table
     dojoInstructor = db.session.query(
-        student.name).filter_by(id=found_id).scalar()
+        student.lastName).filter_by(id=found_id).scalar()
     return dojoInstructor
 
 
@@ -43,8 +43,8 @@ def update_Act_DeactEnrollment(student_id, dojo_id, act_deact):
     return
 
 
-def insert_newStudent(name, lastGrading, dojo_id, belt='0'):
-    record = student(name, lastGrading, dojo_id, active=True, belt=belt)
+def insert_newStudent(firstName, lastName, lastGrading, dojo_id, belt='0'):
+    record = student(firstName, lastName, lastGrading, dojo_id, active=True, belt=belt)
     db.session.add(record)
     db.session.commit()
     return

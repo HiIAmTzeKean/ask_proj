@@ -3,10 +3,10 @@ from wtforms import BooleanField, StringField, PasswordField, validators, Select
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, InputRequired, Optional
 from flaskapp.attendance.helpers import belt_type
-import datetime
 
 class formEditInstructor(FlaskForm):
-    name = StringField(label='Name', validators=[DataRequired()])
+    firstName = StringField(label='Name without Surname', validators=[DataRequired()])
+    lastName = StringField(label='surname', validators=[DataRequired()])
     belt = SelectField(label='Belt', choices=belt_type(),validators=[DataRequired()])
     lastGrading = DateField(label='Last Grading Date',
                             validators=[validators.Optional()])

@@ -4,12 +4,22 @@
 
 {% block content %}
 <div>
-    <h2>Class of {{ dojoName }}</h2>
-    <h2>Instructor: {{ instructorName }}</h2>
-    <h2>Date: {{ lessonDate }}</h2>
-    <a href="{{ url_for('attendance.attendanceStatusSummary') }}" class="btn btn-primary">End Class</a>
+    <h4>Class of {{ dojoName }}</h4>
+    <h4>Instructor: {{ instructorName }}</h4>
+    <h4>Date: {{ lessonDate }}</h4>
 </div>
+
+<a href="{{ url_for('attendance.attendanceStatusSummary') }}" class="btn btn-primary">End Class</a>
+
 <hr>
+
+<!--Include remarks for the lesson-->
+<div>
+    <p>text box here to include techniques taught</p>
+</div>
+
+<hr>
+
 <div>
     <table class="table table-sm table-bordered">
         <thead class="thead-dark">
@@ -22,7 +32,7 @@
         <tbody>
         {% for studentstatus in student_list %}
             <tr id="section{{ studentstatus.student_id }}">
-                <td>{{ studentstatus.student.name }}</td>
+                <td>{{ studentstatus.student.firstName }}</td>
                 <td>{{ studentstatus.status }}</td>
             
                 {% if studentstatus.status != True %}

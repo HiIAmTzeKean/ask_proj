@@ -8,7 +8,7 @@ def generateDojo():
 
 def generateStudent():
     for i in range(100):
-        print('({},\'Person{}\',\'{} Kyu\',True),'.format(
+        print('({},\'Person{}\',\'Surname\',\'{} Kyu\',True),'.format(
             i, i, randint(0, 10)))
 
 def generateEnrollment():
@@ -45,4 +45,4 @@ def generatestudentStatus():
 
 
 if __name__ == "__main__":
-    generateLesson()
+    generateStudent()

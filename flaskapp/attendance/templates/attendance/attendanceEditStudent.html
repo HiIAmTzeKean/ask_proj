@@ -3,7 +3,7 @@
 {% block title %}Edit Student{% endblock %}
 
 {% block content %}
-<h2>Update {{ studentRecord.name }} Particulars</h2>
+<h2>Update {{ studentRecord.lastName }} Particulars</h2>
 
 <form method="POST" action="{{ url_for('attendance.attendanceEditStudent', student_id=studentRecord.id) }}">
 {{ form.hidden_tag() }}
@@ -13,8 +13,12 @@
       {{ form.field.label }}: {{ ', '.join(errors) }}
     {% endfor %}
     <tr>
-      <th scope="row">{{ form.name.label(class="col-form-label")}}</th>
-      <td colspan="2">{{ form.name(class="form-control")}}</td>
+      <th scope="row">{{ form.firstName.label(class="col-form-label")}}</th>
+      <td colspan="2">{{ form.firstName(class="form-control")}}</td>
+    </tr>
+    <tr>
+      <th scope="row">{{ form.lastName.label(class="col-form-label")}}</th>
+      <td colspan="2">{{ form.lastName(class="form-control")}}</td>
     </tr>
     <tr>
       <th scope="row">{{ form.belt.label(class="col-form-label") }}</th>
