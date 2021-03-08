@@ -334,3 +334,4 @@ VALUES
 
 SELECT setval('lesson_id_seq', (SELECT MAX(id) from "lesson"));
 SELECT setval('dojo_id_seq', (SELECT MAX(id) from "dojo"));
+SELECT setval('student_id_seq', (SELECT MAX(id) from "student"));

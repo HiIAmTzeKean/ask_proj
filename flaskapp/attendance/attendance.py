@@ -123,7 +123,8 @@ def attendanceViewer():
 @attendance_bp.route('/attendanceAdd_DelStudent/<string:add_del>', methods=('GET', 'POST'))
 def attendanceAdd_DelStudent(add_del):
     if add_del == 'addNew':
-        name = request.form.get('name')
+        firstName = request.form.get('firstName')
+        lastName = request.form.get('lastName')
         if request.form.get('lastGrading') == '':
             lastGrading = None
         else:
@@ -131,7 +132,7 @@ def attendanceAdd_DelStudent(add_del):
         belt = request.form.get('belt')
         dojo_id = int(request.form.get('dojo_id'))
         # Create new student record
-        record = student(name, lastGrading, True, belt=belt)
+        record = student(firstName,lastName,lastGrading,True,belt=belt)
         db.session.add(record)
         db.session.commit()
         # Add student record to enrollemnt per dojo_id
