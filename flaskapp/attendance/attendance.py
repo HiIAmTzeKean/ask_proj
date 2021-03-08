@@ -159,10 +159,10 @@ def attendanceSearchStudent():
         print(serachBelt)
         if serachBelt =="":
             student_list = db.session.query(student).\
-                filter(student.name.ilike('%{}%'.format(serachString))).all()
+                filter(student.firstName.ilike('%{}%'.format(serachString))).all()
         else:
             student_list = db.session.query(student).\
-                filter(student.name.ilike('%{}%'.format(serachString)), student.belt.ilike(serachBelt)).all()
+                filter(student.firstName.ilike('%{}%'.format(serachString)), student.belt.ilike(serachBelt)).all()
     else:
         student_list = db.session.query(student).all()
     if form.validate_on_submit():
