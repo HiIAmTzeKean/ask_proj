@@ -12,8 +12,8 @@ from flaskapp.attendance.db_method import (delete_studentEnrollmentRecord,
                                            update_attendancePresent)
 from flaskapp.attendance.form import (formAdd_DelStudent, formDojoSelection,
                                       formEditDojo, formEditStudent,
-                                      formSearchStudent, formStartLesson)
-from flaskapp.attendance.helpers import findTerm, str_to_date
+                                      formSearchStudent, formStartLesson, formAddTechniquesTaught)
+from flaskapp.attendance.helpers import findTerm, str_to_date, catchList, lockList, drillsList
 from flaskapp.auth.auth import dojo_required
 from flaskapp.models import (dojo, enrollment, instructor, lesson, student,
                              studentStatus)
@@ -53,15 +53,21 @@ def attendanceStatus():
         lessonRecord = currentLesson
         student_list = db.session.query(studentStatus).filter(studentStatus.lesson_id == currentLesson.id).order_by(
             studentStatus.status.desc(), studentStatus.student_id.desc()).all()
+
+        ### second form
+        techniquesTaught = formAddTechniquesTaught()
         return render_template('attendance/attendanceStatus.html', dojoName=dojoRecord.name,
-            instructorName=dojoRecord.instructor.firstName, lessonDate=lessonRecord.date, student_list=student_list,lessonRecord=lessonRecord)
+            instructorName=dojoRecord.instructor.firstName, lessonDate=lessonRecord.date,
+            student_list=student_list,lessonRecord=lessonRecord,techniquesTaught=techniquesTaught,
+            catch_list=catchList(), lock_list=lockList())
 
     lessonRecord = lesson(date=datetime.date.today(), term=findTerm(datetime.date.today()), dojo_id=dojoRecord.id, instructor_id=dojoRecord.instructor_id)
+    ### first form
     form = formStartLesson(obj=lessonRecord)  # Load default values
     instructor_list = instructor.query.all()
     form.instructor_id.choices = [(instructor.id, instructor.firstName) for instructor in instructor_list]
     
-    if form.validate_on_submit(): # once form is submitted, return cookie to save lessonStart and lessonID
+    if form.validate_on_submit():
         form.populate_obj(lessonRecord)
         db.session.add(lessonRecord)
         db.session.commit()
@@ -69,14 +75,24 @@ def attendanceStatus():
                 enrollment.studentActive==True).all()  # create record for all students in that dojo
         for studentId in studentId_list:
             insert_studentStausRecord(status=False,student_id=studentId[0],lesson_id=lessonRecord.id) # mark them all as absent
-        # resp = make_response(redirect(url_for('attendance.attendanceStatus')))
         return redirect(url_for('attendance.attendanceStatus'))
-    return render_template('attendance/PreattendanceStatus.html', dojoName=dojoRecord.name, form=form)
+
+    return render_template('attendance/PreattendanceStatus.html',
+                           dojoName=dojoRecord.name, form=form)
 
 
 @attendance_bp.route('/attendanceStatusSummary', methods=('GET', 'POST'))
 def attendanceStatusSummary():
     dojo_id = request.cookies.get('dojo_id')
+    print(request.form)
+    for i in range(1,10):
+        catch = request.form.get('techniqueList{}catch'.format(i))
+        lock = request.form.get('techniqueList{}lock'.format(i))
+        if catch == None:
+            break
+        else:
+            print(catch)
+
     currentLesson = db.session.query(lesson).filter_by(dojo_id=dojo_id).order_by(lesson.id.desc()).first()
     currentLesson.completed = True
     db.session.commit()
