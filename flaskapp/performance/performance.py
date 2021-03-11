@@ -39,6 +39,7 @@ def performanceGradePerformance(student_id):
     if subquery == []:
         flash('No record to grade')
         return redirect(url_for('performance.performanceViewer'))
+
     lessonRecord = db.session.query(lesson).filter(lesson.id.in_(subquery)).order_by(lesson.id.desc()).limit(5).all()
     form = gradePerformanceform()
     form.lesson_id.choices = [(lessonDone.id, '{} {}'.format(lessonDone.date, lessonDone.dojo.name)) for lessonDone in lessonRecord]
