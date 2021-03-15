@@ -121,7 +121,7 @@ def attendancePresent():  # Route to change studentStatus.status
     lessonRecord = db.session.query(lesson).filter_by(id=lesson_id).first()
     return render_template('attendance/section.html', studentstatus=studentstatus, lessonRecord=lessonRecord)
 
-@attendance_bp.route('/attendanceStatusCancel', methods=('GET'))
+@attendance_bp.route('/attendanceStatusCancel', methods=('GET', 'POST'))
 def attendanceStatusCancel():
     dojo_id = request.cookies.get('dojo_id')
     lessonRecord = db.session.query(lesson).filter_by(dojo_id=dojo_id).order_by(lesson.id.desc()).first()
