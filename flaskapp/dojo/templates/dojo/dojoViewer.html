@@ -1,16 +1,13 @@
 {% extends 'base.html' %}
 
 {% block title %}Viewer{% endblock %}
+
 {% block content %}
 <div>
-  <table>
-    <tr>
-      <td>
-        <a href="{{ url_for('dojo.dojoAddDojo') }}" class="btn btn-primary">Add Dojo</a>
-      </td>
-    </tr>
-  </table>
+  <a href="{{ url_for('dojo.dojoAddDojo') }}" class="btn btn-primary">Add Dojo</a>
 </div>
+
+<div id="includedContent"></div>
 
 <table class="table">
     <thead class="thead-dark">
@@ -38,4 +35,12 @@
     <tbody>
     </tbody>
 </table>
+{% endblock %}
+
+{% block scripts %}
+<script> 
+  $(function(){
+    $("#includedContent").load("{{ url_for('dojo.static', filename='testtry.html') }}"); 
+  });
+</script> 
 {% endblock %}

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, StringField, PasswordField, validators, SelectField, SubmitField
+from wtforms import BooleanField, StringField, PasswordField, validators, SelectField, SubmitField, FieldList, FormField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, InputRequired, Optional
 from flaskapp.attendance.helpers import belt_type
@@ -49,3 +49,17 @@ class formStartLesson(FlaskForm):
     date = DateField(label='Lesson Date',
                      default=datetime.date.today(), validators=[DataRequired()])
     submit = SubmitField('Start Lesson')
+
+
+class formTechniqueType(FlaskForm):
+    catch = SelectField(
+        label='Catch', choices=[], validators=[DataRequired()])
+    lock = SelectField(
+        label='Lock', choices=[], validators=[DataRequired()])
+    drill = SelectField(
+        label='Drill', choices=[], validators=[DataRequired()])
+
+
+class formAddTechniquesTaught(FlaskForm):
+    techniqueList = FieldList(FormField(formTechniqueType))
+    submit = SubmitField('Done')

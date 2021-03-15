@@ -20,7 +20,14 @@ def get_dojoInstructorId(dojo_id):
 
 
 def insert_studentStausRecord(status,student_id,lesson_id):
-    record = studentStatus(status, student_id, lesson_id)
+    lastRecord = db.session.query(studentStatus).\
+                filter(studentStatus.student_id==student_id, studentStatus.status==True).\
+                order_by(studentStatus.lesson_id.desc()).first()
+    # insert last performance as current performance
+    if lastRecord:
+        record = studentStatus(status, student_id, lesson_id,lastRecord.performance)
+    else:
+        record = studentStatus(status, student_id, lesson_id)
     db.session.add(record)
     db.session.commit()
     return

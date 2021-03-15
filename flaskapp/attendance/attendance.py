@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from flask import (Blueprint, flash, g, make_response, redirect,
                    render_template, request, session, url_for)
@@ -12,8 +13,8 @@ from flaskapp.attendance.db_method import (delete_studentEnrollmentRecord,
                                            update_attendancePresent)
 from flaskapp.attendance.form import (formAdd_DelStudent, formDojoSelection,
                                       formEditDojo, formEditStudent,
-                                      formSearchStudent, formStartLesson)
-from flaskapp.attendance.helpers import findTerm, str_to_date
+                                      formSearchStudent, formStartLesson, formAddTechniquesTaught)
+from flaskapp.attendance.helpers import findTerm, str_to_date, catchList, lockList, drillsList
 from flaskapp.auth.auth import dojo_required
 from flaskapp.models import (dojo, enrollment, instructor, lesson, student,
                              studentStatus)
@@ -53,32 +54,51 @@ def attendanceStatus():
         lessonRecord = currentLesson
         student_list = db.session.query(studentStatus).filter(studentStatus.lesson_id == currentLesson.id).order_by(
             studentStatus.status.desc(), studentStatus.student_id.desc()).all()
+
+        ### second form
+        techniquesTaught = formAddTechniquesTaught()
         return render_template('attendance/attendanceStatus.html', dojoName=dojoRecord.name,
-            instructorName=dojoRecord.instructor.firstName, lessonDate=lessonRecord.date, student_list=student_list,lessonRecord=lessonRecord)
+            instructorName=dojoRecord.instructor.firstName, lessonDate=lessonRecord.date,
+            student_list=student_list,lessonRecord=lessonRecord,techniquesTaught=techniquesTaught,
+            catch_list=catchList(), lock_list=lockList())
 
     lessonRecord = lesson(date=datetime.date.today(), term=findTerm(datetime.date.today()), dojo_id=dojoRecord.id, instructor_id=dojoRecord.instructor_id)
     form = formStartLesson(obj=lessonRecord)  # Load default values
     instructor_list = instructor.query.all()
     form.instructor_id.choices = [(instructor.id, instructor.firstName) for instructor in instructor_list]
-    
-    if form.validate_on_submit(): # once form is submitted, return cookie to save lessonStart and lessonID
+
+    if form.validate_on_submit():
         form.populate_obj(lessonRecord)
         db.session.add(lessonRecord)
         db.session.commit()
-        studentId_list = db.session.query(enrollment.student_id).filter(enrollment.dojo_id == dojo_id,
-                enrollment.studentActive==True).all()  # create record for all students in that dojo
+        studentId_list = db.session.query(enrollment.student_id).\
+                        filter(enrollment.dojo_id == dojo_id, enrollment.studentActive==True).all()  # create record for all students in that dojo
         for studentId in studentId_list:
             insert_studentStausRecord(status=False,student_id=studentId[0],lesson_id=lessonRecord.id) # mark them all as absent
-        # resp = make_response(redirect(url_for('attendance.attendanceStatus')))
         return redirect(url_for('attendance.attendanceStatus'))
-    return render_template('attendance/PreattendanceStatus.html', dojoName=dojoRecord.name, form=form)
+
+    return render_template('attendance/PreattendanceStatus.html',
+                           dojoName=dojoRecord.name, form=form)
 
 
 @attendance_bp.route('/attendanceStatusSummary', methods=('GET', 'POST'))
 def attendanceStatusSummary():
     dojo_id = request.cookies.get('dojo_id')
+    
+    # appending techniques taught to db record
+    catch = []; lock = []
+    for item in request.form:
+        if 'catch' in item:
+            catch.append(request.form.get(item))
+        if 'lock' in item:
+            lock.append(request.form.get(item))
+    technique_taught = {}
+    for serialNum,technique in enumerate(zip(catch,lock)):
+        technique_taught[serialNum] = ' '.join(technique)
+
     currentLesson = db.session.query(lesson).filter_by(dojo_id=dojo_id).order_by(lesson.id.desc()).first()
     currentLesson.completed = True
+    currentLesson.techniquesTaught = json.dumps(technique_taught)
     db.session.commit()
 
     present_list = db.session.query(studentStatus.status).filter(
@@ -101,7 +121,14 @@ def attendancePresent():  # Route to change studentStatus.status
     lessonRecord = db.session.query(lesson).filter_by(id=lesson_id).first()
     return render_template('attendance/section.html', studentstatus=studentstatus, lessonRecord=lessonRecord)
 
-
+@attendance_bp.route('/attendanceStatusCancel', methods=('GET'))
+def attendanceStatusCancel():
+    dojo_id = request.cookies.get('dojo_id')
+    lessonRecord = db.session.query(lesson).filter_by(dojo_id=dojo_id).order_by(lesson.id.desc()).first()
+    db.session.delete(lessonRecord)
+    db.session.commit()
+    return redirect(url_for('attendance.attendanceStatus'))
+    
 # ----------------------- Viewer Tab ----------------------------#
 
 
@@ -114,10 +141,19 @@ def attendanceViewer():
     dojo_list = dojo.query.all()
     form.dojo_id.choices = [(dojo.id, dojo.name) for dojo in dojo_list]
 
+    # get list of student to display
     student_list = db.session.query(enrollment).join(student).filter(enrollment.dojo_id==dojo_id).order_by(enrollment.studentActive.desc()).all()
+    # get last lesson's detail
+    try:
+        lastLessonTechniques_json = db.session.query(lesson.techniquesTaught).filter(lesson.dojo_id==dojo_id).order_by(lesson.date.desc(),lesson.id.desc()).first()[0]
+        lastLessonTechniques = json.loads(lastLessonTechniques_json)
+    except:
+        lastLessonTechniques={}
+
     return render_template('attendance/attendanceViewer.html', student_list=student_list,
                            instructorName=dojoRecord.instructor.firstName,
-                           dojoName=dojoRecord.name, dojoRecord=dojoRecord, form=form)
+                           dojoName=dojoRecord.name, dojoRecord=dojoRecord,
+                           lastLessonTechniques=lastLessonTechniques, form=form)
 
 
 @attendance_bp.route('/attendanceAdd_DelStudent/<string:add_del>', methods=('GET', 'POST'))
