@@ -15,15 +15,14 @@
 <div>
     <form action="{{ url_for('attendance.attendanceStatusSummary') }}" method="POST">
         {{ techniquesTaught.hidden_tag() }}
-        {{ techniquesTaught.submit }}
-
+        {{ techniquesTaught.submit(class="btn btn-success") }}
+        <a href="{{ url_for('attendance.attendanceStatusCancel') }}" class="btn btn-danger">Cancel Lesson</a>
+        
         <hr>
         <button type="button" id="addNewField" class="btn btn-primary">Add Technique</button>
-        <table>
-            <tbody>
-                {{ techniquesTaught.techniqueList }}
-            </tbody>
-        </table>
+
+        {{ techniquesTaught.techniqueList }}
+
     </form>
 </div>
 
@@ -92,10 +91,11 @@
         var count_item = 0;
         $("#addNewField").click(function () {
             count_item += 1;
-            $("#techniqueList").append("<div class='form-group row'>\
-                                            <label class='col-sm-2 col-form-label'>Catch</label>\
-                                            <div class='col-sm-10'>\
-                                                <select class='form-control' name = techniqueList"+ count_item +"catch>\
+            $("#techniqueList").append("<div class='form-group row techniqueListRow'>\
+                                            <label class='col-form-label'>-</label>\
+                                            <label class='col-sm-1 col-form-label'>Catch</label>\
+                                            <div class='col-sm-4'>\
+                                                <select class='form-control' name = techniqueList"+count_item+"catch>\
                                                     {% for o in catch_list %}\
                                                     <option value='{{ o }}'>\
                                                         {{ o }}\
@@ -103,12 +103,9 @@
                                                     {% endfor %}\
                                                 </select>\
                                             </div>\
-                                        </div>");
-
-            $("#techniqueList").append("<div class='form-group row'>\
-                                            <label class='col-sm-2 col-form-label'>Lock</label>\
-                                            <div class='col-sm-10'>\
-                                                <select class='form-control' name = techniqueList"+ count_item +"lock>\
+                                            <label class='col-sm-1 col-form-label'>Lock</label>\
+                                            <div class='col-sm-4'>\
+                                                <select class='form-control' name = techniqueList"+count_item+"lock>\
                                                     {% for o in lock_list %}\
                                                     <option value='{{ o }}'>\
                                                         {{ o }}\
@@ -116,8 +113,17 @@
                                                     {% endfor %}\
                                                 </select>\
                                             </div>\
-                                        </div>");
+                                            <button type='button' class='col-sm-1 close' id='removeButton'>&times;</button>\
+                                        </div>"
+                );
         });
     })
+
+    // handle click event of the remove link
+    $(document).on('click', '#removeButton', function(){
+        $(this).parent('div').remove(); //Remove field html
+        count_item--; //Decrement field counter
+    })
+    
 </script>
 {% endblock %}

@@ -102,7 +102,8 @@ class studentStatus(db.Model):
     lesson = db.relationship('lesson', back_populates='studentStatus')
     
     performance_defaultValue = {"technique": "5", "ukemi": "5", "discipline": "5", "coordination": "5", "knowledge": "5", "spirit": "5"}
-    def __init__(self, status, student_id, lesson_id, performance = json.dumps(performance_defaultValue)):
+    
+    def __init__(self, status, student_id, lesson_id, performance=json.dumps(performance_defaultValue)):
         self.status = status
         self.performance = performance
         self.student_id = student_id
@@ -137,6 +138,7 @@ class lesson(db.Model):
     date = db.Column(db.Date, nullable=False)
     term = db.Column(db.Integer, nullable=False)
     completed = db.Column(db.Boolean, nullable=False, default=False)
+    techniquesTaught = db.Column(JSON, nullable=True)
 
     dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id', ondelete="CASCADE"), nullable=False)
     dojo = db.relationship('dojo', back_populates='lesson')

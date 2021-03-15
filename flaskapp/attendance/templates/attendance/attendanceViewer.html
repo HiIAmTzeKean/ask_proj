@@ -28,8 +28,15 @@
 
 <!-- For future development -->
 <div>
-  <p>Ignore: Previous lesson did techniques... </p>
-  <p>Class average is...</p>
+  <p>Techniques taught last lesson were:</p>
+  {% if lastLessonTechniques == {} %}
+    <strong>N/A</strong>
+  {% else %}
+    {% for technique in lastLessonTechniques %}
+      <li>{{ lastLessonTechniques[technique] }}</li>
+    {% endfor %}
+  {% endif %}
+  
 </div>
 
 <br>
@@ -41,7 +48,6 @@
       <th scope="col">Name</th>
       <th scope="col">Belt</th>
       <th scope="col">Last grading</th>
-      <th scope="col">Active</th>
       <th scope="col">Actions</th>
     </tr>
   </thead>
@@ -53,7 +59,6 @@
       <td>{{ student.student.firstName }}</td>
       <td>{{ student.student.belt }}</td>
       <td>{{ student.student.lastGrading }}</td>
-      <td>{{ student.studentActive }}</td>
       <td>
         {% if student.studentActive == True %}
         <a href="{{ url_for('attendance.attendanceAct_DeactEnrollment', student_id=student.student.id, dojo_id=request.cookies.get('dojo_id'), act_deact='deact') }}"

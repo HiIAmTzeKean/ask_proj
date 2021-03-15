@@ -1,5 +1,6 @@
 import datetime
 import json
+from werkzeug.datastructures import MultiDict
 
 from flask import (Blueprint, flash, g, make_response, redirect,
                    render_template, request, session, url_for)
@@ -40,30 +41,47 @@ def performanceGradePerformance(student_id):
         flash('No record to grade')
         return redirect(url_for('performance.performanceViewer'))
 
-    lessonRecord = db.session.query(lesson).filter(lesson.id.in_(subquery)).order_by(lesson.id.desc()).limit(5).all()
-    form = gradePerformanceform()
-    form.lesson_id.choices = [(lessonDone.id, '{} {}'.format(lessonDone.date, lessonDone.dojo.name)) for lessonDone in lessonRecord]
+    if request.method == 'GET':
+        lessonRecord = db.session.query(lesson).filter(lesson.id.in_(subquery)).order_by(lesson.id.desc()).limit(5).all()
+        # get student's last record to load form fields
+        last_studentRecord = db.session.query(studentStatus)\
+            .filter(studentStatus.student_id == studentRecord.id,studentStatus.status == True,studentStatus.evaluated == True).\
+            order_by(studentStatus.lesson_id.desc()).first()
+        if last_studentRecord:
+            lastPerformance = json.loads(last_studentRecord.performance)
+            lastPerformance.update({'lesson_id':lessonRecord[0].id})
+            form = gradePerformanceform(formdata=MultiDict(lastPerformance))
+        else: 
+            form = gradePerformanceform()
+        form.lesson_id.choices = [(lessonDone.id, '{} {}'.format(lessonDone.date, lessonDone.dojo.name)) for lessonDone in lessonRecord]
 
-    if form.validate_on_submit(): # update record in database if valid
-        lesson_id = form.lesson_id.data
-        technique = form.technique.data
-        ukemi = form.ukemi.data
-        discipline = form.discipline.data
-        coordination = form.coordination.data
-        knowledge = form.knowledge.data
-        spirit = form.spirit.data
-
-        performanceScore = {'technique':technique, 'ukemi':ukemi, 'discipline':discipline, 'coordination':coordination, 'knowledge':knowledge, 'spirit':spirit}
+    else:
+        lesson_id = request.form["lesson_id"]
+        performanceScore = {'technique':request.form["technique"],
+                            'ukemi':request.form["ukemi"],
+                            'discipline':request.form["discipline"],
+                            'coordination':request.form["coordination"],
+                            'knowledge':request.form["knowledge"],
+                            'spirit':request.form["spirit"]
+                            }
         student_record = db.session.query(studentStatus).filter(studentStatus.student_id == studentRecord.id, studentStatus.lesson_id == lesson_id).first()
         student_record.performance = json.dumps(performanceScore)
         student_record.evaluated = True
         db.session.commit()
 
-        flash('Successfully updated!')
-        return redirect(url_for('performance.performanceGradePerformance', student_id=student_id)) # return back same view page
+        flash('Successfully updated {}\'s Record!'.format(student_record.student.firstName))
+        return redirect(url_for('performance.performanceViewer')) # return back home page
 
     return render_template('performance/performanceGradePerformance.html',
             studentRecord=studentRecord, form=form)
+
+
+@performance_bp.route('/performanceGetPastPerformance/', methods=('GET', 'POST'))
+def performanceGetPastPerformance():
+    student_id = int(request.form['student_id'])
+    lesson_id = int(request.form['lesson_id'])
+    student_record = db.session.query(studentStatus).filter(studentStatus.student_id == studentRecord.id, studentStatus.lesson_id == lesson_id).first()
+    return student_record.performance 
 
 
 @performance_bp.route('/performanceChartView/<student_id>', methods=('GET', 'POST'))
