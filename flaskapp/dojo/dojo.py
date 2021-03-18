@@ -16,7 +16,6 @@ dojo_bp = Blueprint('dojo', __name__,
 @dojo_bp.route('/dojoViewer', methods=('GET', 'POST'))
 def dojoViewer():
     dojo_list = db.session.query(dojo).all()
-    print(url_for('dojo.static', filename='panda.jpg' ))
     return render_template('dojo/dojoViewer.html', dojo_list=dojo_list)
 
 
