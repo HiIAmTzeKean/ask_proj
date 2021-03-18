@@ -16,7 +16,7 @@
     <form action="{{ url_for('attendance.attendanceStatusSummary') }}" method="POST">
         {{ techniquesTaught.hidden_tag() }}
         {{ techniquesTaught.submit(class="btn btn-success") }}
-        <a href="{{ url_for('attendance.attendanceStatusCancel') }}" class="btn btn-danger">Cancel Lesson</a>
+        <a href="{{ url_for('attendance.attendanceLessonCancel') }}" class="btn btn-danger">Cancel Lesson</a>
         
         <hr>
         <button type="button" id="addNewField" class="btn btn-primary">Add Technique</button>
@@ -94,7 +94,7 @@
             $("#techniqueList").append("<div class='form-group row techniqueListRow'>\
                                             <label class='col-form-label'>-</label>\
                                             <label class='col-sm-1 col-form-label'>Catch</label>\
-                                            <div class='col-sm-4'>\
+                                            <div class='col-sm-3'>\
                                                 <select class='form-control' name = techniqueList"+count_item+"catch>\
                                                     {% for o in catch_list %}\
                                                     <option value='{{ o }}'>\
@@ -104,7 +104,7 @@
                                                 </select>\
                                             </div>\
                                             <label class='col-sm-1 col-form-label'>Lock</label>\
-                                            <div class='col-sm-4'>\
+                                            <div class='col-sm-3'>\
                                                 <select class='form-control' name = techniqueList"+count_item+"lock>\
                                                     {% for o in lock_list %}\
                                                     <option value='{{ o }}'>\

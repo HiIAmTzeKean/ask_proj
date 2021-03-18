@@ -21,7 +21,7 @@ def performanceViewer():
     dojoRecord = db.session.query(dojo).filter(dojo.id == dojo_id).first()
     student_list = db.session.query(enrollment).join(student).\
                     filter(enrollment.dojo_id == dojo_id,
-                    enrollment.studentActive == True).all()
+                    enrollment.studentActive == True).order_by(student.firstName.desc()).all()
 
     return render_template('performance/performanceViewer.html',
                            student_list=student_list,
@@ -76,12 +76,34 @@ def performanceGradePerformance(student_id):
             studentRecord=studentRecord, form=form)
 
 
-@performance_bp.route('/performanceGetPastPerformance/', methods=('GET', 'POST'))
-def performanceGetPastPerformance():
-    student_id = int(request.form['student_id'])
-    lesson_id = int(request.form['lesson_id'])
+@performance_bp.route('/performanceGradeNext/<student_id>', methods=['POST'])
+def performanceGradeNext(student_id):
+    studentRecord = get_studentRecord(student_id)
+    lesson_id = request.form["lesson_id"]
+    performanceScore = {'technique':request.form["technique"],
+                        'ukemi':request.form["ukemi"],
+                        'discipline':request.form["discipline"],
+                        'coordination':request.form["coordination"],
+                        'knowledge':request.form["knowledge"],
+                        'spirit':request.form["spirit"]
+                        }
     student_record = db.session.query(studentStatus).filter(studentStatus.student_id == studentRecord.id, studentStatus.lesson_id == lesson_id).first()
-    return student_record.performance 
+    student_record.performance = json.dumps(performanceScore)
+    student_record.evaluated = True
+    db.session.commit()
+
+    flash('Successfully updated {}\'s Record!'.format(student_record.student.firstName))
+
+    # get next student record
+    student_list = db.session.query(studentStatus).join(student).\
+                    filter(studentStatus.lesson_id == lesson_id,
+                    studentStatus.status==True, studentStatus.evaluated==False).order_by(student.firstName.desc()).all()
+
+    if student_list != []:
+        return url_for('performance.performanceGradePerformance', student_id=student_list[0].student.id)
+    else:
+        flash('No more records left to grade for this lesson!')
+        return url_for('performance.performanceViewer')
 
 
 @performance_bp.route('/performanceChartView/<student_id>', methods=('GET', 'POST'))

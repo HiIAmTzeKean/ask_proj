@@ -357,16 +357,17 @@
 {% block title %}Chart{% endblock %}
 
 {% block content %}
+<div id="student_details">
+     <div>
+       <h4>Name: {{ studentRecord.firstName }}</h4>
+     </div>
+     <div>
+       <h4>Belt: {{ studentRecord.belt }}</h4>
+     </div>
+</div>
+<hr>
 <div>
      <table>
-          <thead>
-               <tr>
-                    <th colspan="2">{{ studentRecord.firstName }}</th>
-               </tr>
-               <tr>
-                    <th colspan="2">{{ studentRecord.belt }}</th>
-               </tr>
-          </thead>
           <tbody>
           <tr>
                <td>

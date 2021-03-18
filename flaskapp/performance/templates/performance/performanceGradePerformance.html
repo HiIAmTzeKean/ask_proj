@@ -3,7 +3,7 @@
 {% block title %}Grade Performance{% endblock %}
 
 {% block content %}
-<h2>Grade {{ studentRecord.name }}</h2>
+<h2>Grade {{ studentRecord.firstName }}</h2>
 
 <form method="POST" action="{{ url_for('performance.performanceGradePerformance', student_id=studentRecord.id) }}">
 {{ form.hidden_tag() }}
@@ -40,6 +40,7 @@
     <tr>
       <td><a href="{{ url_for('performance.performanceViewer') }}" class="btn btn-danger">Back</a></td>
       <td>{{ form.submit(class="btn btn-success") }}</td>
+      <td><input type="button" class="btn btn-primary" value="Continue" onClick="return submitForm(this.form);"/></td>
     </tr>
   </tbody>
 </table>
@@ -48,27 +49,19 @@
 
 {% block scripts %}
 <script>
-  $(document).ready(function () {
-      $(document).on('click', '.lesson_id', function () {
-          var csrf_token = "{{ csrf_token() }}";
-          var student_id = $(this).attr('student_id');
-          var lesson_id = $(this).attr('lesson_id');
-
-          $.ajax({
-              url: "{{ url_for('performance.performanceGetPastPerformance')}}",
-              type: "POST",
-              headers: { "X-CSRFToken": csrf_token, },
-              data: { student_id: student_id, lesson_id: lesson_id },
-              success: function (data) {
-                  $('#section' + student_id).fadeOut(100).fadeIn(100)
-                  $('#section' + student_id).html(data)
-              }
-          });
+    function submitForm(form) {
+      var csrf_token = "{{ csrf_token() }}";
+      var formData = $(form).serializeArray();
+      $.ajax({
+        url: "{{ url_for('performance.performanceGradeNext', student_id=studentRecord.id) }}",
+        type: "POST",
+        headers: { "X-CSRFToken": csrf_token, },
+        data: formData,
+        success: function (data) {
+          location.replace(data)
+        }
       });
-  })
-
-  function updateForm(val) {
-  }
+    };
 </script>
 {% endblock %}
 

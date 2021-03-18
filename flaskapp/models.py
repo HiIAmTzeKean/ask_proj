@@ -70,7 +70,7 @@ class student(db.Model):
         self.active = active
 
     def __repr__(self):
-        return '<Student {}>'.format(self.name)
+        return '<Student {}>'.format(self.firstName)
 
 
 class instructor(student):

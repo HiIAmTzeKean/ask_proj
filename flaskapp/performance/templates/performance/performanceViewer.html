@@ -3,18 +3,22 @@
 {% block title %}Viewer{% endblock %}
 
 {% block content %}
-<h2>Class of {{ dojoRecord.name }}</h2>
-<h2>Instructor: {{ dojoRecord.instructor.name }}</h2>
-
+<div id="Dojo_details">
+    <div>
+      <h4>Class of {{ dojoRecord.name }}</h4>
+    </div>
+    <div>
+      <h4>Instructor: {{ dojoRecord.instructor.firstName }}</h4>
+    </div>
+</div>
+<hr>
 
 <table class="table" id="students">
     <thead class="thead-dark">
         <tr>
-            <th scope="col">#</th>
             <th scope="col">Name</th>
             <th scope="col">Belt</th>
             <th scope="col">Last grading</th>
-            <th scope="col">Active</th>
             <th scope="col">Performance grade</th>
             <th scope="col">Actions</th>
         </tr>
@@ -22,13 +26,11 @@
     <tbody>
         {% for student in student_list %}
         <tr id={{ student.student.id }}>
-            <th scope="col">{{ loop.index }}</th>
             <td>{{ student.student.firstName }}</td>
             <td>{{ student.student.belt }}</td>
             <td>{{ student.student.lastGrading }}</td>
-            <td>{{ student.studentActive  }}</td>
             <td>
-                <a href="{{ url_for('performance.performanceGradePerformance', student_id=student.student.id) }}" class="btn btn-primary">gradePerformance<a>
+                <a href="{{ url_for('performance.performanceGradePerformance', student_id=student.student.id) }}" class="btn btn-primary">Grade<a>
             </td>
             <td>
                 <a href="{{ url_for('performance.performanceChartView', student_id=student.student.id) }}" class="btn btn-primary">Chart View<a>
