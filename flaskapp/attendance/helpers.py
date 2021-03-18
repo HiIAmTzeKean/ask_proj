@@ -60,9 +60,9 @@ def lockList():
         'Shiho Nage Ura-Waza',
         'Kokyu Nage',
         'Sumi Otoshi',
-        'Kokyu Nage (Jiyu-Waza)'
-        'Nikkyo (static) '
-        'Kote Gaeshi (static)'
+        'Kokyu Nage (Jiyu-Waza)',
+        'Nikkyo (static)',
+        'Kote Gaeshi (static)',
         'Nikyo Omote-Waza',
         'Nikyo Ura-Waza',
         'Sankyo Omote-Waza',

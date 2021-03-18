@@ -3,40 +3,62 @@
 {% block title %}Viewer{% endblock %}
 
 {% block content %}
-<div>
-  <div id="Dojo_details">
+<div id="Dojo_details">
+  <div>
     <h4>Class of {{ dojoName }}</h4>
   </div>
   <div>
     <h4>Instructor: {{ instructorName }}</h4>
   </div>
-
-  <div>
-    <a href="{{ url_for('attendance.attendanceSearchStudent') }}"
-      class="btn btn-primary">Add Existing Student</a>
-
-    <a href="#" data-toggle="modal" data-target='#addStudent'
-      class="btn btn-primary">Add New Student</a>
-
-    <a href="{{ url_for('attendance.attendanceEditDojo', dojo_id=dojoRecord.id) }}"
-      class="btn btn-primary">Edit
-      Dojo</a>
-  </div>
 </div>
 
 <br>
 
-<!-- For future development -->
-<div>
-  <p>Techniques taught last lesson were:</p>
-  {% if lastLessonTechniques == {} %}
-    <strong>N/A</strong>
-  {% else %}
-    {% for technique in lastLessonTechniques %}
-      <li>{{ lastLessonTechniques[technique] }}</li>
-    {% endfor %}
-  {% endif %}
-  
+<div id="accordion">
+  <div class="card">
+    <!-- Listing Techniques taught last lesson -->
+    <div class="card-header" id="headingOne">
+      <h5 class="mb-0">
+        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          Techniques history
+        </button>
+      </h5>
+    </div>
+    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+      <div class="card-body">
+        <p>Techniques taught last lesson were:</p>
+        {% if lastLessonTechniques == {} %}
+          <strong>N/A</strong>
+        {% else %}
+          {% for technique in lastLessonTechniques %}
+            <li>{{ lastLessonTechniques[technique] }}</li>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" id="headingTwo">
+      <h5 class="mb-0">
+        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+          Dojo Actions
+        </button>
+      </h5>
+    </div>
+    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+      <div class="card-body">
+        <a href="{{ url_for('attendance.attendanceSearchStudent') }}"
+          class="btn btn-primary">Add Existing Student</a>
+
+        <a href="#" data-toggle="modal" data-target='#addStudent'
+          class="btn btn-primary">Add New Student</a>
+
+        <a href="{{ url_for('attendance.attendanceEditDojo', dojo_id=dojoRecord.id) }}"
+          class="btn btn-primary">Edit Dojo</a>
+      </div>
+    </div>
+  </div>
 </div>
 
 <br>
@@ -60,18 +82,22 @@
       <td>{{ student.student.belt }}</td>
       <td>{{ student.student.lastGrading }}</td>
       <td>
-        {% if student.studentActive == True %}
-        <a href="{{ url_for('attendance.attendanceAct_DeactEnrollment', student_id=student.student.id, dojo_id=request.cookies.get('dojo_id'), act_deact='deact') }}"
-          class="btn btn-danger">
-          Deactivate</a>
-        {% else %}
-        <a href="{{ url_for('attendance.attendanceAct_DeactEnrollment', student_id=student.student.id, dojo_id=request.cookies.get('dojo_id'), act_deact='act') }}"
-          class="btn btn-success">
-          activate</a>
-        {% endif %}
-        <a href="{{ url_for('attendance.attendanceEditStudent', student_id=student.student.id) }}"
-          class="btn btn-success">
-          Edit</a>
+        <div class="btn-group dropleft">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            &#8230;
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a href="{{ url_for('attendance.attendanceEditStudent', student_id=student.student.id) }}"
+              class="dropdown-item">Edit</a>
+            {% if student.studentActive == True %}
+            <a href="{{ url_for('attendance.attendanceAct_DeactEnrollment', student_id=student.student.id, dojo_id=request.cookies.get('dojo_id'), act_deact='deact') }}"
+              class="dropdown-item">Deactivate</a>
+            {% else %}
+            <a href="{{ url_for('attendance.attendanceAct_DeactEnrollment', student_id=student.student.id, dojo_id=request.cookies.get('dojo_id'), act_deact='act') }}"
+              class="dropdown-item">activate</a>
+            {% endif %}
+          </div>
+        </div>
       </td>
     </tr>
     {% endfor %}
