@@ -6,9 +6,9 @@ from flask import (Blueprint, flash, g, make_response, redirect,
                    render_template, request, session, url_for)
 from flaskapp import db
 from flaskapp.auth.auth import dojo_required
-from flaskapp.models import dojo, enrollment, lesson, student, studentStatus
+from flaskapp.models import dojo, enrollment, lesson, student, studentStatus, studentRemarks
 from flaskapp.performance.db_method import get_studentRecord
-from flaskapp.performance.form import gradePerformanceform
+from flaskapp.performance.form import gradePerformanceform, performanceRemarkform
 
 performance_bp = Blueprint('performance', __name__,
                            template_folder='templates', static_folder='static')
@@ -26,6 +26,25 @@ def performanceViewer():
     return render_template('performance/performanceViewer.html',
                            student_list=student_list,
                            dojoRecord=dojoRecord)
+
+
+@performance_bp.route('/performanceRemarks/<student_id>', methods=('GET', 'POST'))
+def performanceRemarks(student_id):
+    studentRecord = get_studentRecord(student_id)
+    form = performanceRemarkform()
+    if form.validate_on_submit():
+        remarkRecord = studentRemarks(
+            student_id = student_id,
+            remarks=form.remark.data,
+            date=form.date.data
+        )
+        db.session.add(remarkRecord)
+        db.session.commit()
+        flash('Record loaded for {}!'.format(studentRecord.firstName))
+        return redirect(url_for('performance.performanceViewer')) # return back home page
+
+    return render_template('performance/performanceRemarks.html',
+            studentRecord=studentRecord, form=form)
 
 
 @performance_bp.route('/performanceGradePerformance/<student_id>', methods=('GET', 'POST'))
