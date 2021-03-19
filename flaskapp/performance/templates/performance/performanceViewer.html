@@ -30,10 +30,18 @@
             <td>{{ student.student.belt }}</td>
             <td>{{ student.student.lastGrading }}</td>
             <td>
-                <a href="{{ url_for('performance.performanceGradePerformance', student_id=student.student.id) }}" class="btn btn-primary">Grade<a>
+                <a href="{{ url_for('performance.performanceGradePerformance', student_id=student.student.id) }}" class="btn btn-primary">Grade</a>
             </td>
             <td>
-                <a href="{{ url_for('performance.performanceChartView', student_id=student.student.id) }}" class="btn btn-primary">Chart View<a>
+                <div class="btn-group dropleft">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      &#8230;
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a href="{{ url_for('performance.performanceChartView', student_id=student.student.id) }}" class="dropdown-item">Chart View</a>
+                        <a href="{{ url_for('performance.performanceRemarks', student_id=student.student.id) }}" class="dropdown-item">Remarks</a>
+                    </div>
+                </div>
             </td>
         </tr>
         {% endfor %}

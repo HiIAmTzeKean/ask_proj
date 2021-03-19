@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, StringField, PasswordField, validators, SelectField, SubmitField
+from wtforms import BooleanField, StringField, PasswordField, validators, SelectField, SubmitField, TextAreaField
+from wtforms.widgets import TextArea
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, InputRequired, Optional
 import datetime
@@ -14,4 +15,11 @@ class gradePerformanceform(FlaskForm):
     coordination = SelectField(label='coordination', choices=formChoice,validators=[DataRequired()], default=5)
     knowledge = SelectField(label='knowledge', choices=formChoice,validators=[DataRequired()], default=5)
     spirit = SelectField(label='spirit', choices=formChoice,validators=[DataRequired()], default=5)
+    submit = SubmitField('Submit')
+
+
+class performanceRemarkform(FlaskForm):
+    remark = TextAreaField(label='Remark', widget=TextArea())
+    date = DateField(label='Date of remark',
+                     default=datetime.date.today(), validators=[DataRequired()])
     submit = SubmitField('Submit')
