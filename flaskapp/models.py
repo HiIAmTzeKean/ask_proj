@@ -59,7 +59,8 @@ class student(db.Model):
     lastGrading = db.Column(db.Date, nullable=True)
     active = db.Column(db.Boolean, nullable=False, default=True) # active as a student
 
-    studentStatus= db.relationship('studentStatus', back_populates='student',cascade="all, delete", passive_deletes=True)
+    studentStatus = db.relationship('studentStatus', back_populates='student',cascade="all, delete", passive_deletes=True)
+    studentRemarks = db.relationship('studentRemarks', back_populates='student',cascade="all, delete", passive_deletes=True)
     enrollment = db.relationship('enrollment', back_populates='student',cascade="all, delete", passive_deletes=True)
     
     def __init__(self, firstName, lastName, lastGrading, active=True, belt='0'):
@@ -111,6 +112,24 @@ class studentStatus(db.Model):
 
     def __repr__(self):
         return '<studentStatus {} {}>'.format(self.status, self.student_id)
+
+
+class studentRemarks(db.Model):
+    __tablename__ = 'studentRemarks'
+    id = db.Column(db.Integer, primary_key=True)
+    remarks = db.Column(db.String, nullable=False, default='')
+    date = db.Column(db.Date, nullable=False)
+
+    student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="CASCADE"))
+    student = db.relationship('student', back_populates='studentRemarks')
+    
+    def __init__(self, student_id, remarks, date):
+        self.student_id = student_id
+        self.remarks = remarks
+        self.date = date
+
+    def __repr__(self):
+        return '<studentRemark {}>'.format(self.student_id)
 
 
 class enrollment(db.Model):

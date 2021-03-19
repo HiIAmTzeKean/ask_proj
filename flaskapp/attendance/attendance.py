@@ -151,8 +151,7 @@ def attendanceViewer():
         lastLessonTechniques={}
 
     return render_template('attendance/attendanceViewer.html', student_list=student_list,
-                           instructorName=dojoRecord.instructor.firstName,
-                           dojoName=dojoRecord.name, dojoRecord=dojoRecord,
+                           dojoRecord=dojoRecord,
                            lastLessonTechniques=lastLessonTechniques, form=form)
 
 
@@ -185,15 +184,14 @@ def attendanceRemoveStudent(student_id,dojo_id):
     delete_studentEnrollmentRecord(student_id, dojo_id)
     return redirect(url_for('attendance.attendanceViewer'))
 
-#todo allow for search by belt
+
 @attendance_bp.route('/attendanceSearchStudent', methods=('GET', 'POST'))
 def attendanceSearchStudent():
     form = formSearchStudent()
     if request.args.get('searchStudent')=='True':
         serachString = request.args.get('serachString')
         serachBelt = request.args.get('serachBelt')
-        print(serachBelt)
-        if serachBelt =="":
+        if serachBelt == "":
             student_list = db.session.query(student).\
                 filter(student.firstName.ilike('%{}%'.format(serachString))).all()
         else:
@@ -214,13 +212,16 @@ def attendanceEditStudent(student_id):
     enrollementRecord = db.session.query(enrollment).filter_by(student_id=student_id).first()  # extract dojo student is currently from
     form = formEditStudent(obj=studentRecord)  # load values into form
 
-    if form.validate_on_submit():  # update record in database if valid
+    # update record
+    if form.validate_on_submit():  
         form.populate_obj(studentRecord)
         db.session.commit()
-        flash('Successfully updated!')
-    
-        return redirect(url_for('attendance.attendanceEditStudent', student_id=student_id))  # return back same view page
-    return render_template('attendance/attendanceEditStudent.html',studentRecord=studentRecord, enrollementRecord=enrollementRecord,form=form)
+        flash('Successfully updated {}!'.format(studentRecord.firstName))
+        # return back same view page
+        return redirect(url_for('attendance.attendanceEditStudent', student_id=student_id))  
+
+    return render_template('attendance/attendanceEditStudent.html', studentRecord=studentRecord,
+                            enrollementRecord=enrollementRecord, form=form)
 
 
 @attendance_bp.route('/attendanceEditDojo/<int:dojo_id>', methods=('GET', 'POST'))
@@ -229,11 +230,13 @@ def attendanceEditDojo(dojo_id): # edit dojo particulars
     form = formEditDojo(obj=dojoRecord)
     instructor_list = instructor.query.all()
     form.instructor_id.choices = [(instructor.id, instructor.firstName) for instructor in instructor_list]
+
     if form.validate_on_submit():
         form.populate_obj(dojoRecord)
         db.session.commit()
         flash('Successfully updated!')
         return redirect(url_for('attendance.attendanceEditDojo', dojo_id=dojo_id))
+
     return render_template('attendance/attendanceEditDojo.html', dojoRecord=dojoRecord, form=form)
 
 

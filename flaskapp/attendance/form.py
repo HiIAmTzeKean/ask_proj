@@ -12,7 +12,7 @@ class formDojoSelection(FlaskForm):
 
 
 class formAdd_DelStudent(FlaskForm):
-    firstName = StringField(label='Name without Surname', validators=[DataRequired()])
+    firstName = StringField(label='Name', validators=[DataRequired()])
     lastName = StringField(label='Surname', validators=[DataRequired()])
     belt = SelectField(label='Belt', choices=belt_type(), validators=[DataRequired()])
     lastGrading = DateField(label='Last Grading Date', validators=[validators.Optional()])
@@ -21,7 +21,7 @@ class formAdd_DelStudent(FlaskForm):
 
 
 class formEditStudent(FlaskForm):
-    firstName = StringField(label='Name without Surname', validators=[DataRequired()])
+    firstName = StringField(label='Name', validators=[DataRequired()])
     lastName = StringField(label='Surname', validators=[DataRequired()])
     belt = SelectField(label='Belt', choices=belt_type(),validators=[DataRequired()])
     lastGrading = DateField(label='Last Grading Date',
