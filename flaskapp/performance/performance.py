@@ -33,8 +33,12 @@ def performanceRemarks(student_id):
     studentRecord = get_studentRecord(student_id)
     form = performanceRemarkform()
     if form.validate_on_submit():
+        dojo_id=request.cookies.get('dojo_id')
+        dojoRecord = db.session.query(dojo).filter(dojo.id == dojo_id).first()
         remarkRecord = studentRemarks(
             student_id = student_id,
+            dojo_id=dojoRecord.id,
+            instructor_id=dojoRecord.instructor.id,
             remarks=form.remark.data,
             date=form.date.data
         )
