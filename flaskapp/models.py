@@ -40,6 +40,7 @@ class dojo(db.Model):
     instructor = db.relationship('instructor', back_populates='dojo')
     enrollment = db.relationship('enrollment', back_populates='dojo',cascade="all, delete", passive_deletes=True)
     lesson = db.relationship('lesson', back_populates='dojo', cascade="all, delete", passive_deletes=True)
+    studentRemarks = db.relationship('studentRemarks', back_populates='dojo', cascade="all, delete", passive_deletes=True)
 
     def __init__(self, name, location,instructor_id):
         self.name = name
@@ -80,8 +81,10 @@ class instructor(student):
     id = db.Column(db.Integer, db.ForeignKey('student.id'), primary_key=True)
     username = db.Column(db.Text, nullable=False, unique=True)
     # password = db.Column(db.Text, nullable=False)
+
     lesson = db.relationship('lesson', back_populates='instructor')
     dojo = db.relationship('dojo', back_populates='instructor')
+    studentRemarks = db.relationship('studentRemarks', back_populates='instructor', cascade="all, delete", passive_deletes=True)
 
     def __init__(self, username):
         self.username = username
@@ -120,11 +123,19 @@ class studentRemarks(db.Model):
     remarks = db.Column(db.String, nullable=False, default='')
     date = db.Column(db.Date, nullable=False)
 
+    dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id', ondelete="CASCADE"))
+    dojo = db.relationship('dojo', back_populates='studentRemarks')
+
+    instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id', ondelete="CASCADE"))
+    instructor = db.relationship('instructor', back_populates='studentRemarks', foreign_keys=[instructor_id])
+
     student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="CASCADE"))
-    student = db.relationship('student', back_populates='studentRemarks')
+    student = db.relationship('student', back_populates='studentRemarks', foreign_keys=[student_id])
     
-    def __init__(self, student_id, remarks, date):
+    def __init__(self, student_id, dojo_id, instructor_id, remarks, date):
         self.student_id = student_id
+        self.dojo_id = dojo_id
+        self.instructor_id = instructor_id
         self.remarks = remarks
         self.date = date
 

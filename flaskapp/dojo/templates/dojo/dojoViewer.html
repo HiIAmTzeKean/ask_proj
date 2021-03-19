@@ -15,7 +15,6 @@
         <th scope="col">#</th>
         <th scope="col">Name</th>
         <th scope="col">location</th>
-        <th scope="col">Active</th>
         <th scope="col">Actions</th>
       </tr>
     </thead>
@@ -24,11 +23,9 @@
         <th scope="col">{{ loop.index }}</th>
         <td>{{ dojo.name }}</td>
         <td>{{ dojo.location }}</td>
-        <td>{{ dojo.instructor.name }}</td>
         <td>
-            <a href="{{ url_for('dojo.dojoEditDojo', dojo_id=dojo.id) }}"
-                class="btn btn-success">
-                Edit</a>
+          <a href="{{ url_for('dojo.dojoEditDojo', dojo_id=dojo.id) }}"
+            class="btn btn-success">Edit</a>
         </td>
       </tr>
       {% endfor %}

@@ -7,7 +7,7 @@ class Config:
     TESTING = False
     CSRF_ENABLED = True
     SECRET_KEY = os.environ['SECRET_KEY']
-    PERMANENT_SESSION_LIFETIME = timedelta(minutes=5)
+    PERMANENT_SESSION_LIFETIME = timedelta(minutes=10)
     SESSION_REFRESH_EACH_REQUEST = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
