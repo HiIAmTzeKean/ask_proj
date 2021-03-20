@@ -35,7 +35,7 @@ class dojo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
     location = db.Column(db.Text, nullable=False)
-    instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id'), nullable=False)
+    instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id', ondelete="SET NULL"))
 
     instructor = db.relationship('instructor', back_populates='dojo')
     enrollment = db.relationship('enrollment', back_populates='dojo',cascade="all, delete", passive_deletes=True)
@@ -123,10 +123,10 @@ class studentRemarks(db.Model):
     remarks = db.Column(db.String, nullable=False, default='')
     date = db.Column(db.Date, nullable=False)
 
-    dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id', ondelete="CASCADE"))
+    dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id', ondelete="SET NULL"))
     dojo = db.relationship('dojo', back_populates='studentRemarks')
 
-    instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id', ondelete="CASCADE"))
+    instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id', ondelete="SET NULL"))
     instructor = db.relationship('instructor', back_populates='studentRemarks', foreign_keys=[instructor_id])
 
     student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="CASCADE"))
@@ -173,10 +173,10 @@ class lesson(db.Model):
     dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id', ondelete="CASCADE"), nullable=False)
     dojo = db.relationship('dojo', back_populates='lesson')
 
-    instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id'), nullable=False)
+    instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id', ondelete="SET NULL"))
     instructor = db.relationship('instructor', back_populates='lesson')
 
-    studentStatus = db.relationship('studentStatus', back_populates='lesson',cascade="all, delete", passive_deletes=True)
+    studentStatus = db.relationship('studentStatus', back_populates='lesson', cascade="all, delete", passive_deletes=True)
 
     def __init__(self, date, term, dojo_id, instructor_id):
         self.date = date

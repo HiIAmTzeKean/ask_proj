@@ -8,7 +8,12 @@
     <h4>Class of {{ dojoRecord.name}}</h4>
   </div>
   <div>
-    <h4>Instructor: {{ dojoRecord.instructor.firstName }}</h4>
+    {% if instructorRecord.firstName %}
+      <h4>Instructor: {{ instructorRecord.firstName }}</h4>
+    {% else %}
+      <h4>Instructor: Nil</h4>
+    {% endif %}
+    
   </div>
 </div>
 
