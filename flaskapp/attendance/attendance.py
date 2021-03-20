@@ -57,12 +57,16 @@ def attendanceStatus():
 
         ### second form
         techniquesTaught = formAddTechniquesTaught()
-        return render_template('attendance/attendanceStatus.html', dojoName=dojoRecord.name,
-            instructorName=dojoRecord.instructor.firstName, lessonDate=lessonRecord.date,
-            student_list=student_list,lessonRecord=lessonRecord,techniquesTaught=techniquesTaught,
+        return render_template('attendance/attendanceStatus.html', dojoRecord=dojoRecord,
+            instructorRecord=currentLesson.instructor,
+            student_list=student_list, lessonRecord=lessonRecord, techniquesTaught=techniquesTaught,
             catch_list=catchList(), lock_list=lockList())
 
-    lessonRecord = lesson(date=datetime.date.today(), term=findTerm(datetime.date.today()), dojo_id=dojoRecord.id, instructor_id=dojoRecord.instructor_id)
+    lessonRecord = lesson(date=datetime.date.today(),
+                          term=findTerm(datetime.date.today()),
+                          dojo_id=dojoRecord.id,
+                          instructor_id=dojoRecord.instructor_id
+                          )
     form = formStartLesson(obj=lessonRecord)  # Load default values
     instructor_list = instructor.query.all()
     form.instructor_id.choices = [(instructor.id, instructor.firstName) for instructor in instructor_list]
@@ -78,13 +82,12 @@ def attendanceStatus():
         return redirect(url_for('attendance.attendanceStatus'))
 
     return render_template('attendance/PreattendanceStatus.html',
-                           dojoName=dojoRecord.name, form=form)
+                           dojoRecord=dojoRecord, form=form)
 
 
 @attendance_bp.route('/attendanceStatusSummary', methods=('GET', 'POST'))
 def attendanceStatusSummary():
     dojo_id = request.cookies.get('dojo_id')
-    
     # appending techniques taught to db record
     catch = []; lock = []
     for item in request.form:
@@ -100,7 +103,6 @@ def attendanceStatusSummary():
     currentLesson.completed = True
     currentLesson.techniquesTaught = json.dumps(technique_taught)
     db.session.commit()
-
     present_list = db.session.query(studentStatus.status).filter(
             studentStatus.lesson_id == currentLesson.id, studentStatus.status == True).all()
     absent_list = db.session.query(studentStatus.status).filter(
@@ -151,7 +153,7 @@ def attendanceViewer():
         lastLessonTechniques={}
 
     return render_template('attendance/attendanceViewer.html', student_list=student_list,
-                           dojoRecord=dojoRecord,
+                           dojoRecord=dojoRecord, instructorRecord=dojoRecord.instructor,
                            lastLessonTechniques=lastLessonTechniques, form=form)
 
 
@@ -177,6 +179,7 @@ def attendanceAdd_DelStudent(add_del):
         dojo_id = int(request.args.get('dojo_id'))
         insert_newEnrollment(student_id, dojo_id)
     return redirect(url_for('attendance.attendanceViewer'))
+
 
 @attendance_bp.route('/attendanceRemoveStudent/<int:student_id>/<int:dojo_id>', methods=('GET', 'POST'))
 def attendanceRemoveStudent(student_id,dojo_id):
