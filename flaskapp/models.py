@@ -97,7 +97,14 @@ class studentStatus(db.Model):
     __tablename__ = 'studentStatus'
     status = db.Column(db.Boolean, nullable=False, default=True)
     performance = db.Column(JSON, nullable=True)
-    evaluated = db.Column(db.Boolean, nullable=False, default=False)
+    evaluated = db.Column(db.Boolean, default=False)
+    
+    technique = db.Column(db.Integer,  default=5)
+    ukemi = db.Column(db.Integer,  default=5)
+    discipline = db.Column(db.Integer, default=5)
+    coordination = db.Column(db.Integer, default=5)
+    knowledge = db.Column(db.Integer, default=5)
+    spirit = db.Column(db.Integer,  default=5)
 
     student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="CASCADE"), primary_key=True)
     student = db.relationship('student', back_populates='studentStatus')
