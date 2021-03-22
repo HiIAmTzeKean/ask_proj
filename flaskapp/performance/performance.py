@@ -150,14 +150,14 @@ def performanceGradeNext(student_id):
         flash('No more records left to grade for this lesson!')
         return url_for('performance.performanceViewer')
 
-@performance_bp.route('/performancemigrate', methods=['GET','POST'])
-def performancemigrate():
-    records = db.session.query(studentStatus).all()
-    for i in records:
-        lastperf = json.loads(i.performance)
-        studentStatus.query.filter_by(student_id=i.student_id, lesson_id=i.lesson_id).update(lastperf)
-    db.session.commit()
-    return 'h'
+# @performance_bp.route('/performancemigrate', methods=['GET','POST'])
+# def performancemigrate():
+#     records = db.session.query(studentStatus).all()
+#     for i in records:
+#         lastperf = json.loads(i.performance)
+#         studentStatus.query.filter_by(student_id=i.student_id, lesson_id=i.lesson_id).update(lastperf)
+#     db.session.commit()
+#     return 'h'
 
 @performance_bp.route('/performanceChartView/<student_id>', methods=('GET', 'POST'))
 def performanceChartView(student_id):

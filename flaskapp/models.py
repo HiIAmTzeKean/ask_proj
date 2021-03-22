@@ -96,9 +96,9 @@ class instructor(student):
 class studentStatus(db.Model):
     __tablename__ = 'studentStatus'
     status = db.Column(db.Boolean, nullable=False, default=True)
-    performance = db.Column(JSON, nullable=True)
-    evaluated = db.Column(db.Boolean, default=False)
     
+    evaluated = db.Column(db.Boolean, default=False)
+
     technique = db.Column(db.Integer,  default=5)
     ukemi = db.Column(db.Integer,  default=5)
     discipline = db.Column(db.Integer, default=5)
@@ -112,11 +112,11 @@ class studentStatus(db.Model):
     lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id', ondelete="CASCADE"), primary_key=True)
     lesson = db.relationship('lesson', back_populates='studentStatus')
     
-    performance_defaultValue = {"technique": "5", "ukemi": "5", "discipline": "5", "coordination": "5", "knowledge": "5", "spirit": "5"}
+    # performance = db.Column(JSON, nullable=True)
+    # performance_defaultValue = {"technique": "5", "ukemi": "5", "discipline": "5", "coordination": "5", "knowledge": "5", "spirit": "5"}
     
-    def __init__(self, status, student_id, lesson_id, performance=json.dumps(performance_defaultValue)):
+    def __init__(self, status, student_id, lesson_id):
         self.status = status
-        self.performance = performance
         self.student_id = student_id
         self.lesson_id = lesson_id
 
