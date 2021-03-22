@@ -34,8 +34,7 @@ def insert_studentStausRecord(status,student_id,lesson_id):
 
 
 def update_attendancePresent(status,student_id,lesson_id):
-    record = db.session.query(studentStatus).filter_by(student_id=student_id, lesson_id=lesson_id).first()
-    record.status = status
+    record = studentStatus.query.filter_by(student_id=student_id, lesson_id=lesson_id).update({studentStatus.status: status})
     db.session.commit()
     return
 

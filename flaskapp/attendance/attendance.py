@@ -26,7 +26,7 @@ attendance_bp = Blueprint('attendance', __name__,
 @attendance_bp.route('/attendanceDojoSelect', methods=('GET', 'POST'))
 def attendanceDojoSelect():
     form = formDojoSelection()
-    dojo_list = dojo.query.all()
+    dojo_list = db.session.query(dojo.id, dojo.name).all()
     form.dojo_id.choices = [(dojo.id, dojo.name) for dojo in dojo_list]
     if form.validate_on_submit():  # remove and load cookies
         dojo_id = form.dojo_id.data
@@ -44,7 +44,7 @@ def attendanceDojoSelect():
 @dojo_required
 def attendanceStatus():
     dojo_id = request.cookies.get('dojo_id')
-    dojoRecord = db.session.query(dojo).filter_by(id=dojo_id).first()
+    dojoRecord = db.session.query(dojo.id, dojo.name, dojo.instructor_id).filter_by(id=dojo_id).first()
 
     # try get lesson record where dojo equal selection. sort asc.
     # if latest record completed is false, run below
@@ -68,7 +68,7 @@ def attendanceStatus():
                           instructor_id=dojoRecord.instructor_id
                           )
     form = formStartLesson(obj=lessonRecord)  # Load default values
-    instructor_list = instructor.query.all()
+    instructor_list = db.session.query(instructor.id, instructor.firstName).all()
     form.instructor_id.choices = [(instructor.id, instructor.firstName) for instructor in instructor_list]
 
     if form.validate_on_submit():
@@ -120,8 +120,9 @@ def attendancePresent():  # Route to change studentStatus.status
     lesson_id = int(request.form['lesson_id'])
     update_attendancePresent(status, student_id, lesson_id)
     studentstatus = db.session.query(studentStatus).filter(studentStatus.lesson_id == lesson_id, studentStatus.student_id == student_id).first()
-    lessonRecord = db.session.query(lesson).filter_by(id=lesson_id).first()
+    lessonRecord = db.session.query(lesson.id).filter_by(id=lesson_id).first()
     return render_template('attendance/section.html', studentstatus=studentstatus, lessonRecord=lessonRecord)
+
 
 @attendance_bp.route('/attendanceLessonCancel', methods=('GET', 'POST'))
 def attendanceLessonCancel():
