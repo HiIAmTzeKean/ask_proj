@@ -64,8 +64,7 @@ def performanceGradePerformance(student_id):
         flash('No record to grade')
         return redirect(url_for('performance.performanceViewer'))
 
-    lessonRecord = db.session.query(lesson.date, lesson.dojo.name).filter(lesson.id.in_(subquery)).order_by(lesson.id.desc()).limit(5).all()
-
+    lessonRecord = db.session.query(lesson).filter(lesson.id.in_(subquery)).order_by(lesson.id.desc()).limit(5).all()
     last_studentRecord = db.session.query(studentStatus)\
         .filter(studentStatus.student_id == studentRecord.id,studentStatus.status == True,studentStatus.evaluated == True).\
         order_by(studentStatus.lesson_id.desc()).first()
