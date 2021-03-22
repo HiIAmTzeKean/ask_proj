@@ -64,43 +64,18 @@ def performanceGradePerformance(student_id):
         flash('No record to grade')
         return redirect(url_for('performance.performanceViewer'))
 
-    # if request.method == 'GET':
-    #     lessonRecord = db.session.query(lesson).filter(lesson.id.in_(subquery)).order_by(lesson.id.desc()).limit(5).all()
-    #     # get student's last record to load form fields
-    #     last_studentRecord = db.session.query(studentStatus)\
-    #         .filter(studentStatus.student_id == studentRecord.id,studentStatus.status == True,studentStatus.evaluated == True).\
-    #         order_by(studentStatus.lesson_id.desc()).first()
-    #     if last_studentRecord:
-    #         lastPerformance = json.loads(last_studentRecord.performance)
-    #         lastPerformance.update({'lesson_id':lessonRecord[0].id})
-    #         form = gradePerformanceform(formdata=MultiDict(lastPerformance))
-    #     else:
-    #         form = gradePerformanceform()
-    #     form.lesson_id.choices = [(lessonDone.id, '{} {}'.format(lessonDone.date, lessonDone.dojo.name)) for lessonDone in lessonRecord]
+    lessonRecord = db.session.query(lesson.date, lesson.dojo.name).filter(lesson.id.in_(subquery)).order_by(lesson.id.desc()).limit(5).all()
 
-    lessonRecord = db.session.query(lesson).filter(lesson.id.in_(subquery)).order_by(lesson.id.desc()).limit(5).all()
     last_studentRecord = db.session.query(studentStatus)\
         .filter(studentStatus.student_id == studentRecord.id,studentStatus.status == True,studentStatus.evaluated == True).\
         order_by(studentStatus.lesson_id.desc()).first()
+
     if last_studentRecord:
         form = gradePerformanceform(obj=last_studentRecord)
     else:
         form = gradePerformanceform()
     form.lesson_id.choices = [(lessonDone.id, '{} {}'.format(lessonDone.date, lessonDone.dojo.name)) for lessonDone in lessonRecord]
-        
-    # else:
-    #     lesson_id = request.form["lesson_id"]
-    #     performanceScore = {'technique':request.form["technique"],
-    #                         'ukemi':request.form["ukemi"],
-    #                         'discipline':request.form["discipline"],
-    #                         'coordination':request.form["coordination"],
-    #                         'knowledge':request.form["knowledge"],
-    #                         'spirit':request.form["spirit"]
-    #                         }
-    #     student_record = db.session.query(studentStatus).filter(studentStatus.student_id == studentRecord.id, studentStatus.lesson_id == lesson_id).first()
-    #     student_record.performance = json.dumps(performanceScore)
-    #     student_record.evaluated = True
-    #     db.session.commit()
+
     if form.validate_on_submit():
         lesson_id = form.lesson_id.data
         student_record = db.session.query(studentStatus).filter(studentStatus.student_id == studentRecord.id, studentStatus.lesson_id == lesson_id).first()

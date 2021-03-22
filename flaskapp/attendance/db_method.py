@@ -25,7 +25,13 @@ def insert_studentStausRecord(status,student_id,lesson_id):
                 order_by(studentStatus.lesson_id.desc()).first()
     # insert last performance as current performance
     if lastRecord:
-        record = studentStatus(status, student_id, lesson_id,lastRecord.performance)
+        record = studentStatus(status, student_id, lesson_id)
+        record.technique = lastRecord.technique
+        record.ukemi = lastRecord.ukemi
+        record.knowledge = lastRecord.knowledge
+        record.coordination =lastRecord.coordination
+        record.discipline =lastRecord.discipline
+        record.spirit =lastRecord.spirit
     else:
         record = studentStatus(status, student_id, lesson_id)
     db.session.add(record)
