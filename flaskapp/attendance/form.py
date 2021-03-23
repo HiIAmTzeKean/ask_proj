@@ -12,7 +12,7 @@ class formDojoSelection(FlaskForm):
 
 
 class formAdd_DelStudent(FlaskForm):
-    membership = StringField(label='Membership ID', validators=[validators.Optional()])
+    membership = StringField(label='Membership ID', validators=[DataRequired()])
     dateOfBirth_month = SelectField(validators=[validators.Optional()],choices=[i for i in range(1,13)])
     currentyear = int(datetime.date.today().year)
     dateOfBirth_year = SelectField(validators=[validators.Optional()],choices=[i for i in range(currentyear,currentyear-100,-1)])
@@ -25,7 +25,7 @@ class formAdd_DelStudent(FlaskForm):
 
 
 class formEditStudent(FlaskForm):
-    membership = StringField(label='Membership ID', validators=[validators.Optional()])
+    membership = StringField(label='Membership ID', validators=[DataRequired()])
     dateOfBirth_month = SelectField(validators=[validators.Optional()],choices=[i for i in range(1,13)])
     currentyear = int(datetime.date.today().year)
     dateOfBirth_year = SelectField(validators=[validators.Optional()],choices=[i for i in range(currentyear,currentyear-100,-1)])

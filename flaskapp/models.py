@@ -60,7 +60,7 @@ class student(db.Model):
     belt = db.Column(db.Text, nullable=True)
     lastGrading = db.Column(db.Date, nullable=True)
     active = db.Column(db.Boolean, nullable=False, default=True) # active as a student
-    membership = db.Column(db.Text, unique=True)
+    membership = db.Column(db.Text, unique=True, nullable=True)
     dateOfBirth = db.Column(db.Date, nullable=True)
 
     belt_id = db.Column(db.Integer, db.ForeignKey('belts.id', ondelete="SET NULL"))

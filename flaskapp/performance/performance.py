@@ -125,7 +125,8 @@ def performanceChartView(student_id):
     # ---- get student details
     studentRecord = db.session.query(student.firstName,
                                      student.lastGrading,
-                                     belts.beltName).filter(student.id==student_id, student.belt_id == belts.id).first()
+                                     belts.beltName,
+                                     belts.timespanNeeded).filter(student.id==student_id, student.belt_id == belts.id).first()
 
     # ---- get performance details
     subquery = db.session.query(studentStatus.technique,
@@ -146,11 +147,16 @@ def performanceChartView(student_id):
     myRemarks = db.session.query(studentRemarks.remarks,
                                  studentRemarks.date).filter_by(student_id=student_id).all()
 
+    if studentRecord.lastGrading:
+        countdown = int(studentRecord.lastGrading.month) - studentRecord.timespanNeeded
+    else:
+        countdown = None
     return render_template('performanceChartView.html',
                            studentRecord=studentRecord,
                            technique=technique, ukemi=ukemi, discipline=discipline,
                            coordination=coordination, knowledge=knowledge,
-                           spirit=spirit, dateLabel=dateLabel, lessonDone=gradingEligible(student_id),
+                           spirit=spirit, dateLabel=dateLabel, countdown = countdown,
+                           lessonDone=gradingEligible(student_id),
                            myRemarks=myRemarks)
 
 
