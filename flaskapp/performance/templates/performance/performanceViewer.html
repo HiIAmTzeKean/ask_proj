@@ -18,19 +18,17 @@
         <tr>
             <th scope="col">Name</th>
             <th scope="col">Belt</th>
-            <th scope="col">Last grading</th>
-            <th scope="col">Performance grade</th>
+            <th scope="col">Performance</th>
             <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>
         {% for student in student_list %}
-        <tr id={{ student.student.id }}>
-            <td>{{ student.student.firstName }}</td>
-            <td>{{ student.student.belt }}</td>
-            <td>{{ student.student.lastGrading }}</td>
+        <tr id={{ student.id }}>
+            <td>{{ student.firstName }}</td>
+            <td>{{ student.beltName }}</td>
             <td>
-                <a href="{{ url_for('performance.performanceGradePerformance', student_id=student.student.id) }}" class="btn btn-primary">Grade</a>
+                <a href="{{ url_for('performance.performanceGradePerformance', student_id=student.id) }}" class="btn btn-primary">Grade</a>
             </td>
             <td>
                 <div class="btn-group dropleft">
@@ -38,8 +36,8 @@
                       &#8230;
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a href="{{ url_for('performance.performanceChartView', student_id=student.student.id) }}" class="dropdown-item">Chart View</a>
-                        <a href="{{ url_for('performance.performanceRemarks', student_id=student.student.id) }}" class="dropdown-item">Remarks</a>
+                        <a href="{{ url_for('performance.performanceChartView', student_id=student.id) }}" class="dropdown-item">Chart View</a>
+                        <a href="{{ url_for('performance.performanceRemarks', student_id=student.id) }}" class="dropdown-item">Remarks</a>
                     </div>
                 </div>
             </td>
@@ -47,8 +45,4 @@
         {% endfor %}
     </tbody>
 </table>
-{% endblock %}
-
-{% block scripts %}
-
 {% endblock %}

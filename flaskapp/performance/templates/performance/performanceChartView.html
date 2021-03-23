@@ -35,9 +35,6 @@
           data: chartData,
           options: {
                responsive: true,
-               legend: {
-                    position: 'bottom',
-               },
                scales: {
                     xAxes: [{
                             display: true,
@@ -93,9 +90,6 @@
           data: chartData,
           options: {
                responsive: true,
-               legend: {
-                    position: 'bottom',
-               },
                scales: {
                     xAxes: [{
                             display: true,
@@ -151,9 +145,6 @@
           data: chartData,
           options: {
                responsive: true,
-               legend: {
-                    position: 'bottom',
-               },
                scales: {
                     xAxes: [{
                             display: true,
@@ -209,9 +200,6 @@
           data: chartData,
           options: {
                responsive: true,
-               legend: {
-                    position: 'bottom',
-               },
                scales: {
                     xAxes: [{
                             display: true,
@@ -267,9 +255,6 @@
           data: chartData,
           options: {
                responsive: true,
-               legend: {
-                    position: 'bottom',
-               },
                scales: {
                     xAxes: [{
                             display: true,
@@ -325,9 +310,6 @@
           data: chartData,
           options: {
                responsive: true,
-               legend: {
-                    position: 'bottom',
-               },
                scales: {
                     xAxes: [{
                             display: true,
@@ -358,42 +340,78 @@
 
 {% block content %}
 <div id="student_details">
-     <div>
-       <h4>Name: {{ studentRecord.firstName }}</h4>
-     </div>
-     <div>
-       <h4>Belt: {{ studentRecord.belt }}</h4>
-     </div>
+     <h4>Name: {{ studentRecord.firstName }}</h4>
+     <h4>Belt: {{ studentRecord.beltName }}</h4>
 </div>
+
 <hr>
-<div>
-     <table>
-          <tbody>
-          <tr>
-               <td>
-                    <canvas id="technique" width="300" height="300"></canvas>
-               </td>
-               <td>
-                    <canvas id="ukemi" width="300" height="300"></canvas>
-               </td>
-          </tr>
-          <tr>
-               <td>
-                    <canvas id="discipline" width="200" height="200"></canvas>
-               </td>
-               <td>
-                    <canvas id="coordination" width="200" height="200"></canvas>
-               </td>
-          </tr>
-          <tr>
-               <td>
-                    <canvas id="knowledge" width="200" height="200"></canvas>
-               </td>
-               <td>
-                    <canvas id="spirit" width="200" height="200"></canvas>
-               </td>
-          </tr>
-          </tbody>
-     </table>
+
+<div id="accordion">
+     <div class="card">
+          <div class="card-header" id="headingOne">
+               <h5 class="mb-0">
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                         aria-controls="collapseOne">
+                         Grading Eligible
+                    </button>
+               </h5>
+          </div>
+
+          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+               <div class="card-body">
+                    <p>Last grading date: {{ studentRecord.lastGrading }}</p>
+                    <p>Lessons taken after grading: {{ lessonDone }}</p>
+               </div>
+          </div>
+     </div>
+     <div class="card">
+          <div class="card-header" id="headingTwo">
+               <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo"
+                         aria-expanded="false" aria-controls="collapseTwo">
+                         Performance Charts
+                    </button>
+               </h5>
+          </div>
+          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+               <div class="card-body">
+                    <div>
+                         <div class="d-flex flex-row">
+                              <div class="p-1"><canvas id="technique" width="190" height="190"></canvas></div>
+                              <div class="p-1"><canvas id="ukemi" width="190" height="190"></canvas></div>
+                         </div>
+                         <div class="d-flex flex-row">
+                              <div class="p-1"><canvas id="discipline" width="190" height="190"></canvas></canvas></div>
+                              <div class="p-1"><canvas id="coordination" width="190" height="190"></canvas></div>
+                         </div>
+                         <div class="d-flex flex-row">
+                              <div class="p-1"><canvas id="knowledge" width="190" height="190"></canvas></div>
+                              <div class="p-1"><canvas id="spirit" width="190" height="190"></canvas></div>
+                         </div>
+                    </div>
+               </div>
+          </div>
+     </div>
+     <div class="card">
+          <div class="card-header" id="headingThree">
+               <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree"
+                         aria-expanded="false" aria-controls="collapseThree">
+                         Remarks
+                    </button>
+               </h5>
+          </div>
+          <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+               <div class="card-body">
+                    {% for remark in myRemarks %}
+                         <p>Date: {{ remark.date }}</p>
+                         <p>Remark: {{ remark.remarks }}</p>
+                         <hr>
+                    {% endfor %}
+               </div>
+          </div>
+     </div>
 </div>
+
+
 {% endblock %}

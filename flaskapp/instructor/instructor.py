@@ -4,7 +4,7 @@ import json
 from flask import (Blueprint, flash, g, make_response, redirect,
                    render_template, request, session, url_for)
 from flaskapp import db
-from flaskapp.models import dojo, enrollment, lesson, student, studentStatus, instructor
+from flaskapp.models import dojo, enrollment, lesson, student, studentStatus, instructor, belts
 from flaskapp.instructor.form import formEditInstructor, formSearchStudent
 
 instructor_bp = Blueprint('instructor', __name__,
@@ -23,11 +23,20 @@ def instructorViewer():
 @instructor_bp.route('/instructorEditInstructor/<int:instructor_id>', methods=('GET', 'POST'))
 def instructorEditInstructor(instructor_id):
     instructorRecord = db.session.query(instructor).filter_by(id=instructor_id).first()
-    form = formEditInstructor(obj=instructorRecord) # load values into form
+    if instructorRecord.dateOfBirth:
+        form = formEditInstructor(obj=instructorRecord,
+                           dateOfBirth_month=int(instructorRecord.dateOfBirth.month),
+                           dateOfBirth_year=int(instructorRecord.dateOfBirth.year))  # load values into form
+    else:
+        form = formEditInstructor(obj=instructorRecord)  # load values into form
+    belt_list = db.session.query(belts.id, belts.beltName).all()
+    form.belt_id.choices = [(belt.id, belt.beltName) for belt in belt_list]
 
     # update record in database if valid
     if form.validate_on_submit():  
         form.populate_obj(instructorRecord)
+        date_str = '01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data)
+        instructorRecord.dateOfBirth = datetime.datetime.strptime(date_str, '%d%m%Y').date()
         db.session.commit()
         flash('Successfully updated {}!'.format(instructorRecord.firstName))
         return redirect(url_for('instructor.instructorViewer'))
@@ -57,7 +66,12 @@ def instructorSearchStudent():
             student_list = db.session.query(student).\
                 filter(student.firstName.ilike('%{}%'.format(serachString)), student.belt.ilike(serachBelt)).all()
     else:
-        student_list = db.session.query(student).all()
+                student_list = db.session.query(student.id,
+                                    student.firstName,
+                                    student.lastName,
+                                    student.lastGrading,
+                                    belts.beltName).\
+            filter(student.belt_id == belts.id).all()
     if form.validate_on_submit():
         serachString = form.name.data
         serachBelt = form.belt.data

@@ -23,7 +23,9 @@
   <a href="{{ url_for('attendance.attendanceViewer') }}" class="btn btn-danger">Back</a>
   </div>
 </div>
+
 <br>
+
 <div>
 <table class="table" id="studentTable">
   <thead class="thead-dark">
@@ -42,7 +44,7 @@
         <th scope="col">{{ loop.index }}</th>
         <td>{{ student.firstName }}</td>
         <td>{{ student.lastName }}</td>
-        <td>{{ student.belt }}</td>
+        <td>{{ student.beltName }}</td>
         <td>{{ student.lastGrading }}</td>
         <td><a href="{{ url_for('attendance.attendanceAdd_DelStudent', student_id=student.id, dojo_id=request.cookies.get('dojo_id'), add_del='addExisting') }}" class="btn btn-success">Add to Dojo</a></td>
     </tr>

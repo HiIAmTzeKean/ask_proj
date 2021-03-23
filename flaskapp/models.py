@@ -53,21 +53,26 @@ class dojo(db.Model):
 
 class student(db.Model):
     __mapper_args__ = {'polymorphic_identity': 'student'}
+    # __table_args__ = (Index('my_index', "a", "b"), )
     id = db.Column(db.Integer, primary_key=True)
     firstName = db.Column(db.Text, nullable=False)
     lastName = db.Column(db.Text, nullable=False)
-    belt = db.Column(db.Text, nullable=False)
+    belt = db.Column(db.Text, nullable=True)
     lastGrading = db.Column(db.Date, nullable=True)
     active = db.Column(db.Boolean, nullable=False, default=True) # active as a student
+    membership = db.Column(db.Text, unique=True)
+    dateOfBirth = db.Column(db.Date, nullable=True)
+
+    belt_id = db.Column(db.Integer, db.ForeignKey('belts.id', ondelete="SET NULL"))
+    belts = db.relationship('belts', back_populates='student')
 
     studentStatus = db.relationship('studentStatus', back_populates='student',cascade="all, delete", passive_deletes=True)
     studentRemarks = db.relationship('studentRemarks', back_populates='student',cascade="all, delete", passive_deletes=True)
     enrollment = db.relationship('enrollment', back_populates='student',cascade="all, delete", passive_deletes=True)
     
-    def __init__(self, firstName, lastName, lastGrading, active=True, belt='0'):
+    def __init__(self, firstName, lastName, lastGrading, active=True):
         self.firstName = firstName
         self.lastName = lastName
-        self.belt = belt
         self.lastGrading = lastGrading
         self.active = active
 
@@ -96,7 +101,6 @@ class instructor(student):
 class studentStatus(db.Model):
     __tablename__ = 'studentStatus'
     status = db.Column(db.Boolean, nullable=False, default=True)
-    
     evaluated = db.Column(db.Boolean, default=False)
 
     technique = db.Column(db.Integer,  default=5)
@@ -112,8 +116,6 @@ class studentStatus(db.Model):
     lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id', ondelete="CASCADE"), primary_key=True)
     lesson = db.relationship('lesson', back_populates='studentStatus')
     
-    # performance = db.Column(JSON, nullable=True)
-    # performance_defaultValue = {"technique": "5", "ukemi": "5", "discipline": "5", "coordination": "5", "knowledge": "5", "spirit": "5"}
     
     def __init__(self, status, student_id, lesson_id):
         self.status = status
@@ -136,7 +138,7 @@ class studentRemarks(db.Model):
     instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id', ondelete="SET NULL"))
     instructor = db.relationship('instructor', back_populates='studentRemarks', foreign_keys=[instructor_id])
 
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="CASCADE"))
+    student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="CASCADE"), primary_key=True)
     student = db.relationship('student', back_populates='studentRemarks', foreign_keys=[student_id])
     
     def __init__(self, student_id, dojo_id, instructor_id, remarks, date):
@@ -193,3 +195,21 @@ class lesson(db.Model):
 
     def __repr__(self):
         return '<Record {} {}>'.format(self.date, self.dojo_id)
+
+
+class belts(db.Model):
+    __tablename__ = 'belts'
+    id = db.Column(db.Integer, primary_key=True)
+    beltName = db.Column(db.Text, nullable=False)
+    lessonNeeded = db.Column(db.Integer, nullable=False)
+    timespanNeeded = db.Column(db.Integer, nullable=False) # months to wait
+
+    student = db.relationship('student',back_populates='belts',cascade="all, delete", passive_deletes=True)
+
+    def __init__(self, beltName, lessonNeeded,timespanNeeded):
+        self.beltName = beltName
+        self.lessonNeeded = lessonNeeded
+        self.timespanNeeded = timespanNeeded
+
+    def __repr__(self):
+        return '<belt {}>'.format(self.beltName)

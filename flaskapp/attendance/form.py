@@ -1,10 +1,10 @@
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, StringField, PasswordField, validators, SelectField, SubmitField, FieldList, FormField
+from wtforms import BooleanField, StringField, validators, SelectField, SubmitField, FieldList, FormField, IntegerField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, InputRequired, Optional
 from flaskapp.attendance.helpers import belt_type
 import datetime
-
+from dateutil.relativedelta import relativedelta
 
 class formDojoSelection(FlaskForm):
     dojo_id = SelectField(label='Dojo Name', choices='', validators=[DataRequired()])
@@ -12,20 +12,27 @@ class formDojoSelection(FlaskForm):
 
 
 class formAdd_DelStudent(FlaskForm):
+    membership = StringField(label='Membership ID', validators=[validators.Optional()])
+    dateOfBirth_month = SelectField(validators=[validators.Optional()],choices=[i for i in range(1,13)])
+    currentyear = int(datetime.date.today().year)
+    dateOfBirth_year = SelectField(validators=[validators.Optional()],choices=[i for i in range(currentyear,currentyear-100,-1)])
     firstName = StringField(label='Name', validators=[DataRequired()])
     lastName = StringField(label='Surname', validators=[DataRequired()])
-    belt = SelectField(label='Belt', choices=belt_type(), validators=[DataRequired()])
+    belt_id = SelectField(label='Belt', choices='', validators=[DataRequired()])
     lastGrading = DateField(label='Last Grading Date', validators=[validators.Optional()])
     dojo_id = SelectField(label='Dojo Name', choices='', validators=[DataRequired()])
     submit = SubmitField('Add student')
 
 
 class formEditStudent(FlaskForm):
+    membership = StringField(label='Membership ID', validators=[validators.Optional()])
+    dateOfBirth_month = SelectField(validators=[validators.Optional()],choices=[i for i in range(1,13)])
+    currentyear = int(datetime.date.today().year)
+    dateOfBirth_year = SelectField(validators=[validators.Optional()],choices=[i for i in range(currentyear,currentyear-100,-1)])
     firstName = StringField(label='Name', validators=[DataRequired()])
     lastName = StringField(label='Surname', validators=[DataRequired()])
-    belt = SelectField(label='Belt', choices=belt_type(),validators=[DataRequired()])
-    lastGrading = DateField(label='Last Grading Date',
-                            validators=[validators.Optional()])
+    belt_id = SelectField(label='Belt', choices='', validators=[DataRequired()])
+    lastGrading = DateField(label='Last Grading Date', validators=[validators.Optional()])
     submit = SubmitField(label='Save Changes')
 
 

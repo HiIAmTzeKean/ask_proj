@@ -43,3 +43,27 @@ VALUES
 ('True',11,0),
 ('True',12,0),
 ('True',13,0);
+
+INSERT INTO belts
+  ("beltName", "lessonNeeded","timespanNeeded")
+  VALUES
+  ('White',0,3),
+  ('12 Kyu',0,4),
+  ('11 Kyu',0,4),
+  ('10 Kyu',0,4),
+  ('9 Kyu',0,4),
+  ('8 Kyu',0,6),
+  ('7 Kyu',0,6),
+  ('6 Kyu',24,0),
+  ('5 Kyu',32,0),
+  ('4 Kyu',36,6),
+  ('3 Kyu',56,6),
+  ('2 Kyu',62,9),
+  ('1 Kyu',70,9),
+  ('1 Dan',150,18),
+  ('2 Dan',240,30),
+  ('3 Dan',0,0),
+  ('4 Dan',0,0),
+  ('5 Dan',0,0),
+  ('6 Dan',0,0),
+  ('7 Dan',0,0);

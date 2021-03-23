@@ -17,7 +17,7 @@ from flaskapp.attendance.form import (formAdd_DelStudent, formDojoSelection,
 from flaskapp.attendance.helpers import findTerm, str_to_date, catchList, lockList, drillsList
 from flaskapp.auth.auth import dojo_required
 from flaskapp.models import (dojo, enrollment, instructor, lesson, student,
-                             studentStatus)
+                             studentStatus,belts)
 
 attendance_bp = Blueprint('attendance', __name__,
                           template_folder='templates', static_folder='static')
@@ -140,12 +140,21 @@ def attendanceLessonCancel():
 def attendanceViewer():
     dojo_id = request.cookies.get('dojo_id')
     dojoRecord = db.session.query(dojo).filter(dojo.id==dojo_id).first()
-    form = formAdd_DelStudent(dojo_id=int(dojo_id))
+    form = formAdd_DelStudent(dojo_id=int(dojo_id),belt_id=int(1))
     dojo_list = dojo.query.all()
     form.dojo_id.choices = [(dojo.id, dojo.name) for dojo in dojo_list]
+    belt_list = db.session.query(belts.id, belts.beltName).all()
+    form.belt_id.choices = [(belt.id, belt.beltName) for belt in belt_list]
 
     # get list of student to display
-    student_list = db.session.query(enrollment).join(student).filter(enrollment.dojo_id==dojo_id).order_by(enrollment.studentActive.desc()).all()
+    student_list = db.session.query(student.id,
+                                    student.firstName,
+                                    student.lastGrading,
+                                    belts.beltName,enrollment.studentActive)\
+            .filter(student.belt_id == belts.id)\
+            .filter(enrollment.dojo_id==dojo_id,enrollment.student_id == student.id)\
+            .order_by(enrollment.studentActive.desc(),student.id.asc(),).all()
+    
     # get last lesson's detail
     try:
         lastLessonTechniques_json = db.session.query(lesson.techniquesTaught).filter(lesson.dojo_id==dojo_id).order_by(lesson.date.desc(),lesson.id.desc()).first()[0]
@@ -161,20 +170,14 @@ def attendanceViewer():
 @attendance_bp.route('/attendanceAdd_DelStudent/<string:add_del>', methods=('GET', 'POST'))
 def attendanceAdd_DelStudent(add_del):
     if add_del == 'addNew':
-        firstName = request.form.get('firstName')
-        lastName = request.form.get('lastName')
-        if request.form.get('lastGrading') == '':
-            lastGrading = None
-        else:
-            lastGrading = request.form.get('lastGrading')
-        belt = request.form.get('belt')
-        dojo_id = int(request.form.get('dojo_id'))
-        # Create new student record
-        record = student(firstName,lastName,lastGrading,True,belt=belt)
+        form = formAdd_DelStudent(request.form)
+        record = student(None,None,None)
+        form.populate_obj(record)
         db.session.add(record)
         db.session.commit()
+
         # Add student record to enrollemnt per dojo_id
-        insert_newEnrollment(record.id, dojo_id)
+        insert_newEnrollment(record.id, record.dojo_id)
     elif add_del == 'addExisting':
         student_id = int(request.args.get('student_id'))
         dojo_id = int(request.args.get('dojo_id'))
@@ -192,6 +195,7 @@ def attendanceRemoveStudent(student_id,dojo_id):
 @attendance_bp.route('/attendanceSearchStudent', methods=('GET', 'POST'))
 def attendanceSearchStudent():
     form = formSearchStudent()
+    dojo_id = request.cookies.get('dojo_id')
     if request.args.get('searchStudent')=='True':
         serachString = request.args.get('serachString')
         serachBelt = request.args.get('serachBelt')
@@ -201,8 +205,16 @@ def attendanceSearchStudent():
         else:
             student_list = db.session.query(student).\
                 filter(student.firstName.ilike('%{}%'.format(serachString)), student.belt.ilike(serachBelt)).all()
+    
     else:
-        student_list = db.session.query(student).all()
+        notAvail_studentList = db.session.query(enrollment.student_id).filter(enrollment.dojo_id == dojo_id).all()
+        student_list = db.session.query(student.id,
+                                    student.firstName,
+                                    student.lastName,
+                                    student.lastGrading,
+                                    belts.beltName).\
+            filter(student.belt_id == belts.id, student.id.notin_(notAvail_studentList)).all()
+
     if form.validate_on_submit():
         serachString = form.name.data
         serachBelt = form.belt.data
@@ -213,12 +225,21 @@ def attendanceSearchStudent():
 @attendance_bp.route('/attendanceEditStudent/<int:student_id>', methods=('GET', 'POST'))
 def attendanceEditStudent(student_id): 
     studentRecord = get_studentRecord(student_id)
-    enrollementRecord = db.session.query(enrollment).filter_by(student_id=student_id).first()  # extract dojo student is currently from
-    form = formEditStudent(obj=studentRecord)  # load values into form
+    enrollementRecord = db.session.query(enrollment.dojo_id).filter_by(student_id=student_id).first()  # extract dojo student is currently from
+    if studentRecord.dateOfBirth:
+        form = formEditStudent(obj=studentRecord,
+                           dateOfBirth_month=int(studentRecord.dateOfBirth.month),
+                           dateOfBirth_year=int(studentRecord.dateOfBirth.year))  # load values into form
+    else:
+        form = formEditStudent(obj=studentRecord)  # load values into form
+    belt_list = db.session.query(belts.id, belts.beltName).all()
+    form.belt_id.choices = [(belt.id, belt.beltName) for belt in belt_list]
 
     # update record
     if form.validate_on_submit():  
         form.populate_obj(studentRecord)
+        date_str = '01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data)
+        studentRecord.dateOfBirth = datetime.datetime.strptime(date_str, '%d%m%Y').date()
         db.session.commit()
         flash('Successfully updated {}!'.format(studentRecord.firstName))
         # return back same view page
@@ -252,3 +273,15 @@ def attendanceAct_DeactEnrollment():
 
     update_Act_DeactEnrollment(student_id, dojo_id, act_deact)
     return redirect(url_for('attendance.attendanceViewer'))
+
+## migrate belt over
+@attendance_bp.route('/migrate', methods=('GET', 'POST'))
+def attendancemigrate():
+    records = db.session.query(student).all()
+    for record in records:
+        currentbelt = record.belt
+        newbelt_id = db.session.query(belts.id).filter(belts.beltName == currentbelt).scalar()
+        record.belt_id = newbelt_id
+        db.session.commit()
+    return 'ok'
+
