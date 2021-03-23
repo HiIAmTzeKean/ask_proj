@@ -1,6 +1,6 @@
 import datetime
 import json
-
+from sqlalchemy.exc import IntegrityError
 from flask import (Blueprint, flash, g, make_response, redirect,
                    render_template, request, session, url_for)
 from flaskapp import db
@@ -221,7 +221,7 @@ def attendanceSearchStudent():
         return redirect(url_for('attendance.attendanceSearchStudent',searchStudent='True', serachString=serachString, serachBelt=serachBelt))
     return render_template('attendance/attendanceSearchStudent.html',student_list=student_list, form=form)
 
-
+# todo error handler for not unique membership
 @attendance_bp.route('/attendanceEditStudent/<int:student_id>', methods=('GET', 'POST'))
 def attendanceEditStudent(student_id): 
     studentRecord = get_studentRecord(student_id)
@@ -236,8 +236,14 @@ def attendanceEditStudent(student_id):
     form.belt_id.choices = [(belt.id, belt.beltName) for belt in belt_list]
 
     # update record
-    if form.validate_on_submit():  
-        form.populate_obj(studentRecord)
+    if form.validate_on_submit():
+        try:
+            form.populate_obj(studentRecord)
+            db.session.commit()
+        except IntegrityError as ex:
+            flash('Error: membership already exist!!')
+            return redirect(url_for('attendance.attendanceEditStudent', student_id=student_id))
+
         date_str = '01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data)
         studentRecord.dateOfBirth = datetime.datetime.strptime(date_str, '%d%m%Y').date()
         db.session.commit()
