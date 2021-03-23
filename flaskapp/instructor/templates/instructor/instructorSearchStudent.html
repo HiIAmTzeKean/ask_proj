@@ -43,7 +43,7 @@
     <tr id={{ student.id }}>
         <td>{{ student.firstName }}</td>
         <td>{{ student.lastName }}</td>
-        <td>{{ student.belt }}</td>
+        <td>{{ student.beltName }}</td>
         <td>{{ student.lastGrading }}</td>
         <td><a href="{{ url_for('instructor.instructorDeleteStudent', student_id=student.id) }}" class="btn btn-danger">Delete</a></td>
     </tr>

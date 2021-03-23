@@ -79,30 +79,29 @@
     </tr>
   </thead>
   <tbody>
-    <!-- Record from a join query (enrollment, student) -->
     {% for student in student_list %}
     {% if student.studentActive == False %}
-      <tr class="table-secondary" id = {{ student.student.id }}>
+      <tr class="table-secondary" id = {{ student.id }}>
     {% else %}
-      <tr id = {{ student.student.id }}>
+      <tr id = {{ student.id }}>
     {% endif %}
       <th scope="col">{{ loop.index }}</th>
-        <td>{{ student.student.firstName }}</td>
-        <td>{{ student.student.belt }}</td>
-        <td>{{ student.student.lastGrading }}</td>
+        <td>{{ student.firstName }}</td>
+        <td>{{ student.beltName }}</td>
+        <td>{{ student.lastGrading }}</td>
         <td>
           <div class="btn-group dropleft">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               &#8230;
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <a href="{{ url_for('attendance.attendanceEditStudent', student_id=student.student.id) }}"
+              <a href="{{ url_for('attendance.attendanceEditStudent', student_id=student.id) }}"
                 class="dropdown-item">Edit</a>
               {% if student.studentActive == True %}
-              <a href="{{ url_for('attendance.attendanceAct_DeactEnrollment', student_id=student.student.id, dojo_id=request.cookies.get('dojo_id'), act_deact='deact') }}"
+              <a href="{{ url_for('attendance.attendanceAct_DeactEnrollment', student_id=student.id, dojo_id=request.cookies.get('dojo_id'), act_deact='deact') }}"
                 class="dropdown-item">Deactivate</a>
               {% else %}
-              <a href="{{ url_for('attendance.attendanceAct_DeactEnrollment', student_id=student.student.id, dojo_id=request.cookies.get('dojo_id'), act_deact='act') }}"
+              <a href="{{ url_for('attendance.attendanceAct_DeactEnrollment', student_id=student.id, dojo_id=request.cookies.get('dojo_id'), act_deact='act') }}"
                 class="dropdown-item">Activate</a>
               {% endif %}
             </div>
@@ -132,6 +131,10 @@
           <table class="table">
             <tbody>
               <tr>
+                <th scope="col">{{ form.membership.label(class="col-sm-3 col-form-label")}}</th>
+                <td>{{ form.membership(class="form-control")}}</td>
+              </tr>
+              <tr>
                 <th scope="col">{{ form.firstName.label(class="col-form-label") }}</th>
                 <td>{{ form.firstName(placeholder='Student Surname', class="form-control") }}</td>
               </tr>
@@ -140,8 +143,13 @@
                 <td>{{ form.lastName(placeholder='Student Name', class="form-control") }}</td>
               </tr>
               <tr>
-                <th scope="col">{{ form.belt.label(class="col-form-label") }}</th>
-                <td>{{ form.belt(placeholder='8 Kyu', class="form-control") }}</td>
+                <th scope="col"><label class="col-form-label">Date Of Birth (month/year)</label></th>
+                <td><div class = "col-sm-5">{{ form.dateOfBirth_month(class="form-control")}}</div>
+                  <div class = "col-sm-6">{{ form.dateOfBirth_year(class="form-control")}}</div> </td>
+              </tr>
+              <tr>
+                <th scope="col">{{ form.belt_id.label(class="col-sm-3 col-form-label") }}</th>
+                <td>{{ form.belt_id(class="form-control") }}</td>
               </tr>
               <tr>
                 <th scope="col">{{ form.lastGrading.label(class="col-form-label") }}</th>
