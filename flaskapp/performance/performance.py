@@ -208,6 +208,6 @@ def gradingEligible(student_id):
 
 def daysToGrading(studentRecord):
     if studentRecord.lastGrading:
-        return int(studentRecord.lastGrading.month) - studentRecord.timespanNeeded
+        return int(datetime.date.today().month) - int(studentRecord.lastGrading.month) + studentRecord.timespanNeeded
     else:
         return None
