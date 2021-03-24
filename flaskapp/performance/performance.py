@@ -1,6 +1,7 @@
 import datetime
 from flask import (Blueprint, flash, g, make_response, redirect,
                    render_template, request, session, url_for)
+from flask_mobility.decorators import mobile_template
 from flaskapp import db, app
 from flaskapp.auth.auth import dojo_required
 from flaskapp.models import (dojo, enrollment, lesson, student, studentRemarks,
@@ -8,6 +9,7 @@ from flaskapp.models import (dojo, enrollment, lesson, student, studentRemarks,
 from flaskapp.performance.db_method import get_studentRecord
 from flaskapp.performance.form import (gradePerformanceform,
                                        performanceRemarkform)
+
 
 performance_bp = Blueprint('performance', __name__,
                            template_folder='templates/performance',
@@ -121,7 +123,8 @@ def performanceGradeNext(student_id):
 
 
 @performance_bp.route('/performanceChartView/<student_id>', methods=['GET'])
-def performanceChartView(student_id):
+@mobile_template('{mobile/}performanceChartView.html')
+def performanceChartView(student_id, template):
     dojo_id = request.cookies.get('dojo_id')
     # ---- get student details
     studentRecord = db.session.query(student.firstName,
@@ -143,17 +146,21 @@ def performanceChartView(student_id):
                         studentStatus.evaluated == True,
                         studentStatus.lesson_id == lesson.id,
                         lesson.dojo_id == dojo_id).\
-                order_by(lesson.date.asc()).all()
+                order_by(lesson.date.asc()).limit(10).all()
     
     technique,ukemi,discipline,coordination,knowledge,spirit,dateLabel = [list(i) for i in zip(*subquery)]
+    dateLabel = [label if (i+1)%(len(dateLabel)//5)==0 else '' for i,label in enumerate(dateLabel)]
 
     # ---- get remarks
     myRemarks = db.session.query(studentRemarks.remarks,
-                                 studentRemarks.date).filter_by(student_id=student_id).all()
+                                 studentRemarks.date).\
+                        filter_by(student_id=student_id).order_by(studentRemarks.date.asc()).all()
 
+    # ---- get number of days to grading
     countdown = daysToGrading(studentRecord)
 
-    return render_template('performanceChartView.html',
+    # return render_template('performanceChartView.html',
+    return render_template(template,
                            studentRecord=studentRecord,
                            technique=technique, ukemi=ukemi, discipline=discipline,
                            coordination=coordination, knowledge=knowledge,
