@@ -138,8 +138,7 @@ def attendanceViewer():
     dojoRecord = db.session.query(dojo).filter(dojo.id==dojo_id).first()
 
     form = formAdd_DelStudent(dojo_id=int(dojo_id),belt_id=int(1))
-    dojo_list = db.session.query(dojo.id, dojo.name).filter(dojo.id==dojo_id).all()
-    form.dojo_id.choices = [(dojo.id, dojo.name) for dojo in dojo_list]
+    form.dojo_id.choices = [(dojoRecord.id, dojoRecord.name)]
     belt_list = db.session.query(belts.id, belts.beltName).all()
     form.belt_id.choices = [(belt.id, belt.beltName) for belt in belt_list]
 
@@ -162,12 +161,12 @@ def attendanceViewer():
         lastLessonTechniques={}
 
     # ---- get number of student with null membership
-    # iterate through list, store student.id, student.firstName
     missingMembership_list = []
     for studentRecord in student_list:
         if studentRecord.membership:
             continue
         missingMembership_list.append([studentRecord.id, studentRecord.firstName])
+
     return render_template('attendance/attendanceViewer.html', student_list=student_list,
                            dojoRecord=dojoRecord, instructorRecord=dojoRecord.instructor,
                            lastLessonTechniques=lastLessonTechniques, missingMembership_list=missingMembership_list,
@@ -288,13 +287,13 @@ def attendanceAct_DeactEnrollment():
     return redirect(url_for('attendance.attendanceViewer'))
 
 ## migrate belt over
-@attendance_bp.route('/migrate', methods=('GET', 'POST'))
-def attendancemigrate():
-    records = db.session.query(student).all()
-    for record in records:
-        currentbelt = record.belt
-        newbelt_id = db.session.query(belts.id).filter(belts.beltName == currentbelt).scalar()
-        record.belt_id = newbelt_id
-        db.session.commit()
-    return 'ok'
+# @attendance_bp.route('/migrate', methods=('GET', 'POST'))
+# def attendancemigrate():
+#     records = db.session.query(student).all()
+#     for record in records:
+#         currentbelt = record.belt
+#         newbelt_id = db.session.query(belts.id).filter(belts.beltName == currentbelt).scalar()
+#         record.belt_id = newbelt_id
+#         db.session.commit()
+#     return 'ok'
 

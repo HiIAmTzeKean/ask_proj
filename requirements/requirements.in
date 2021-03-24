@@ -5,10 +5,11 @@ flask_sqlalchemy
 flask_migrate
 flask-login
 flask_wtf
+Flask-Mobility
 python-dotenv
 gitpython
 is-safe-url
 psycopg2-binary
-flask_wtf
 matplotlib
+bokeh
 gunicorn

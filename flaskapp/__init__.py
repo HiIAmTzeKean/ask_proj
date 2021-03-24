@@ -26,6 +26,8 @@ db = SQLAlchemy(app)
 from flask_migrate import Migrate
 migrate = Migrate(app, db)
 
+from flask_mobility import Mobility
+mobilize = Mobility(app)
 
 # import models 
 from flaskapp import models
