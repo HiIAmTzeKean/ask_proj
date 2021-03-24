@@ -5,11 +5,14 @@
 {% block content %}
 <h2>Update {{ studentRecord.firstName }} Particulars</h2>
 
+<hr>
+
 <form method="POST" action="{{ url_for('attendance.attendanceEditStudent', student_id=studentRecord.id) }}">
   {{ form.hidden_tag() }}
   <!--{{ form.errors.items() }}-->
   
-<div  class="container-fluid">
+<div class="container-fluid">
+
   <div class="form-group row">
     {{ form.membership.label(class="col-sm-3 col-form-label")}}
     <div class="col-sm-5">
@@ -57,15 +60,21 @@
     </div>
   </div>
 
-  <div class="form-group row">
-    <a href="{{ url_for('attendance.attendanceViewer') }}" class="btn btn-danger">Back</a>
-    &nbsp
-    {{ form.submit(class="btn btn-success") }}
-    &nbsp
-    <a href="{{ url_for('attendance.attendanceRemoveStudent', student_id=studentRecord.id, dojo_id=enrollementRecord.dojo_id) }}"
-      class="btn btn-success">
-      Remove Student</a>
-  </div>
+</div>
+
+<hr>
+
+<div class="form-group row">
+      <div class="p-2">
+        <a href="{{ url_for('attendance.attendanceViewer') }}" class="btn btn-danger">Back</a>
+      </div>
+      <div class="p-2">
+        {{ form.submit(class="btn btn-success") }}
+      </div>
+      <div class="p-2">
+        <a href="{{ url_for('attendance.attendanceRemoveStudent', student_id=studentRecord.id, dojo_id=enrollementRecord.dojo_id) }}"
+          class="btn btn-success">Remove Student</a>
+      </div>
 </div>
 
 </form>

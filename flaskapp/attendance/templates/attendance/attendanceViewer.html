@@ -4,16 +4,16 @@
 
 {% block content %}
 <div id="Dojo_details">
-  <div>
-    <h4>Class of {{ dojoRecord.name}}</h4>
+  <div class="d-flex flex-row">
+    <div class="p-2"><h4>Class of {{ dojoRecord.name}}</h4></div>
   </div>
+
   <div>
     {% if instructorRecord.firstName %}
       <h4>Instructor: {{ instructorRecord.firstName }}</h4>
     {% else %}
       <h4>Instructor: Nil</h4>
     {% endif %}
-    
   </div>
 </div>
 
@@ -53,14 +53,33 @@
     </div>
     <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
       <div class="card-body">
-        <a href="{{ url_for('attendance.attendanceSearchStudent') }}"
-          class="btn btn-primary">Add Existing Student</a>
-
-        <a href="#" data-toggle="modal" data-target='#addStudent'
-          class="btn btn-primary">Add New Student</a>
-
-        <a href="{{ url_for('attendance.attendanceEditDojo', dojo_id=dojoRecord.id) }}"
-          class="btn btn-primary">Edit Dojo</a>
+        <div class="d-flex align-content-around flex-wrap">
+          <div class="p-2">
+            <a href="{{ url_for('attendance.attendanceSearchStudent') }}"
+            class="btn btn-primary">Add Existing Student</a>
+          </div>
+          <div class="p-2">
+            <a href="#" data-toggle="modal" data-target='#addStudent'
+            class="btn btn-primary">Add New Student</a>
+          </div>
+          <div class="p-2">
+            <a href="{{ url_for('attendance.attendanceEditDojo', dojo_id=dojoRecord.id) }}"
+                        class="btn btn-primary">Edit Dojo</a>
+          </div>
+          <div class="p-2">
+            <div class="dropdown">
+              <button class="btn btn-primary dropdown-toggle" type="button" id="NotificationMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Notifications <span class="badge badge-light">{{ missingMembership_list|length  }}</span>
+              </button>
+              <div class="dropdown-menu" aria-labelledby="NotificationMenuButton">
+              <!-- id in href, student firstName into view -->
+                {% for studentRecord in missingMembership_list %}
+                  <a class="dropdown-item" href="{{ url_for('attendance.attendanceEditStudent', student_id=studentRecord[0]) }}">Membership missing: {{ studentRecord[1] }}</a>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

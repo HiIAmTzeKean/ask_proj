@@ -63,8 +63,6 @@ class formTechniqueType(FlaskForm):
         label='Catch', choices=[], validators=[DataRequired()])
     lock = SelectField(
         label='Lock', choices=[], validators=[DataRequired()])
-    drill = SelectField(
-        label='Drill', choices=[], validators=[DataRequired()])
 
 
 class formAddTechniquesTaught(FlaskForm):

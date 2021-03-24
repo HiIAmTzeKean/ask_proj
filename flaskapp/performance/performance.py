@@ -11,7 +11,7 @@ from flaskapp.performance.form import (gradePerformanceform,
 
 performance_bp = Blueprint('performance', __name__,
                            template_folder='templates/performance',
-                           static_folder='static',url_prefix='/performance')
+                           static_folder='static', url_prefix='/performance')
 
 
 @performance_bp.route('/performanceViewer', methods=('GET', 'POST'))
@@ -19,17 +19,17 @@ performance_bp = Blueprint('performance', __name__,
 def performanceViewer():
     dojo_id = request.cookies.get('dojo_id')
     dojoRecord = db.session.query(dojo).filter(dojo.id == dojo_id).first()
-    # student_list = db.session.query(enrollment).join(student).\
-    #                 filter(enrollment.dojo_id == dojo_id,
-    #                 enrollment.studentActive == True).order_by(student.firstName.desc()).all()
 
     student_list = db.session.query(student.id,
                                 student.firstName,
                                 student.lastGrading,
-                                belts.beltName,enrollment.studentActive)\
-        .filter(student.belt_id == belts.id)\
-        .filter(enrollment.dojo_id==dojo_id,enrollment.student_id == student.id)\
-        .order_by(enrollment.studentActive.desc(),student.id.asc(),).all()
+                                belts.beltName,
+                                enrollment.studentActive)\
+                    .filter(student.belt_id == belts.id)\
+                    .filter(enrollment.dojo_id == dojo_id,
+                            enrollment.student_id == student.id,
+                            enrollment.studentActive == True)\
+                    .order_by(student.id.asc(),).all()
     return render_template('performanceViewer.html',
                            student_list=student_list,
                            dojoRecord=dojoRecord)
@@ -122,11 +122,13 @@ def performanceGradeNext(student_id):
 
 @performance_bp.route('/performanceChartView/<student_id>', methods=['GET'])
 def performanceChartView(student_id):
+    dojo_id = request.cookies.get('dojo_id')
     # ---- get student details
     studentRecord = db.session.query(student.firstName,
                                      student.lastGrading,
                                      belts.beltName,
-                                     belts.timespanNeeded).filter(student.id==student_id, student.belt_id == belts.id).first()
+                                     belts.timespanNeeded)\
+                        .filter(student.id==student_id, student.belt_id == belts.id).first()
 
     # ---- get performance details
     subquery = db.session.query(studentStatus.technique,
@@ -138,7 +140,9 @@ def performanceChartView(student_id):
                                 lesson.date).\
                 filter(studentStatus.student_id == student_id,
                         studentStatus.status == True,
-                        studentStatus.lesson_id == lesson.id).\
+                        studentStatus.evaluated == True,
+                        studentStatus.lesson_id == lesson.id,
+                        lesson.dojo_id == dojo_id).\
                 order_by(lesson.date.asc()).all()
     
     technique,ukemi,discipline,coordination,knowledge,spirit,dateLabel = [list(i) for i in zip(*subquery)]
@@ -147,10 +151,8 @@ def performanceChartView(student_id):
     myRemarks = db.session.query(studentRemarks.remarks,
                                  studentRemarks.date).filter_by(student_id=student_id).all()
 
-    if studentRecord.lastGrading:
-        countdown = int(studentRecord.lastGrading.month) - studentRecord.timespanNeeded
-    else:
-        countdown = None
+    countdown = daysToGrading(studentRecord)
+
     return render_template('performanceChartView.html',
                            studentRecord=studentRecord,
                            technique=technique, ukemi=ukemi, discipline=discipline,
@@ -158,17 +160,6 @@ def performanceChartView(student_id):
                            spirit=spirit, dateLabel=dateLabel, countdown = countdown,
                            lessonDone=gradingEligible(student_id),
                            myRemarks=myRemarks)
-
-
-@performance_bp.route('/performanceRemarksView/<student_id>', methods=['GET'])
-def performanceRemarksView(student_id):
-    studentRecord = get_studentRecord(student_id)
-    remarks = db.session.query(studentRemarks).\
-                filter(studentRemarks.student_id == student_id).\
-                order_by(studentRemarks.date.asc()).all()
-    return render_template('performanceChartView.html',
-                           studentRecord=studentRecord,
-                           remarks=remarks, dateLabel=dateLabel)
 
 
 @performance_bp.route('/performanceBokeh/<student_id>', methods=('GET', 'POST'))
@@ -206,3 +197,10 @@ def gradingEligible(student_id):
     else:
         lessonsDone = db.session.query(studentStatus.status).filter(studentStatus.student_id == student_id,studentStatus.status==True).count()
         return lessonsDone
+
+
+def daysToGrading(studentRecord):
+    if studentRecord.lastGrading:
+        return int(studentRecord.lastGrading.month) - studentRecord.timespanNeeded
+    else:
+        return None

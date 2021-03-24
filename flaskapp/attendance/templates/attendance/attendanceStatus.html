@@ -90,12 +90,11 @@
     $(document).ready(function () {
         var count_item = 0;
         $("#addNewField").click(function () {
-            count_item += 1;
+            
             $("#techniqueList").append("<div class='form-group row techniqueListRow'>\
-                                            <label class='col-form-label'>-</label>\
                                             <label class='col-sm-1 col-form-label'>Catch</label>\
                                             <div class='col-sm-3'>\
-                                                <select class='form-control' name = techniqueList"+count_item+"catch>\
+                                                <select class='form-control' id=techniqueList-"+count_item+"-catch name=techniqueList-"+count_item+"-catch>\
                                                     {% for o in catch_list %}\
                                                     <option value='{{ o }}'>\
                                                         {{ o }}\
@@ -105,7 +104,7 @@
                                             </div>\
                                             <label class='col-sm-1 col-form-label'>Lock</label>\
                                             <div class='col-sm-3'>\
-                                                <select class='form-control' name = techniqueList"+count_item+"lock>\
+                                                <select class='form-control' id=techniqueList-"+count_item+"-lock name=techniqueList-"+count_item+"-lock>\
                                                     {% for o in lock_list %}\
                                                     <option value='{{ o }}'>\
                                                         {{ o }}\
@@ -116,6 +115,7 @@
                                             <button type='button' class='col-sm-1 close' id='removeButton'>&times;</button>\
                                         </div>"
                 );
+            count_item += 1;
         });
     })
 

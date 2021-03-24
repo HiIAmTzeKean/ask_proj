@@ -89,24 +89,20 @@ def attendanceStatus():
 def attendanceStatusSummary():
     dojo_id = request.cookies.get('dojo_id')
     # appending techniques taught to db record
-    catch = []; lock = []
-    for item in request.form:
-        if 'catch' in item:
-            catch.append(request.form.get(item))
-        if 'lock' in item:
-            lock.append(request.form.get(item))
+    form = formAddTechniquesTaught(request.form)
     technique_taught = {}
-    for serialNum,technique in enumerate(zip(catch,lock)):
-        technique_taught[serialNum] = ' '.join(technique)
-
+    for serialNum,technique in enumerate(form.techniqueList.data):
+        technique_taught[serialNum] = '{} {}'.format(technique['catch'], technique['lock'])
     currentLesson = db.session.query(lesson).filter_by(dojo_id=dojo_id).order_by(lesson.id.desc()).first()
     currentLesson.completed = True
     currentLesson.techniquesTaught = json.dumps(technique_taught)
     db.session.commit()
+
     present_list = db.session.query(studentStatus.status).filter(
             studentStatus.lesson_id == currentLesson.id, studentStatus.status == True).all()
     absent_list = db.session.query(studentStatus.status).filter(
             studentStatus.lesson_id == currentLesson.id, studentStatus.status == False).all()
+    
     resp = make_response(render_template('attendance/attendanceStatusSummary.html', absentCount=len(absent_list),
             presentCount=len(present_list), instructorName=currentLesson.instructor.firstName, dojoName=currentLesson.dojo.name))
     return resp
@@ -140,19 +136,22 @@ def attendanceLessonCancel():
 def attendanceViewer():
     dojo_id = request.cookies.get('dojo_id')
     dojoRecord = db.session.query(dojo).filter(dojo.id==dojo_id).first()
+
     form = formAdd_DelStudent(dojo_id=int(dojo_id),belt_id=int(1))
-    dojo_list = dojo.query.all()
+    dojo_list = db.session.query(dojo.id, dojo.name).filter(dojo.id==dojo_id).all()
     form.dojo_id.choices = [(dojo.id, dojo.name) for dojo in dojo_list]
     belt_list = db.session.query(belts.id, belts.beltName).all()
     form.belt_id.choices = [(belt.id, belt.beltName) for belt in belt_list]
 
     # get list of student to display
     student_list = db.session.query(student.id,
+                                    student.membership,
                                     student.firstName,
                                     student.lastGrading,
-                                    belts.beltName,enrollment.studentActive)\
+                                    belts.beltName,
+                                    enrollment.studentActive)\
             .filter(student.belt_id == belts.id)\
-            .filter(enrollment.dojo_id==dojo_id,enrollment.student_id == student.id)\
+            .filter(enrollment.dojo_id==dojo_id, enrollment.student_id == student.id)\
             .order_by(enrollment.studentActive.desc(),student.id.asc(),).all()
     
     # get last lesson's detail
@@ -162,9 +161,17 @@ def attendanceViewer():
     except:
         lastLessonTechniques={}
 
+    # ---- get number of student with null membership
+    # iterate through list, store student.id, student.firstName
+    missingMembership_list = []
+    for studentRecord in student_list:
+        if studentRecord.membership:
+            continue
+        missingMembership_list.append([studentRecord.id, studentRecord.firstName])
     return render_template('attendance/attendanceViewer.html', student_list=student_list,
                            dojoRecord=dojoRecord, instructorRecord=dojoRecord.instructor,
-                           lastLessonTechniques=lastLessonTechniques, form=form)
+                           lastLessonTechniques=lastLessonTechniques, missingMembership_list=missingMembership_list,
+                           form=form)
 
 
 @attendance_bp.route('/attendanceAdd_DelStudent/<string:add_del>', methods=('GET', 'POST'))
