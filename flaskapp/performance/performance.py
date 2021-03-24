@@ -149,7 +149,10 @@ def performanceChartView(student_id, template):
                 order_by(lesson.date.asc()).limit(10).all()
     
     technique,ukemi,discipline,coordination,knowledge,spirit,dateLabel = [list(i) for i in zip(*subquery)]
-    dateLabel = [label if (i+1)%(len(dateLabel)//5)==0 else '' for i,label in enumerate(dateLabel)]
+    try:
+        dateLabel = [label if (i+1)%(len(dateLabel)//5)==0 else '' for i,label in enumerate(dateLabel)]
+    except:
+        pass
 
     # ---- get remarks
     myRemarks = db.session.query(studentRemarks.remarks,
