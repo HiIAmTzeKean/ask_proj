@@ -4,7 +4,7 @@ import json
 from flask import (Blueprint, flash, g, make_response, redirect,
                    render_template, request, session, url_for)
 from flaskapp import db
-from flaskapp.models import dojo, enrollment, lesson, student, studentStatus, instructor, belts
+from flaskapp.models import Dojo, enrollment, lesson, student, studentStatus, instructor, belts
 from flaskapp.instructor.form import formEditInstructor, formSearchStudent
 
 instructor_bp = Blueprint('instructor', __name__,

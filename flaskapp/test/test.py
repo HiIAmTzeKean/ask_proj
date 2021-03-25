@@ -2,7 +2,7 @@ import datetime
 from flask import (Blueprint, flash, g, make_response,
     redirect, render_template, request, session, url_for)
 from flaskapp import db
-from flaskapp.models import student, studentStatus, dojo, instructor
+from flaskapp.models import student, studentStatus,instructor
 
 test_bp = Blueprint('test', __name__,)
 

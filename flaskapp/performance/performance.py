@@ -4,7 +4,7 @@ from flask import (Blueprint, flash, g, make_response, redirect,
 from flask_mobility.decorators import mobile_template
 from flaskapp import db, app
 from flaskapp.auth.auth import dojo_required
-from flaskapp.models import (dojo, enrollment, lesson, student, studentRemarks,
+from flaskapp.models import (Dojo, enrollment, lesson, student, studentRemarks,
                              studentStatus, belts)
 from flaskapp.performance.db_method import get_studentRecord
 from flaskapp.performance.form import (gradePerformanceform,
@@ -20,7 +20,7 @@ performance_bp = Blueprint('performance', __name__,
 @dojo_required
 def performanceViewer():
     dojo_id = request.cookies.get('dojo_id')
-    dojoRecord = db.session.query(dojo).filter(dojo.id == dojo_id).first()
+    dojoRecord = db.session.query(Dojo).filter(Dojo.id == dojo_id).first()
 
     student_list = db.session.query(student.id,
                                 student.firstName,
@@ -39,11 +39,11 @@ def performanceViewer():
 
 @performance_bp.route('/performanceRemarks/<student_id>', methods=('GET', 'POST'))
 def performanceRemarks(student_id):
-    studentRecord = get_studentRecord(student_id)
+    studentRecord = db.session.query(student).filter_by(id=student_id).first()
     form = performanceRemarkform()
     if form.validate_on_submit():
         dojo_id=request.cookies.get('dojo_id')
-        dojoRecord = db.session.query(dojo).filter(dojo.id == dojo_id).first()
+        dojoRecord = db.session.query(Dojo).filter(Dojo.id == dojo_id).first()
         remarkRecord = studentRemarks(
             student_id = student_id,
             dojo_id=dojoRecord.id,
@@ -62,7 +62,7 @@ def performanceRemarks(student_id):
 
 @performance_bp.route('/performanceGradePerformance/<student_id>', methods=('GET', 'POST'))
 def performanceGradePerformance(student_id):
-    studentRecord = get_studentRecord(student_id)
+    studentRecord = db.session.query(student).filter_by(id=student_id).first()
 
     # with student id find out his last 5 status where he is present and not marked before
     subquery = db.session.query(studentStatus.lesson_id)\
@@ -100,7 +100,7 @@ def performanceGradePerformance(student_id):
 
 @performance_bp.route('/performanceGradeNext/<student_id>', methods=['POST'])
 def performanceGradeNext(student_id):
-    studentRecord = get_studentRecord(student_id)
+    studentRecord = db.session.query(student).filter_by(id=student_id).first()
     form = gradePerformanceform(request.form)
     lesson_id = form.lesson_id.data
     student_record = db.session.query(studentStatus).filter(studentStatus.student_id == studentRecord.id, studentStatus.lesson_id == lesson_id).first()
@@ -147,12 +147,9 @@ def performanceChartView(student_id, template):
                         studentStatus.lesson_id == lesson.id,
                         lesson.dojo_id == dojo_id).\
                 order_by(lesson.date.asc()).limit(10).all()
-    
-    technique,ukemi,discipline,coordination,knowledge,spirit,dateLabel = [list(i) for i in zip(*subquery)]
-    try:
-        dateLabel = [label if (i+1)%(len(dateLabel)//5)==0 else '' for i,label in enumerate(dateLabel)]
-    except:
-        pass
+
+    technique,ukemi,discipline,coordination,knowledge,spirit,dateLabel = processChartRecords(subquery)
+    dateLabel = processDateLabel(dateLabel)
 
     # ---- get remarks
     myRemarks = db.session.query(studentRemarks.remarks,
@@ -208,6 +205,19 @@ def gradingEligible(student_id):
         lessonsDone = db.session.query(studentStatus.status).filter(studentStatus.student_id == student_id,studentStatus.status==True).count()
         return lessonsDone
 
+
+def processDateLabel(dateLabel):
+    try:
+        return [label if (i+1)%(len(dateLabel)//5)==0 else '' for i,label in enumerate(dateLabel)]
+    except:
+        return None
+
+
+def processChartRecords(subquery):
+    if subquery == []:
+        return [],[],[],[],[],[],[]
+    return [list(i) for i in zip(*subquery)]
+        
 
 def daysToGrading(studentRecord):
     if studentRecord.lastGrading:
