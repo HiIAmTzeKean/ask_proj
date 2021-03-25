@@ -210,7 +210,7 @@ def processDateLabel(dateLabel):
     try:
         return [label if (i+1)%(len(dateLabel)//5)==0 else '' for i,label in enumerate(dateLabel)]
     except:
-        return None
+        return []
 
 
 def processChartRecords(subquery):
