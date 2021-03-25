@@ -48,6 +48,9 @@ app.register_blueprint(instructor.instructor_bp)
 from .dojo import dojo
 app.register_blueprint(dojo.dojo_bp)
 
+from .parent import parent
+app.register_blueprint(parent.parent_bp)
+
 from .auth import auth
 app.register_blueprint(auth.auth_bp)
 

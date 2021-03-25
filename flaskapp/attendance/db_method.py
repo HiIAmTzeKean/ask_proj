@@ -1,11 +1,11 @@
 from flaskapp import db
-from flaskapp.models import dojo, studentStatus, student, enrollment
+from flaskapp.models import Dojo, studentStatus, student, enrollment
 
 
 def get_dojoInstructorName(dojo_id):
     # get instructor id from dojo table
     found_id = db.session.query(
-        dojo.instructor_id).filter_by(id=dojo_id).scalar()
+        Dojo.instructor_id).filter_by(id=dojo_id).scalar()
     # get name from student table
     dojoInstructor = db.session.query(
         student.lastName).filter_by(id=found_id).scalar()
@@ -15,7 +15,7 @@ def get_dojoInstructorName(dojo_id):
 def get_dojoInstructorId(dojo_id):
     # get instructor id from dojo table
     found_id = db.session.query(
-        dojo.instructor_id).filter_by(id=dojo_id).scalar()
+        Dojo.instructor_id).filter_by(id=dojo_id).scalar()
     return found_id
 
 

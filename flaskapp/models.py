@@ -31,14 +31,15 @@ class user(db.Model, UserMixin):
         return '<User {}>'.format(self.username)
 
 
-class dojo(db.Model):
+class Dojo(db.Model):
+    __tablename__ = 'Dojo'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
     location = db.Column(db.Text, nullable=False)
     instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id', ondelete="SET NULL"))
 
     instructor = db.relationship('instructor', back_populates='dojo')
-    enrollment = db.relationship('enrollment', back_populates='dojo',cascade="all, delete", passive_deletes=True)
+    enrollment = db.relationship('enrollment', back_populates='dojo', cascade="all, delete", passive_deletes=True)
     lesson = db.relationship('lesson', back_populates='dojo', cascade="all, delete", passive_deletes=True)
     studentRemarks = db.relationship('studentRemarks', back_populates='dojo', cascade="all, delete", passive_deletes=True)
 
@@ -84,11 +85,12 @@ class instructor(student):
     __tablename__ = 'instructor'
     __mapper_args__ = {'polymorphic_identity': 'instructor'}
     id = db.Column(db.Integer, db.ForeignKey('student.id'), primary_key=True)
+    email = db.Column(db.String(255), unique=True)
     username = db.Column(db.Text, nullable=False, unique=True)
     # password = db.Column(db.Text, nullable=False)
 
     lesson = db.relationship('lesson', back_populates='instructor')
-    dojo = db.relationship('dojo', back_populates='instructor')
+    dojo = db.relationship('Dojo', back_populates='instructor')
     studentRemarks = db.relationship('studentRemarks', back_populates='instructor', cascade="all, delete", passive_deletes=True)
 
     def __init__(self, username):
@@ -99,7 +101,7 @@ class instructor(student):
 
 
 class studentStatus(db.Model):
-    __tablename__ = 'studentStatus'
+    __tablename__ = 'StudentStatus'
     status = db.Column(db.Boolean, nullable=False, default=True)
     evaluated = db.Column(db.Boolean, default=False)
 
@@ -132,8 +134,8 @@ class studentRemarks(db.Model):
     remarks = db.Column(db.String, nullable=False, default='')
     date = db.Column(db.Date, nullable=False)
 
-    dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id', ondelete="SET NULL"))
-    dojo = db.relationship('dojo', back_populates='studentRemarks')
+    dojo_id = db.Column(db.Integer, db.ForeignKey('Dojo.id', ondelete="SET NULL"))
+    dojo = db.relationship('Dojo', back_populates='studentRemarks')
 
     instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id', ondelete="SET NULL"))
     instructor = db.relationship('instructor', back_populates='studentRemarks', foreign_keys=[instructor_id])
@@ -159,8 +161,8 @@ class enrollment(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="CASCADE"), primary_key=True)
     student = db.relationship('student', back_populates='enrollment')
 
-    dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id', ondelete="CASCADE"), primary_key=True)
-    dojo = db.relationship('dojo', back_populates='enrollment')
+    dojo_id = db.Column(db.Integer, db.ForeignKey('Dojo.id', ondelete="CASCADE"), primary_key=True)
+    dojo = db.relationship('Dojo', back_populates='enrollment')
 
 
     def __init__(self, student_id, dojo_id):
@@ -179,8 +181,8 @@ class lesson(db.Model):
     completed = db.Column(db.Boolean, nullable=False, default=False)
     techniquesTaught = db.Column(JSON, nullable=True)
 
-    dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id', ondelete="CASCADE"), nullable=False)
-    dojo = db.relationship('dojo', back_populates='lesson')
+    dojo_id = db.Column(db.Integer, db.ForeignKey('Dojo.id', ondelete="CASCADE"), nullable=False)
+    dojo = db.relationship('Dojo', back_populates='lesson')
 
     instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id', ondelete="SET NULL"))
     instructor = db.relationship('instructor', back_populates='lesson')

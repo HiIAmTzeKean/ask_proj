@@ -16,7 +16,7 @@ from flaskapp.attendance.form import (formAdd_DelStudent, formDojoSelection,
                                       formSearchStudent, formStartLesson, formAddTechniquesTaught)
 from flaskapp.attendance.helpers import findTerm, str_to_date, catchList, lockList, drillsList
 from flaskapp.auth.auth import dojo_required
-from flaskapp.models import (dojo, enrollment, instructor, lesson, student,
+from flaskapp.models import (Dojo, enrollment, instructor, lesson, student,
                              studentStatus,belts)
 
 attendance_bp = Blueprint('attendance', __name__,
@@ -26,7 +26,7 @@ attendance_bp = Blueprint('attendance', __name__,
 @attendance_bp.route('/attendanceDojoSelect', methods=('GET', 'POST'))
 def attendanceDojoSelect():
     form = formDojoSelection()
-    dojo_list = db.session.query(dojo.id, dojo.name).all()
+    dojo_list = db.session.query(Dojo.id, Dojo.name).all()
     form.dojo_id.choices = [(dojo.id, dojo.name) for dojo in dojo_list]
     if form.validate_on_submit():  # remove and load cookies
         dojo_id = form.dojo_id.data
@@ -44,7 +44,7 @@ def attendanceDojoSelect():
 @dojo_required
 def attendanceStatus():
     dojo_id = request.cookies.get('dojo_id')
-    dojoRecord = db.session.query(dojo.id, dojo.name, dojo.instructor_id).filter_by(id=dojo_id).first()
+    dojoRecord = db.session.query(Dojo.id, Dojo.name, Dojo.instructor_id).filter_by(id=dojo_id).first()
 
     # try get lesson record where dojo equal selection. sort asc.
     # if latest record completed is false, run below
@@ -135,7 +135,7 @@ def attendanceLessonCancel():
 @dojo_required
 def attendanceViewer():
     dojo_id = request.cookies.get('dojo_id')
-    dojoRecord = db.session.query(dojo).filter(dojo.id==dojo_id).first()
+    dojoRecord = db.session.query(Dojo).filter(Dojo.id==dojo_id).first()
 
     form = formAdd_DelStudent(dojo_id=int(dojo_id),belt_id=int(1))
     form.dojo_id.choices = [(dojoRecord.id, dojoRecord.name)]
@@ -263,7 +263,7 @@ def attendanceEditStudent(student_id):
 
 @attendance_bp.route('/attendanceEditDojo/<int:dojo_id>', methods=('GET', 'POST'))
 def attendanceEditDojo(dojo_id): # edit dojo particulars
-    dojoRecord = db.session.query(dojo).filter(dojo.id==dojo_id).first()
+    dojoRecord = db.session.query(Dojo).filter(Dojo.id==Dojo).first()
     form = formEditDojo(obj=dojoRecord)
     instructor_list = instructor.query.all()
     form.instructor_id.choices = [(instructor.id, instructor.firstName) for instructor in instructor_list]
