@@ -207,10 +207,12 @@ def gradingEligible(student_id):
 
 
 def processDateLabel(dateLabel):
-    try:
-        return [label if (i+1)%(len(dateLabel)//5)==0 else '' for i,label in enumerate(dateLabel)]
-    except:
+    if dateLabel ==[]:
         return []
+    elif len(dateLabel)<5:
+        return dataLabel
+    else:
+        [label if (i+1)%(len(dateLabel)//5)==0 else '' for i,label in enumerate(dateLabel)]
 
 
 def processChartRecords(subquery):
