@@ -1,4 +1,4 @@
-from flaskapp import db, LoginManager
+from flaskapp import db
 from datetime import datetime
 from sqlalchemy.orm import validates
 from sqlalchemy.dialects.postgresql import JSON
