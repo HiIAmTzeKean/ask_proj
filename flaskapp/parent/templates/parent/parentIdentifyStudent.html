@@ -1,6 +1,6 @@
 {% extends 'base_parent.html' %}
 
-{% block title %}Dojo Select{% endblock %}
+{% block title %}Identify Student{% endblock %}
 
 {% block content %}
 <form action="{{ url_for('parent.parentIdentifyStudent') }}" method="POST">
@@ -10,14 +10,6 @@
     {{ form.membership.label(class="col-sm-3 col-form-label")}}
     <div class="col-sm-5">
       {{ form.membership(class="form-control")}}
-    </div>
-  </div>
-
-  <div class="form-group row">
-    <label for="DOB" class="col-sm-3 col-form-label">Date Of Birth (month/year)</label>
-    <div class="row col-sm-5">
-      <div class = "col-sm-5">{{ form.dateOfBirth_month(class="form-control")}}</div>
-      <div class = "col-sm-6">{{ form.dateOfBirth_year(class="form-control")}}</div> 
     </div>
   </div>
 

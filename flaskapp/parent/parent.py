@@ -32,6 +32,25 @@ def parentIdentifyStudent():
     return render_template('parentIdentifyStudent.html',form=form)
 
 
+@parent_bp.route('/parentGradingDates', methods=('GET', 'POST'))
+def parentGradingDates():
+    from bs4 import BeautifulSoup
+    import requests
+    url='http://www.aikido.com.sg/grading-information.html'
+    html_content = requests.get(url).text
+    soup = BeautifulSoup(html_content, "lxml")
+    gradingData = soup.find_all("table")[1].tbody.find_all("tr")
+    details = []
+    for row in gradingData:
+        for td in row.find_all("td"):
+            details.append(td.text)
+
+    processedDetails =[[],[],[]]
+    for no,date in enumerate(details):
+        processedDetails[no//4].append(date)
+    return render_template('parentGradingDates.html',processedDetails=processedDetails)
+
+
 @parent_bp.route('/parentChartView/<studentID>', methods=['GET'])
 @mobile_template('{mobile/}parentChartView.html')
 def parentChartView(studentID, template):
