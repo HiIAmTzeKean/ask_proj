@@ -25,6 +25,8 @@ db = SQLAlchemy(app)
 from flask_migrate import Migrate
 migrate = Migrate(app, db)
 
+from flask_mobility import Mobility
+mobilize = Mobility(app)
 
 # import models 
 from flaskapp import models
@@ -41,6 +43,12 @@ app.register_blueprint(performance.performance_bp)
 
 from .instructor import instructor
 app.register_blueprint(instructor.instructor_bp)
+
+from .dojo import dojo
+app.register_blueprint(dojo.dojo_bp)
+
+from .parent import parent
+app.register_blueprint(parent.parent_bp)
 
 from .auth import auth
 app.register_blueprint(auth.auth_bp)

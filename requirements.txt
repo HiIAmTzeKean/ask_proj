@@ -6,17 +6,21 @@
 #
 alembic==1.4.3
     # via flask-migrate
+beautifulsoup4==4.9.3
+    # via -r requirements.in
+bokeh==2.3.0
+    # via -r requirements.in
+certifi==2020.12.5
+    # via requests
+chardet==4.0.0
+    # via requests
 click==7.1.2
     # via flask
 cycler==0.10.0
     # via matplotlib
-dominate==2.5.2
-    # via flask-bootstrap
-flask-bootstrap==3.3.7.1
-    # via -r requirements.in
-flask-login==0.5.0
-    # via -r requirements.in
 flask-migrate==2.5.3
+    # via -r requirements.in
+flask-mobility==1.1.0
     # via -r requirements.in
 flask-script==2.0.6
     # via -r requirements.in
@@ -29,9 +33,8 @@ flask-wtf==0.14.3
 flask==1.1.2
     # via
     #   -r requirements.in
-    #   flask-bootstrap
-    #   flask-login
     #   flask-migrate
+    #   flask-mobility
     #   flask-script
     #   flask-sqlalchemy
     #   flask-wtf
@@ -41,6 +44,8 @@ gitpython==3.1.8
     # via -r requirements.in
 gunicorn==20.0.4
     # via -r requirements.in
+idna==2.10
+    # via requests
 is-safe-url==1.0
     # via -r requirements.in
 itsdangerous==1.1.0
@@ -48,9 +53,13 @@ itsdangerous==1.1.0
     #   flask
     #   flask-wtf
 jinja2==2.11.2
-    # via flask
+    # via
+    #   bokeh
+    #   flask
 kiwisolver==1.3.1
     # via matplotlib
+lxml==4.6.3
+    # via -r requirements.in
 mako==1.1.3
     # via alembic
 markupsafe==1.1.1
@@ -61,33 +70,52 @@ markupsafe==1.1.1
 matplotlib==3.3.3
     # via -r requirements.in
 numpy==1.19.5
-    # via matplotlib
+    # via
+    #   bokeh
+    #   matplotlib
+packaging==20.9
+    # via bokeh
 pillow==8.1.0
-    # via matplotlib
+    # via
+    #   bokeh
+    #   matplotlib
 psycopg2-binary==2.8.6
     # via -r requirements.in
 pyparsing==2.4.7
-    # via matplotlib
+    # via
+    #   matplotlib
+    #   packaging
 python-dateutil==2.8.1
     # via
     #   alembic
+    #   bokeh
     #   matplotlib
 python-dotenv==0.15.0
     # via -r requirements.in
 python-editor==1.0.4
     # via alembic
+pyyaml==5.4.1
+    # via bokeh
+requests==2.25.1
+    # via -r requirements.in
 six==1.15.0
     # via
     #   cycler
     #   python-dateutil
 smmap==3.0.4
     # via gitdb
+soupsieve==2.2.1
+    # via beautifulsoup4
 sqlalchemy==1.3.19
     # via
     #   alembic
     #   flask-sqlalchemy
-visitor==0.1.3
-    # via flask-bootstrap
+tornado==6.1
+    # via bokeh
+typing-extensions==3.7.4.3
+    # via bokeh
+urllib3==1.26.4
+    # via requests
 werkzeug==1.0.1
     # via flask
 wtforms==2.3.3

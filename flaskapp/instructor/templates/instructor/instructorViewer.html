@@ -6,7 +6,7 @@
   <table>
     <tr>
       <td>
-        <a href="{{ url_for('attendance.attendanceSearchStudent') }}" class="btn btn-primary">Add Instructor</a>
+        <a href="{{ url_for('instructor.instructorSearchStudent') }}" class="btn btn-primary">Delete Student</a>
       </td>
     </tr>
   </table>
@@ -15,10 +15,9 @@
 <table class="table">
     <thead class="thead-dark">
       <tr>
-        <th scope="col">#</th>
         <th scope="col">Name</th>
         <th scope="col">Belt</th>
-        <th scope="col">Last grading</th>
+        <th scope="col">Classes</th>
         <th scope="col">Active</th>
         <th scope="col">Actions</th>
       </tr>
@@ -26,10 +25,13 @@
     <tbody>
       {% for instructor in instructor_list %}
       <tr id={{ instructor.id }}>
-        <th scope="col">{{ loop.index }}</th>
-        <td>{{ instructor.name }}</td>
-        <td>{{ instructor.belt }}</td>
-        <td>{{ instructor.lastGrading }}</td>
+        <td>{{ instructor.firstName }}</td>
+        <td>{{ instructor.belt.beltName }}</td>
+        <td>
+          {% for dojo in instructor.dojo %}
+          <li>{{ dojo.name }}</li> 
+          {% endfor %}
+        </td>
         <td>{{ instructor.active }}</td>
         <td>
             <a href="{{ url_for('instructor.instructorEditInstructor', instructor_id=instructor.id) }}"

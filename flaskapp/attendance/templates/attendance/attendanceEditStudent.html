@@ -3,37 +3,78 @@
 {% block title %}Edit Student{% endblock %}
 
 {% block content %}
-<h2>Update {{ studentRecord.name }} Particulars</h2>
+<h2>Update {{ studentRecord.firstName }} Particulars</h2>
+
+<hr>
 
 <form method="POST" action="{{ url_for('attendance.attendanceEditStudent', student_id=studentRecord.id) }}">
-{{ form.hidden_tag() }}
-<table class="table">
-  <tbody>
-    {% for field, errors in form.errors.items() %}
-      {{ form.field.label }}: {{ ', '.join(errors) }}
-    {% endfor %}
-    <tr>
-      <th scope="row">{{ form.name.label(class="col-form-label")}}</th>
-      <td colspan="2">{{ form.name(class="form-control")}}</td>
-    </tr>
-    <tr>
-      <th scope="row">{{ form.belt.label(class="col-form-label") }}</th>
-      <td colspan="2">{{ form.belt(class="form-control") }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{{ form.lastGrading.label(class="col-form-label") }}</th>
-      <td colspan="2">{{ form.lastGrading(class="form-control") }}</td>
-    </tr>
-    <tr>
-      <td><a href="{{ url_for('attendance.attendanceViewer') }}" class="btn btn-danger">Back</a></td>
-      <td>{{ form.submit(class="btn btn-success") }}</td>
-      <td>
-        <a href="{{ url_for('attendance.attendanceAdd_DelStudent', student_id=studentRecord.id, dojo_id=enrollementRecord.dojo_id, add_del='del') }}"
-                    class="btn btn-success">
-                    Delete Student</a>
-      </td>
-    </tr>
-  </tbody>
-</table>
+  {{ form.hidden_tag() }}
+  <!--{{ form.errors.items() }}-->
+  
+<div class="container-fluid">
+
+  <div class="form-group row">
+    {{ form.membership.label(class="col-sm-3 col-form-label")}}
+    <div class="col-sm-5">
+      {{ form.membership(class="form-control")}}
+    </div>
+  </div>
+
+  <div class="form-group row">
+    {{ form.firstName.label(class="col-sm-3 col-form-label")}}
+
+    <div class="col-sm-5">
+      {{ form.firstName(class="form-control")}}
+    </div>
+  </div>
+
+  <div class="form-group row">
+    {{ form.lastName.label(class="col-sm-3 col-form-label")}}
+
+    <div class="col-sm-5">
+      {{ form.lastName(class="form-control")}}
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="DOB" class="col-sm-3 col-form-label">Date Of Birth (month/year)</label>
+    <div class="row col-sm-5">
+      <div class = "col-sm-5">{{ form.dateOfBirth_month(class="form-control")}}</div>
+      <div class = "col-sm-6">{{ form.dateOfBirth_year(class="form-control")}}</div> 
+    </div>
+  </div>
+
+  <div class="form-group row">
+    {{ form.belt_id.label(class="col-sm-3 col-form-label") }}
+    
+    <div class="col-sm-5">
+      {{ form.belt_id(class="form-control") }}
+    </div>
+  </div>
+
+  <div class="form-group row">
+    {{ form.lastGrading.label(class="col-sm-3 col-form-label") }}
+    <div class="col-sm-5">
+      {{ form.lastGrading(class="form-control") }}
+    </div>
+  </div>
+
+</div>
+
+<hr>
+
+<div class="form-group row">
+      <div class="p-2">
+        <a href="{{ url_for('attendance.attendanceViewer') }}" class="btn btn-danger">Back</a>
+      </div>
+      <div class="p-2">
+        {{ form.submit(class="btn btn-success") }}
+      </div>
+      <div class="p-2">
+        <a href="{{ url_for('attendance.attendanceRemoveStudent', student_id=studentRecord.id, dojo_id=enrollementRecord.dojo_id) }}"
+          class="btn btn-success">Remove Student</a>
+      </div>
+</div>
+
 </form>
 {% endblock %}

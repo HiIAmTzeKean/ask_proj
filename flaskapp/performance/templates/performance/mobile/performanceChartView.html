@@ -1,0 +1,424 @@
+{% extends 'base.html' %}
+
+
+{% block scripts %}
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+
+     <script> // technique
+          var chartData = {
+               labels: [{% for item in dateLabel %}
+                              "{{item}}",
+                         {% endfor %}],
+          datasets: [{
+               label: 'technique',
+               borderJoinStyle: 'miter',
+               pointBorderColor: "rgba(75,192,192,1)",
+               pointBackgroundColor: "#fff",
+               pointBorderWidth: 1,
+               pointHoverRadius: 5,
+               pointHoverBackgroundColor: "rgba(75,192,192,1)",
+               pointHoverBorderColor: "rgba(220,220,220,1)",
+               pointHoverBorderWidth: 2,
+               pointRadius: 1,
+               pointHitRadius: 10,
+               data: {{ technique }},
+               spanGaps: false,
+               backgroundColor: ['orange'],
+          }]
+          }
+          // get chart canvas
+          var ctx = document.getElementById("technique").getContext("2d");
+
+          // create the chart using the chart canvas
+          var technique = new Chart(ctx, {
+               type: 'line',
+               data: chartData,
+               options: {
+                    responsive: true,
+                    scales: {
+                         xAxes: [{
+                              display: true,
+                              scaleLabel: {
+                                   display: true,
+                              }
+                              }],
+                         yAxes: [{
+                              display: true,
+                              ticks: {
+                                   suggestedMin: 1,
+                                   steps: 1,
+                                   stepValue: 1,
+                                   max: 10
+                              }
+                              }]
+                    },
+                    title: {
+                         display: true,
+                         text: 'technique',
+                    }
+               }
+          });
+     </script>
+     <script> // ukemi
+          var chartData = {
+               labels: [{% for item in dateLabel %}
+                              "{{item}}",
+                         {% endfor %}],
+          datasets: [{
+               label: 'ukemi',
+               borderJoinStyle: 'miter',
+               pointBorderColor: "rgba(75,192,192,1)",
+               pointBackgroundColor: "#fff",
+               pointBorderWidth: 1,
+               pointHoverRadius: 5,
+               pointHoverBackgroundColor: "rgba(75,192,192,1)",
+               pointHoverBorderColor: "rgba(220,220,220,1)",
+               pointHoverBorderWidth: 2,
+               pointRadius: 1,
+               pointHitRadius: 10,
+               data: {{ ukemi }}, // Performance score
+               spanGaps: false,
+               backgroundColor: ['red'],
+          }]
+          }
+          // get chart canvas
+          var ctx = document.getElementById("ukemi").getContext("2d");
+
+          // create the chart using the chart canvas
+          var ukemi = new Chart(ctx, {
+               type: 'line',
+               data: chartData,
+               options: {
+                    responsive: true,
+                    scales: {
+                         xAxes: [{
+                              display: true,
+                              scaleLabel: {
+                                   display: true,
+                              }
+                              }],
+                         yAxes: [{
+                              display: true,
+                              ticks: {
+                                   suggestedMin: 1,
+                                   steps: 1,
+                                   stepValue: 1,
+                                   max: 10
+                              }
+                              }]
+                    },
+                    title: {
+                         display: true,
+                         text: 'Ukemi',
+                    }
+               }
+          });
+     </script>
+     <script> // discipline
+          var chartData = {
+               labels: [{% for item in dateLabel %}
+                         "{{item}}",
+                         {% endfor %}],
+          datasets: [{
+               label: 'discipline',
+               borderJoinStyle: 'miter',
+               pointBorderColor: "rgba(75,192,192,1)",
+               pointBackgroundColor: "#fff",
+               pointBorderWidth: 1,
+               pointHoverRadius: 5,
+               pointHoverBackgroundColor: "rgba(75,192,192,1)",
+               pointHoverBorderColor: "rgba(220,220,220,1)",
+               pointHoverBorderWidth: 2,
+               pointRadius: 1,
+               pointHitRadius: 10,
+               data: {{ discipline }}, // Performance score
+               spanGaps: false,
+               backgroundColor: ['red'],
+          }]
+          }
+          // get chart canvas
+          var ctx = document.getElementById("discipline").getContext("2d");
+
+          // create the chart using the chart canvas
+          var discipline = new Chart(ctx, {
+               type: 'line',
+               data: chartData,
+               options: {
+                    responsive: true,
+                    scales: {
+                         xAxes: [{
+                              display: true,
+                              scaleLabel: {
+                                   display: true,
+                              }
+                              }],
+                         yAxes: [{
+                              display: true,
+                              ticks: {
+                                   suggestedMin: 1,
+                                   steps: 1,
+                                   stepValue: 1,
+                                   max: 10
+                              }
+                              }]
+                    },
+                    title: {
+                         display: true,
+                         text: 'Discipline',
+                    }
+               }
+          });
+     </script>
+     <script> // coordination
+          var chartData = {
+               labels: [{% for item in dateLabel %}
+          "{{item}}",
+               {% endfor %}],
+          datasets: [{
+               label: 'coordination',
+               borderJoinStyle: 'miter',
+               pointBorderColor: "rgba(75,192,192,1)",
+               pointBackgroundColor: "#fff",
+               pointBorderWidth: 1,
+               pointHoverRadius: 5,
+               pointHoverBackgroundColor: "rgba(75,192,192,1)",
+               pointHoverBorderColor: "rgba(220,220,220,1)",
+               pointHoverBorderWidth: 2,
+               pointRadius: 1,
+               pointHitRadius: 10,
+               data: {{ coordination }}, // Performance score
+               spanGaps: false,
+               backgroundColor: ['red'],
+          }]
+          }
+          // get chart canvas
+          var ctx = document.getElementById("coordination").getContext("2d");
+
+          // create the chart using the chart canvas
+          var coordination = new Chart(ctx, {
+               type: 'line',
+               data: chartData,
+               options: {
+                    responsive: true,
+                    scales: {
+                         xAxes: [{
+                              display: true,
+                              scaleLabel: {
+                                   display: true,
+                              }
+                              }],
+                         yAxes: [{
+                              display: true,
+                              ticks: {
+                                   suggestedMin: 1,
+                                   steps: 1,
+                                   stepValue: 1,
+                                   max: 10
+                              }
+                              }]
+                    },
+                    title: {
+                         display: true,
+                         text: 'Coordination',
+                    }
+               }
+          });
+     </script>
+     <script> // knowledge
+          var chartData = {
+               labels: [{% for item in dateLabel %}
+          "{{item}}",
+               {% endfor %}],
+          datasets: [{
+               label: 'knowledge',
+               borderJoinStyle: 'miter',
+               pointBorderColor: "rgba(75,192,192,1)",
+               pointBackgroundColor: "#fff",
+               pointBorderWidth: 1,
+               pointHoverRadius: 5,
+               pointHoverBackgroundColor: "rgba(75,192,192,1)",
+               pointHoverBorderColor: "rgba(220,220,220,1)",
+               pointHoverBorderWidth: 2,
+               pointRadius: 1,
+               pointHitRadius: 10,
+               data: {{ knowledge }}, // Performance score
+               spanGaps: false,
+               backgroundColor: ['red'],
+          }]
+          }
+          // get chart canvas
+          var ctx = document.getElementById("knowledge").getContext("2d");
+
+          // create the chart using the chart canvas
+          var knowledge = new Chart(ctx, {
+               type: 'line',
+               data: chartData,
+               options: {
+                    responsive: true,
+                    scales: {
+                         xAxes: [{
+                              display: true,
+                              scaleLabel: {
+                                   display: true,
+                              }
+                              }],
+                         yAxes: [{
+                              display: true,
+                              ticks: {
+                                   suggestedMin: 1,
+                                   steps: 1,
+                                   stepValue: 1,
+                                   max: 10
+                              }
+                              }]
+                    },
+                    title: {
+                         display: true,
+                         text: 'knowledge',
+                    }
+               }
+          });
+     </script>
+     <script> // spirit
+          var chartData = {
+               labels: [{% for item in dateLabel %}
+          "{{item}}",
+               {% endfor %}],
+          datasets: [{
+               label: 'spirit',
+               borderJoinStyle: 'miter',
+               pointBorderColor: "rgba(75,192,192,1)",
+               pointBackgroundColor: "#fff",
+               pointBorderWidth: 1,
+               pointHoverRadius: 5,
+               pointHoverBackgroundColor: "rgba(75,192,192,1)",
+               pointHoverBorderColor: "rgba(220,220,220,1)",
+               pointHoverBorderWidth: 2,
+               pointRadius: 1,
+               pointHitRadius: 10,
+               data: {{ spirit }}, // Performance score
+               spanGaps: false,
+               backgroundColor: ['red'],
+          }]
+          }
+          // get chart canvas
+          var ctx = document.getElementById("spirit").getContext("2d");
+
+          // create the chart using the chart canvas
+          var spirit = new Chart(ctx, {
+               type: 'line',
+               data: chartData,
+               options: {
+                    responsive: true,
+                    scales: {
+                         xAxes: [{
+                              display: true,
+                              scaleLabel: {
+                                   display: true,
+                              }
+                              }],
+                         yAxes: [{
+                              display: true,
+                              ticks: {
+                                   suggestedMin: 1,
+                                   steps: 1,
+                                   stepValue: 1,
+                                   max: 10
+                              }
+                              }]
+                    },
+                    title: {
+                         display: true,
+                         text: 'spirit',
+                    }
+               }
+          });
+     </script>
+{% endblock %}
+
+{% block title %}Chart{% endblock %}
+
+{% block content %}
+<div id="student_details">
+     <h4>Name: {{ studentRecord.firstName }}</h4>
+     <h4>Belt: {{ studentRecord.beltName }}</h4>
+</div>
+
+<hr>
+
+<div id="accordion">
+     <div class="card">
+          <div class="card-header" id="headingOne">
+               <h5 class="mb-0">
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                         aria-controls="collapseOne">
+                         Grading Eligible
+                    </button>
+               </h5>
+          </div>
+
+          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+               <div class="card-body">
+                    <p>Last grading date: {{ studentRecord.lastGrading }}</p>
+                    <p>Lessons taken after grading: {{ lessonDone }}</p>
+                    <hr>
+                    <p>Pre Requisites for next grading: {{ studentRecord.timespanNeeded }} months practice needed before eligible for grading</p>
+                    {% if countdown %}
+                         {% if countdown<0 %}
+                         <p>You are eligible for grading!</p>
+                         {% else %}
+                         <p>You will then need to wait {{ countdown }} months more</p>
+                         {% endif %}
+                    {% endif %}
+                    
+               </div>
+          </div>
+     </div>
+     <div class="card">
+          <div class="card-header" id="headingTwo">
+               <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo"
+                         aria-expanded="false" aria-controls="collapseTwo">
+                         Performance Charts
+                    </button>
+               </h5>
+          </div>
+          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+               <div class="card-body">
+
+                              <div class="p-1"><canvas id="technique" width="190" height="190"></canvas></div>
+                              <div class="p-1"><canvas id="ukemi" width="190" height="190"></canvas></div>
+
+                              <div class="p-1"><canvas id="discipline" width="190" height="190"></canvas></canvas></div>
+                              <div class="p-1"><canvas id="coordination" width="190" height="190"></canvas></div>
+
+
+                              <div class="p-1"><canvas id="knowledge" width="190" height="190"></canvas></div>
+                              <div class="p-1"><canvas id="spirit" width="190" height="190"></canvas></div>
+ 
+               </div>
+          </div>
+     </div>
+     <div class="card">
+          <div class="card-header" id="headingThree">
+               <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree"
+                         aria-expanded="false" aria-controls="collapseThree">
+                         Remarks
+                    </button>
+               </h5>
+          </div>
+          <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+               <div class="card-body">
+                    {% for remark in myRemarks %}
+                         <p>Date: {{ remark.date }}</p>
+                         <p>Remark: {{ remark.remarks }}</p>
+                         <hr>
+                    {% endfor %}
+               </div>
+          </div>
+     </div>
+</div>
+
+
+{% endblock %}

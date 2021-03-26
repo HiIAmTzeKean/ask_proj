@@ -1,0 +1,27 @@
+{% extends 'base_parent.html' %}
+
+{% block title %}Identify Student{% endblock %}
+
+{% block content %}
+<p>Gradings at ASK are conducted by an authorized grading panel led by:</p>
+<p>Chief Examiner Philip Lee Shihan (7th Dan)</p>
+
+<hr>
+
+<table class="table table-bordered table-sm">
+    <tr class="table-active">
+        <th scope="col">Grading Dates (Sunday)</th>
+        <th scope="col">Application Opening Dates (Sunday)</th>
+        <th scope="col">Closing Date for Submission</th>
+        <th scope="col">Release of Reporting Time</th>
+    </tr>
+
+    {% for row in processedDetails %}
+    <tr>
+        {% for item in row %}
+            <td>{{ item }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

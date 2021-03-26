@@ -3,27 +3,27 @@
 {% block title %}Status{% endblock %}
 
 {% block content %}
-    <h2>Class of {{ dojoName }}</h2>
-    <h2>Instructor: - </h2>
+<h2>Class of {{ dojoRecord.name }}</h2>
+<h2>Instructor: - </h2>
 
-    <!-- Submit start lesson form -->
-    <form method="POST">
-    {{ form.hidden_tag() }}
-    <table>
-        <tr>
-            <td scope="col" colspan="3">Please select the date of class and the instructor taking the class</td>
-        </tr>
-        <tr>
-            <th scope="col" colspan="2">{{ form.date.label(class="col-form-label") }}</th>
-            <td>{{ form.date(class="form-control") }}</td>
-        </tr>
-        <tr>
-            <th scope="col" colspan="2">{{ form.instructor_id.label(class="col-form-label") }}</th>
-            <td>{{ form.instructor_id(class="form-control") }}</td>
-        </tr>
-        <tr><td>{{ form.submit(class="btn btn-success") }}</td></tr>
-    </table>
-    </form>
+<!-- Submit start lesson form -->
+<form method="POST">
+{{ form.hidden_tag() }}
+<table>
+    <tr>
+        <td scope="col" colspan="3">Please select the date of class and the instructor taking the class</td>
+    </tr>
+    <tr>
+        <th scope="col" colspan="2">{{ form.date.label(class="col-form-label") }}</th>
+        <td>{{ form.date(class="form-control") }}</td>
+    </tr>
+    <tr>
+        <th scope="col" colspan="2">{{ form.instructor_id.label(class="col-form-label") }}</th>
+        <td>{{ form.instructor_id(class="form-control") }}</td>
+    </tr>
+    <tr><td>{{ form.submit(class="btn btn-success") }}</td></tr>
+</table>
+</form>
 {% endblock %}
 
 

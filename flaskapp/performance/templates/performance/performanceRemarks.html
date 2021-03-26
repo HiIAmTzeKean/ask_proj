@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Grade Performance{% endblock %}
+
+{% block content %}
+<h2>Remarks for: {{ studentRecord.firstName }}</h2>
+
+
+<div>
+    <form method="POST" action="{{ url_for('performance.performanceRemarks', student_id=studentRecord.id) }}">
+{{ form.hidden_tag() }}
+<div>
+    {{ form.date.label(class="col-form-label") }}
+    {{ form.date(class="form-control") }}
+</div>
+<div>
+    {{ form.remark.label(class="col-form-label") }}
+    {{ form.remark(class="form-control", cols="35", rows="15") }}
+</div>
+<br>
+<div>
+    <a href="{{ url_for('performance.performanceViewer') }}" class="btn btn-danger">Back</a>
+    {{ form.submit(class="btn btn-success") }}
+</div>
+</form>
+</div>
+{% endblock %}

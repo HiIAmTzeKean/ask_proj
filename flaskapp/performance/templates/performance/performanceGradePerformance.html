@@ -3,18 +3,15 @@
 {% block title %}Grade Performance{% endblock %}
 
 {% block content %}
-<h2>Grade {{ studentRecord.name }}</h2>
+<h2>Grade {{ studentRecord.firstName }}</h2>
 
 <form method="POST" action="{{ url_for('performance.performanceGradePerformance', student_id=studentRecord.id) }}">
 {{ form.hidden_tag() }}
 <table class="table">
   <tbody>
-    {% for field, errors in form.errors.items() %}
-      {{ form.field.label }}: {{ ', '.join(errors) }}
-    {% endfor %}
     <tr>
       <th scope="row">{{ form.lesson_id.label(class="col-form-label") }}</th>
-      <td colspan="2">{{ form.lesson_id(class="form-control") }}</td>
+      <td colspan="2">{{ form.lesson_id(class="form-control", value="{{ request.form['lesson_id'] }}") }}</td>
     </tr>
     <tr>
       <th scope="row">{{ form.technique.label(class="col-form-label") }}</th>
@@ -43,10 +40,28 @@
     <tr>
       <td><a href="{{ url_for('performance.performanceViewer') }}" class="btn btn-danger">Back</a></td>
       <td>{{ form.submit(class="btn btn-success") }}</td>
+      <td><input type="button" class="btn btn-primary" value="Continue" onClick="return submitForm(this.form);"/></td>
     </tr>
   </tbody>
 </table>
 </form>
 {% endblock %}
 
+{% block scripts %}
+<script>
+    function submitForm(form) {
+      var csrf_token = "{{ csrf_token() }}";
+      var formData = $(form).serializeArray();
+      $.ajax({
+        url: "{{ url_for('performance.performanceGradeNext', student_id=studentRecord.id) }}",
+        type: "POST",
+        headers: { "X-CSRFToken": csrf_token, },
+        data: formData,
+        success: function (data) {
+          location.replace(data)
+        }
+      });
+    };
+</script>
+{% endblock %}
 

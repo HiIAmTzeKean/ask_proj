@@ -6,7 +6,7 @@ class Config:
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True
-    SECRET_KEY = "this_is_trial_run"
+    SECRET_KEY = os.environ['SECRET_KEY']
     PERMANENT_SESSION_LIFETIME = timedelta(minutes=10)
     SESSION_REFRESH_EACH_REQUEST = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -20,6 +20,7 @@ class ProductionConfig(Config):
 class DevelopmentConfig(Config):
     ENV = 'development'
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    TEMPLATES_AUTO_RELOAD = True
     DEBUG = True
 
 class TestingConfig(Config):

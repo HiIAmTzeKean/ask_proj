@@ -4,13 +4,30 @@
 
 {% block content %}
 <div>
-    <table class="table table-sm">
-        <tr scope="row"><td>Class of {{ dojoName }}</td></tr>
-        <tr scope="row"><td>Instructor: {{ instructorName }}</td></tr>
-        <tr><td>Date: {{ lessonDate }}</td></tr>
-        <tr><td><a href="{{ url_for('attendance.attendanceStatusSummary') }}" class="btn btn-primary">End Class</a></td></tr>
-    </table>
+    <h4>Class of {{ dojoRecord.name }}</h4>
+    <h4>Instructor: {{ instructorRecord.firstName }}</h4>
+    <h4>Date: {{ lessonRecord.date }}</h4>
 </div>
+
+<hr>
+
+<!--Include remarks for the lesson-->
+<div>
+    <form action="{{ url_for('attendance.attendanceStatusSummary') }}" method="POST">
+        {{ techniquesTaught.hidden_tag() }}
+        {{ techniquesTaught.submit(class="btn btn-success") }}
+        <a href="{{ url_for('attendance.attendanceLessonCancel') }}" class="btn btn-danger">Cancel Lesson</a>
+        
+        <hr>
+        <button type="button" id="addNewField" class="btn btn-primary">Add Technique</button>
+
+        {{ techniquesTaught.techniqueList }}
+
+    </form>
+</div>
+
+<hr>
+<!--table to mark attendance-->
 <div>
     <table class="table table-sm table-bordered">
         <thead class="thead-dark">
@@ -21,11 +38,11 @@
             </tr>
         </thead>
         <tbody>
-        {% for studentstatus in student_list %}
+            {% for studentstatus in student_list %}
             <tr id="section{{ studentstatus.student_id }}">
-                <td>{{ studentstatus.student.name }}</td>
+                <td>{{ studentstatus.student.firstName }}</td>
                 <td>{{ studentstatus.status }}</td>
-            
+
                 {% if studentstatus.status != True %}
                 <td colspan="2" class="table-danger">
                     <button class="btn btn-success updateButton" student_id="{{ studentstatus.student_id }}"
@@ -38,7 +55,7 @@
                 </td>
                 {% endif %}
             </tr>
-        {% endfor %}
+            {% endfor %}
         </tbody>
     </table>
 </div>
@@ -47,24 +64,66 @@
 
 {% block scripts %}
 <script>
-$(document).ready(function() {
-    $(document).on('click', '.updateButton', function(){
-        var csrf_token = "{{ csrf_token() }}";
-        var student_id = $(this).attr('student_id');
-        var status = $(this).attr('status');
-        var lesson_id = $(this).attr('lesson_id');
-    
-        $.ajax({
-          url: "{{ url_for('attendance.attendancePresent')}}",
-          type: "POST",
-          headers: {"X-CSRFToken": csrf_token,},
-          data: {student_id: student_id, status: status, lesson_id: lesson_id},
-          success: function(data){
-            $('#section'+student_id).fadeOut(100).fadeIn(100)
-            $('#section'+student_id).html(data)
-          }
+    $(document).ready(function () {
+        $(document).on('click', '.updateButton', function () {
+            var csrf_token = "{{ csrf_token() }}";
+            var student_id = $(this).attr('student_id');
+            var status = $(this).attr('status');
+            var lesson_id = $(this).attr('lesson_id');
+
+            $.ajax({
+                url: "{{ url_for('attendance.attendancePresent')}}",
+                type: "POST",
+                headers: { "X-CSRFToken": csrf_token, },
+                data: { student_id: student_id, status: status, lesson_id: lesson_id },
+                success: function (data) {
+                    $('#section' + student_id).fadeOut(100).fadeIn(100)
+                    $('#section' + student_id).html(data)
+                }
+            });
         });
     });
-});
 </script>
-{% endblock %} 
+
+<!-- Add technique JS -->
+<script>
+    $(document).ready(function () {
+        var count_item = 0;
+        $("#addNewField").click(function () {
+            
+            $("#techniqueList").append("<div class='form-group row techniqueListRow'>\
+                                            <label class='col-sm-1 col-form-label'>Catch</label>\
+                                            <div class='col-sm-3'>\
+                                                <select class='form-control' id=techniqueList-"+count_item+"-catch name=techniqueList-"+count_item+"-catch>\
+                                                    {% for o in catch_list %}\
+                                                    <option value='{{ o }}'>\
+                                                        {{ o }}\
+                                                    </option>\
+                                                    {% endfor %}\
+                                                </select>\
+                                            </div>\
+                                            <label class='col-sm-1 col-form-label'>Lock</label>\
+                                            <div class='col-sm-3'>\
+                                                <select class='form-control' id=techniqueList-"+count_item+"-lock name=techniqueList-"+count_item+"-lock>\
+                                                    {% for o in lock_list %}\
+                                                    <option value='{{ o }}'>\
+                                                        {{ o }}\
+                                                    </option>\
+                                                    {% endfor %}\
+                                                </select>\
+                                            </div>\
+                                            <button type='button' class='col-sm-1 close' id='removeButton'>&times;</button>\
+                                        </div>"
+                );
+            count_item += 1;
+        });
+    })
+
+    // handle click event of the remove link
+    $(document).on('click', '#removeButton', function(){
+        $(this).parent('div').remove(); //Remove field html
+        count_item--; //Decrement field counter
+    })
+    
+</script>
+{% endblock %}

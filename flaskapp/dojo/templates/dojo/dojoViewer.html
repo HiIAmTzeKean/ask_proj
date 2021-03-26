@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Viewer{% endblock %}
+
+{% block content %}
+<div>
+  <a href="{{ url_for('dojo.dojoAddDojo') }}" class="btn btn-primary">Add Dojo</a>
+</div>
+
+<div id="includedContent"></div>
+
+
+<table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">location</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+      {% for dojo in dojo_list %}
+      <tr id={{ dojo.id }}>
+        <th scope="col">{{ loop.index }}</th>
+        <td>{{ dojo.name }}</td>
+        <td>{{ dojo.location }}</td>
+        <td>
+          <a href="{{ url_for('dojo.dojoEditDojo', dojo_id=dojo.id) }}"
+            class="btn btn-success">Edit</a>
+        </td>
+      </tr>
+      {% endfor %}
+    <tbody>
+    </tbody>
+</table>
+{% endblock %}
+
+{% block scripts %}
+<script> 
+  $(function(){
+    $("#includedContent").load("{{ url_for('dojo.static', filename='testtry.html') }}"); 
+  });
+</script> 
+{% endblock %}

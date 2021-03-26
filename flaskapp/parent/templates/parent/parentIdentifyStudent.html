@@ -1,0 +1,21 @@
+{% extends 'base_parent.html' %}
+
+{% block title %}Identify Student{% endblock %}
+
+{% block content %}
+<form action="{{ url_for('parent.parentIdentifyStudent') }}" method="POST">
+  {{ form.hidden_tag() }}
+
+  <div class="form-group row">
+    {{ form.membership.label(class="col-sm-3 col-form-label")}}
+    <div class="col-sm-5">
+      {{ form.membership(class="form-control")}}
+    </div>
+  </div>
+
+  <div class="form-row mt-3">
+      {{ form.submit(class_="form-control btn btn-dark") }}
+  </div>
+
+</form>
+{% endblock %}
