@@ -9,6 +9,9 @@ python-dotenv
 gitpython
 is-safe-url
 psycopg2-binary
+beautifulsoup4
+requests
+lxml
 matplotlib
 bokeh
 gunicorn
