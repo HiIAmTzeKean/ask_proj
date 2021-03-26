@@ -26,7 +26,7 @@
       {% for instructor in instructor_list %}
       <tr id={{ instructor.id }}>
         <td>{{ instructor.firstName }}</td>
-        <td>{{ instructor.belts.beltName }}</td>
+        <td>{{ instructor.belt.beltName }}</td>
         <td>
           {% for dojo in instructor.dojo %}
           <li>{{ dojo.name }}</li> 
