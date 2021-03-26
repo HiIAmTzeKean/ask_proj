@@ -1,6 +1,8 @@
-from flaskapp import db, app
-from flaskapp.models import (Dojo, Enrollment, Lesson, Student, StudentRemarks,
+from flaskapp import db
+from flaskapp.models import (Lesson, Student, StudentRemarks,
                              StudentStatus, Belt)
+import datetime
+
 
 def helper_ChartView(dojo_id, student_id):
     # ---- get student details
@@ -74,7 +76,7 @@ def processDateLabel(dateLabel):
 
 def processChartRecords(subquery):
     if subquery == []:
-        return [],[],[],[],[],[],[]
+        return [], [], [], [], [], [], []
     return [list(i) for i in zip(*subquery)]
         
 
