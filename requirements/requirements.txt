@@ -6,8 +6,12 @@
 #
 alembic==1.4.3
     # via flask-migrate
+bcrypt==3.2.0
+    # via -r requirements.in
 bokeh==2.3.0
     # via -r requirements.in
+cffi==1.14.5
+    # via bcrypt
 click==7.1.2
     # via flask
 cycler==0.10.0
@@ -74,6 +78,8 @@ pillow==8.1.0
     #   matplotlib
 psycopg2-binary==2.8.6
     # via -r requirements.in
+pycparser==2.20
+    # via cffi
 pyparsing==2.4.7
     # via
     #   matplotlib
@@ -91,6 +97,7 @@ pyyaml==5.4.1
     # via bokeh
 six==1.15.0
     # via
+    #   bcrypt
     #   cycler
     #   python-dateutil
 smmap==3.0.4

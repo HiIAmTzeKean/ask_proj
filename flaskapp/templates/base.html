@@ -15,6 +15,8 @@
   <!-- Custom Base CSS file -->
   <link href="https://fonts.googleapis.com/css2?family=Cabin&family=Montserrat&display=swap" rel="stylesheet">
 
+  <link href="{{ url_for('static', filename='base.css') }}" rel="stylesheet">
+
   <!-- Custom Page Specific CSS -->
   {% block styles %}{% endblock %}
 </head>
@@ -40,7 +42,19 @@
     </div>
 
     {% block content %}{% endblock %}
+
   </div>
+
+  <footer class="footer">
+    <div class="container">
+      &copy;
+      <span id="copyright">
+          <script>document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))</script>
+      </span>
+      Shinjukai
+    </div>
+  </footer>
+  
 
   <!-- jQuery, Popper.js, and Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
@@ -57,5 +71,7 @@
   <!-- Custom Page JS Specific Scripts -->
   {% block scripts %}{% endblock %}
 </body>
+
+
 
 </html>

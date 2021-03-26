@@ -3,7 +3,6 @@ flask
 flask-script
 flask_sqlalchemy
 flask_migrate
-flask-login
 flask_wtf
 Flask-Mobility
 python-dotenv
