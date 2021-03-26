@@ -1,12 +1,11 @@
-from flaskapp import db, LoginManager
+from flaskapp import db
 from datetime import datetime
 from sqlalchemy.orm import validates
 from sqlalchemy.dialects.postgresql import JSON
-from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 import json
 
-class user(db.Model, UserMixin):
+class user(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.Text, nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)

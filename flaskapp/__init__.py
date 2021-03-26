@@ -1,7 +1,6 @@
 import os
 from flask import Flask
 from flask_wtf.csrf import CSRFProtect
-from flask_login import LoginManager
 
 
 app = Flask(__name__, instance_relative_config=True,
