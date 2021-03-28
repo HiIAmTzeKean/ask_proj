@@ -11,30 +11,22 @@ class formDojoSelection(FlaskForm):
     submit = SubmitField('Submit')
 
 
-class formAdd_DelStudent(FlaskForm):
-    membership = StringField(label='Membership ID', validators=[DataRequired()])
-    dateOfBirth_month = SelectField(validators=[validators.Optional()],choices=[i for i in range(1,13)])
-    currentyear = int(datetime.date.today().year)
-    dateOfBirth_year = SelectField(validators=[validators.Optional()],choices=[i for i in range(currentyear,currentyear-100,-1)])
-    firstName = StringField(label='Name', validators=[DataRequired()])
-    lastName = StringField(label='Surname', validators=[DataRequired()])
-    belt_id = SelectField(label='Belt', choices='', validators=[DataRequired()])
-    lastGrading = DateField(label='Last Grading Date', validators=[validators.Optional()])
-    dojo_id = SelectField(label='Dojo Name', choices='', validators=[DataRequired()])
-    submit = SubmitField('Add student')
-
 
 class formEditStudent(FlaskForm):
     membership = StringField(label='Membership ID', validators=[DataRequired()])
-    dateOfBirth_month = SelectField(validators=[validators.Optional()],choices=[i for i in range(1,13)])
+    dateOfBirth_month = SelectField(validators=[validators.Optional()],choices=[''] + [i for i in range(1,13)])
     currentyear = int(datetime.date.today().year)
-    dateOfBirth_year = SelectField(validators=[validators.Optional()],choices=[i for i in range(currentyear,currentyear-100,-1)])
+    dateOfBirth_year = SelectField(validators=[validators.Optional()],choices=[''] + [i for i in range(currentyear,currentyear-100,-1)])
     firstName = StringField(label='Name', validators=[DataRequired()])
     lastName = StringField(label='Surname', validators=[DataRequired()])
     belt_id = SelectField(label='Belt', choices='', validators=[DataRequired()])
     lastGrading = DateField(label='Last Grading Date', validators=[validators.Optional()])
     submit = SubmitField(label='Save Changes')
 
+
+class formAdd_DelStudent(formEditStudent):
+    dojo_id = SelectField(label='Dojo Name', choices='', validators=[DataRequired()])
+    submit = SubmitField('Add student')
 
 class formSearchStudent(FlaskForm):
     name = StringField(label='Name', validators=[validators.Optional()])
