@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends '404.html' %}
 
 
 {% block headers %}
@@ -22,4 +22,8 @@
       </div>
     </nav>
   </div>
+{% endblock %}
+
+{% block homebutton %}
+    <a class="btn btn-dark" href="{{ url_for('parent.parentIdentifyStudent') }}">Home</a>
 {% endblock %}
