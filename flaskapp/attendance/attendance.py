@@ -178,6 +178,9 @@ def attendanceAdd_DelStudent(add_del):
         form = formAdd_DelStudent(request.form)
         record = Student(None,None,None)
         form.populate_obj(record)
+        if form.dateOfBirth_month.data and form.dateOfBirth_year.data:
+            date_str = '01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data)
+            record.dateOfBirth = datetime.datetime.strptime(date_str, '%d%m%Y').date()
         db.session.add(record)
         db.session.commit()
 
@@ -249,9 +252,9 @@ def attendanceEditStudent(student_id):
         except IntegrityError as ex:
             flash('Error: membership already exist!!')
             return redirect(url_for('attendance.attendanceEditStudent', student_id=student_id))
-
-        date_str = '01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data)
-        studentRecord.dateOfBirth = datetime.datetime.strptime(date_str, '%d%m%Y').date()
+        if form.dateOfBirth_month.data and form.dateOfBirth_year.data:
+            date_str = '01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data)
+            studentRecord.dateOfBirth = datetime.datetime.strptime(date_str, '%d%m%Y').date()
         db.session.commit()
         flash('Successfully updated {}!'.format(studentRecord.firstName))
         # return back same view page
@@ -286,14 +289,8 @@ def attendanceAct_DeactEnrollment():
     update_Act_DeactEnrollment(student_id, dojo_id, act_deact)
     return redirect(url_for('attendance.attendanceViewer'))
 
-## migrate belt over
-# @attendance_bp.route('/migrate', methods=('GET', 'POST'))
-# def attendancemigrate():
-#     records = db.session.query(student).all()
-#     for record in records:
-#         currentbelt = record.belt
-#         newbelt_id = db.session.query(belts.id).filter(belts.beltName == currentbelt).scalar()
-#         record.belt_id = newbelt_id
-#         db.session.commit()
-#     return 'ok'
 
+# todo
+@attendance_bp.route('/attendancePastLessonViewer', methods=('GET', 'POST'))
+def attendancePastLessonViewer():
+    return redirect(url_for('attendance.attendanceViewer'))
