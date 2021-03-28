@@ -1,5 +1,9 @@
 {% extends 'base_parent.html' %}
 
+{% block styles %}
+<link href="{{ url_for('parent.static', filename='responsive-table.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block title %}Identify Student{% endblock %}
 
 {% block content %}
@@ -8,20 +12,24 @@
 
 <hr>
 
-<table class="table table-bordered table-sm">
-    <tr class="table-active">
-        <th scope="col">Grading Dates (Sunday)</th>
-        <th scope="col">Application Opening Dates (Sunday)</th>
-        <th scope="col">Closing Date for Submission</th>
-        <th scope="col">Release of Reporting Time</th>
-    </tr>
-
-    {% for row in processedDetails %}
-    <tr>
-        {% for item in row %}
-            <td>{{ item }}</td>
+<table>
+    <thead>
+        <tr class="table-active">
+            <th scope="col">Grading Dates</th>
+            <th scope="col">Application Opening Dates</th>
+            <th scope="col">Closing Date for Submission</th>
+            <th scope="col">Release of Reporting Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in processedDetails %}
+        <tr>
+            <td data-label="Grading Dates">{{ row[0] }}</td>
+            <td data-label="Application Opening Dates">{{ row[1] }}</td>
+            <td data-label="Closing Date for Submission">{{ row[2] }}</td>
+            <td data-label="Release of Reporting Time">{{ row[3] }}</td>
+        </tr>
         {% endfor %}
-    </tr>
-    {% endfor %}
+    </tbody>
 </table>
 {% endblock %}
