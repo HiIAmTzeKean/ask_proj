@@ -2,14 +2,13 @@ from flask_wtf import FlaskForm
 from wtforms import BooleanField, StringField, validators, SelectField, SubmitField, FieldList, FormField, IntegerField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, InputRequired, Optional
-from flaskapp.attendance.helpers import belt_type
+from flaskapp.attendance.helpers import belt_type, drillsList
 import datetime
 from dateutil.relativedelta import relativedelta
 
 class formDojoSelection(FlaskForm):
     dojo_id = SelectField(label='Dojo Name', choices='', validators=[DataRequired()])
     submit = SubmitField('Submit')
-
 
 
 class formEditStudent(FlaskForm):
@@ -59,4 +58,5 @@ class formTechniqueType(FlaskForm):
 
 class formAddTechniquesTaught(FlaskForm):
     techniqueList = FieldList(FormField(formTechniqueType))
+    drillList = FieldList(SelectField(label='Drills', choices=drillsList(), validators=[DataRequired()]))
     submit = SubmitField('Done')
