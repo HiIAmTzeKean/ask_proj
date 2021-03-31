@@ -176,16 +176,20 @@ def attendanceViewer():
 def attendanceAdd_DelStudent(add_del):
     if add_del == 'addNew':
         form = formAdd_DelStudent(request.form)
-        record = Student(None,None,None)
-        form.populate_obj(record)
-        if form.dateOfBirth_month.data and form.dateOfBirth_year.data:
-            date_str = '01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data)
-            record.dateOfBirth = datetime.datetime.strptime(date_str, '%d%m%Y').date()
-        db.session.add(record)
-        db.session.commit()
+        try:
+            record = Student(None,None,None)
+            form.populate_obj(record)
+            if form.dateOfBirth_month.data and form.dateOfBirth_year.data:
+                date_str = '01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data)
+                record.dateOfBirth = datetime.datetime.strptime(date_str, '%d%m%Y').date()
+            db.session.add(record)
+            db.session.commit()
 
-        # Add student record to enrollemnt per dojo_id
-        insert_newEnrollment(record.id, record.dojo_id)
+            # Add student record to enrollemnt per dojo_id
+            insert_newEnrollment(record.id, record.dojo_id)
+        except IntegrityError as e:
+            flash('Error: membership already exist!!')
+            return redirect(url_for('attendance.attendanceViewer'))
     elif add_del == 'addExisting':
         student_id = int(request.args.get('student_id'))
         dojo_id = int(request.args.get('dojo_id'))
@@ -249,7 +253,7 @@ def attendanceEditStudent(student_id):
         try:
             form.populate_obj(studentRecord)
             db.session.commit()
-        except IntegrityError as ex:
+        except IntegrityError as e:
             flash('Error: membership already exist!!')
             return redirect(url_for('attendance.attendanceEditStudent', student_id=student_id))
         if form.dateOfBirth_month.data and form.dateOfBirth_year.data:
