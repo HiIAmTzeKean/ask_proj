@@ -290,7 +290,8 @@ def attendanceAct_DeactEnrollment():
     return redirect(url_for('attendance.attendanceViewer'))
 
 
-# todo
+# todo view past lesson
+# todo delete past lesson
 @attendance_bp.route('/attendancePastLessonViewer', methods=('GET', 'POST'))
 def attendancePastLessonViewer():
     return redirect(url_for('attendance.attendanceViewer'))

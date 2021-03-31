@@ -54,9 +54,6 @@ app.register_blueprint(parent_bp)
 from .auth import auth
 app.register_blueprint(auth.auth_bp)
 
-from .test import test
-app.register_blueprint(test.test_bp)
-
 
 @app.errorhandler(404)
 def handle_404(e):
