@@ -3,7 +3,7 @@ import json
 from sqlalchemy.exc import IntegrityError, DataError
 from flask import (Blueprint, flash, g, make_response, redirect,
                    render_template, request, url_for)
-from flaskapp import db
+from flaskapp import app, db
 from flaskapp.attendance.db_method import (delete_studentEnrollmentRecord,
                                            get_studentRecord,
                                            insert_newEnrollment,
@@ -176,7 +176,6 @@ def attendanceViewer():
 def attendanceAdd_DelStudent(add_del):
     if add_del == 'addNew':
         form = formAdd_DelStudent(request.form)
-        flash(request.form)
         try:
             record = Student(None,None,None)
             form.populate_obj(record)
@@ -189,8 +188,8 @@ def attendanceAdd_DelStudent(add_del):
             # Add student record to enrollemnt per dojo_id
             insert_newEnrollment(record.id, record.dojo_id)
         except IntegrityError as e:
-            #flash('Error: membership already exist!!', e)
-            flash(str(e))
+            app.logger.info(str(e))
+            flash('Error: membership already exist!!')
             return redirect(url_for('attendance.attendanceViewer'))
     elif add_del == 'addExisting':
         student_id = int(request.args.get('student_id'))
