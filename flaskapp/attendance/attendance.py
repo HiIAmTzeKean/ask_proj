@@ -176,6 +176,7 @@ def attendanceViewer():
 def attendanceAdd_DelStudent(add_del):
     if add_del == 'addNew':
         form = formAdd_DelStudent(request.form)
+        flash(request.form)
         try:
             record = Student(None,None,None)
             form.populate_obj(record)
