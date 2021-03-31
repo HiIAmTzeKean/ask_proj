@@ -1,6 +1,6 @@
 import datetime
 import json
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, DataError
 from flask import (Blueprint, flash, g, make_response, redirect,
                    render_template, request, url_for)
 from flaskapp import db
@@ -188,7 +188,8 @@ def attendanceAdd_DelStudent(add_del):
             # Add student record to enrollemnt per dojo_id
             insert_newEnrollment(record.id, record.dojo_id)
         except IntegrityError as e:
-            flash('Error: membership already exist!!')
+            #flash('Error: membership already exist!!', e)
+            flash(str(e))
             return redirect(url_for('attendance.attendanceViewer'))
     elif add_del == 'addExisting':
         student_id = int(request.args.get('student_id'))
@@ -238,7 +239,7 @@ def attendanceSearchStudent():
 def attendanceEditStudent(student_id): 
     studentRecord = get_studentRecord(student_id)
     enrollementRecord = db.session.query(Enrollment.dojo_id).\
-        filter_by(student_id=student_id).first()  # extract dojo student is currently from
+                        filter_by(student_id=student_id).first()  # extract dojo student is currently from
     if studentRecord.dateOfBirth:
         form = formEditStudent(obj=studentRecord,
                            dateOfBirth_month=int(studentRecord.dateOfBirth.month),
