@@ -188,7 +188,8 @@ def attendanceAdd_DelStudent(add_del):
             # Add student record to enrollemnt per dojo_id
             insert_newEnrollment(record.id, record.dojo_id)
         except IntegrityError as e:
-            flash('Error: membership already exist!!', e)
+            #flash('Error: membership already exist!!', e)
+            flash(str(e))
             return redirect(url_for('attendance.attendanceViewer'))
     elif add_del == 'addExisting':
         student_id = int(request.args.get('student_id'))
