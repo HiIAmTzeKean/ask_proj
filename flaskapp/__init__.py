@@ -31,7 +31,7 @@ from flaskapp.models import User, Role
 from flaskapp.auth.form import ExtendedRegisterForm
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-security = Security(app, user_datastore, register_form=ExtendedRegisterForm)
+security = Security(app, user_datastore, confirm_register_form=ExtendedRegisterForm)
 
 # mobile view
 from flask_mobility import Mobility

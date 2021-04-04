@@ -20,8 +20,8 @@ class formLogin(FlaskForm):
     submit = SubmitField(label='Login')
 
 
-from flask_security.forms import RegisterForm
+from flask_security.forms import ConfirmRegisterForm
 
-class ExtendedRegisterForm(RegisterForm):
+class ExtendedRegisterForm(ConfirmRegisterForm):
     firstName = StringField('First Name', [DataRequired()])
     lastName = StringField('Last Name', [DataRequired()])
