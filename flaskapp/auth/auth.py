@@ -54,6 +54,14 @@ def authMySecreat():
     db.session.commit()
     return 'yas'
 
+@auth_bp.route('/authMySecreat2', methods=('GET', 'POST'))
+def authMySecreat2():
+    user = user_datastore.find_user(email='ngtzekean600@gmail.com')
+    role = user_datastore.find_or_create_role('Admin')
+    user_datastore.remove_role_from_user(user, role=role)
+    db.session.commit()
+    return 'yas'
+
 def dojo_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
