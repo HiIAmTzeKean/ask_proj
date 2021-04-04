@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}User Viewer{% endblock %}
+
+{% block content %}
+<table class="table" id="students">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Role</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in user_list %}
+        <tr id={{ user.id }}>
+            <td>{{ user.firstName }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+                {% for role in user.roles %}
+                    <li>{{ role.name }}</li>
+                {% endfor %}
+            </td>
+            <td>
+                <div class="btn-group dropleft">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Add
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a href="{{ url_for('auth.authAddRole', email=user.email, roleName='HQ') }}" class="dropdown-item">HQ</a>
+                        <a href="{{ url_for('auth.authAddRole', email=user.email, roleName='Instructor') }}" class="dropdown-item">Instructor</a>
+                        <a href="{{ url_for('auth.authAddRole', email=user.email, roleName='Helper') }}" class="dropdown-item">Helper</a>
+                    </div>
+                </div>
+                <div class="btn-group dropleft">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Remove
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a href="{{ url_for('auth.authRemoveRole', email=user.email, roleName='HQ') }}" class="dropdown-item">HQ</a>
+                        <a href="{{ url_for('auth.authRemoveRole', email=user.email, roleName='Instructor') }}" class="dropdown-item">Instructor</a>
+                        <a href="{{ url_for('auth.authRemoveRole', email=user.email, roleName='Helper') }}" class="dropdown-item">Helper</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

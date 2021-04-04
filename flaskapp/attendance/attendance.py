@@ -16,6 +16,7 @@ from flaskapp.attendance.form import (formAdd_DelStudent, formDojoSelection,
                                       formAddTechniquesTaught)
 from flaskapp.attendance.helpers import findTerm, str_to_date, catchList, lockList, drillsList
 from flaskapp.auth.auth import dojo_required
+from flask_security.decorators import login_required
 from flaskapp.models import (Dojo, Enrollment, Instructor, Lesson, Student,
                              StudentStatus, Belt)
 
@@ -24,6 +25,7 @@ attendance_bp = Blueprint('attendance', __name__,
 
 
 @attendance_bp.route('/attendanceDojoSelect', methods=('GET', 'POST'))
+@login_required
 def attendanceDojoSelect():
     form = formDojoSelection()
     dojo_list = db.session.query(Dojo.id, Dojo.name).all()
@@ -39,6 +41,7 @@ def attendanceDojoSelect():
 
 
 @attendance_bp.route('/attendanceStatus', methods=('GET', 'POST'))
+@login_required
 @dojo_required
 def attendanceStatus():
     dojo_id = request.cookies.get('dojo_id')
@@ -130,12 +133,13 @@ def attendanceLessonCancel():
 
 
 @attendance_bp.route('/attendanceViewer', methods=('GET', 'POST'))
+@login_required
 @dojo_required
 def attendanceViewer():
     dojo_id = request.cookies.get('dojo_id')
     dojoRecord = db.session.query(Dojo).filter(Dojo.id==dojo_id).first()
 
-    form = formAdd_DelStudent(dojo_id=int(dojo_id),belt_id=int(1))
+    form = formAdd_DelStudent(dojo_id=int(dojo_id), belt_id=int(1))
     form.dojo_id.choices = [(dojoRecord.id, dojoRecord.name)]
     belt_list = db.session.query(Belt.id, Belt.beltName).all()
     form.belt_id.choices = [(belt.id, belt.beltName) for belt in belt_list]

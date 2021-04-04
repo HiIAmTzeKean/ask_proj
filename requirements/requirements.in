@@ -5,6 +5,9 @@ flask_sqlalchemy
 flask_migrate
 flask_wtf
 Flask-Mobility
+flask-security
+bcrypt
+email_validator
 python-dotenv
 gitpython
 is-safe-url
@@ -15,3 +18,6 @@ lxml
 matplotlib
 bokeh
 gunicorn
+
+# pip install git+https://github.com/mattupstate/flask-security
+# security patch issue
