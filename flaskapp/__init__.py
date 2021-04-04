@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template, request
 from flask_wtf.csrf import CSRFProtect
-
+from flask_security import Security, SQLAlchemyUserDatastore
 
 app = Flask(__name__, instance_relative_config=True,
             template_folder='templates')
@@ -25,19 +25,24 @@ db = SQLAlchemy(app)
 from flask_migrate import Migrate
 migrate = Migrate(app, db)
 
+# import models 
+from flaskapp.models import User, Role
+
+from flaskapp.auth.form import ExtendedRegisterForm
+# Setup Flask-Security
+user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+security = Security(app, user_datastore, register_form=ExtendedRegisterForm)
+
 # mobile view
 from flask_mobility import Mobility
 mobilize = Mobility(app)
 
-# import models 
-from flaskapp import models
-
+from flask_mail import Mail
+mail = Mail(app)
 
 # register blueprints
 from .attendance import attendance
 app.register_blueprint(attendance.attendance_bp)
-app.add_url_rule('/', endpoint='attendance.attendanceDojoSelect')
-
 
 from .performance import performance
 app.register_blueprint(performance.performance_bp)
@@ -54,6 +59,15 @@ app.register_blueprint(parent_bp)
 from .auth import auth
 app.register_blueprint(auth.auth_bp)
 
+app.add_url_rule('/', endpoint='security.login')
+
+from flask_mail import Message
+@app.route("/lol")
+def lol():
+    msg = Message("Hello",recipients=["ngtzekean600@gmail.com"])
+    msg.body = "Hello Flask message sent from Flask-Mail"
+    mail.send(msg)
+    return 'done'
 
 @app.errorhandler(404)
 def handle_404(e):

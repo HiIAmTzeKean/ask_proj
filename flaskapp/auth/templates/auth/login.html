@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+<form method="POST" action="{{ url_for('auth.login') }}">
+  {{ form.hidden_tag() }}
+  <div>
+    {% for item,errors in form.errors.items() %}
+      {% for error in errors %}
+        <span style="color:red">*{{ item }}: {{ error }}</span>
+        <br>
+      {% endfor %}
+    {% endfor %}
+  </div>
+  <div class="form-group row">
+    {{ form.email.label(class="col-form-label")}}
+    {{ form.email(class="form-control")}}
+  </div>
+  <div class="form-group row">
+    {{ form.password.label(class="col-form-label")}}
+    {{ form.password(class="form-control")}}
+  </div>
+  <div class="form-group row">
+    {{ form.submit(class="form-control btn-success")}}
+  </div>
+</form>
+</div>
+{% endblock %}

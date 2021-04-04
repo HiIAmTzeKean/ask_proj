@@ -1,9 +1,10 @@
 import datetime
-from flask import (Blueprint, flash, redirect,
+from flask import (Blueprint, flash, redirect, g,
                    render_template, request, url_for)
 from flask_mobility.decorators import mobile_template
 from flaskapp import db, app
 from flaskapp.auth.auth import dojo_required
+from flask_security import login_required
 from flaskapp.models import (Dojo, Enrollment, Lesson, Student, StudentRemarks,
                              StudentStatus, Belt)
 from flaskapp.performance.form import (gradePerformanceform,
@@ -18,6 +19,7 @@ performance_bp = Blueprint('performance', __name__,
 
 @performance_bp.route('/performanceViewer', methods=('GET', 'POST'))
 @dojo_required
+@login_required
 def performanceViewer():
     dojo_id = request.cookies.get('dojo_id')
     dojoRecord = db.session.query(Dojo).filter(Dojo.id == dojo_id).first()
@@ -27,11 +29,11 @@ def performanceViewer():
                                     Student.lastGrading,
                                     Belt.beltName,
                                     Enrollment.studentActive)\
-        .filter(Student.belt_id == Belt.id)\
-        .filter(Enrollment.dojo_id == dojo_id,
-                Enrollment.student_id == Student.id,
-                Enrollment.studentActive == True)\
-        .order_by(Student.id.asc(),).all()
+                    .filter(Student.belt_id == Belt.id)\
+                    .filter(Enrollment.dojo_id == dojo_id,
+                            Enrollment.student_id == Student.id,
+                            Enrollment.studentActive == True)\
+                    .order_by(Student.id.asc(),).all()
     return render_template('performanceViewer.html',
                            student_list=student_list,
                            dojoRecord=dojoRecord)

@@ -2,32 +2,37 @@ from flaskapp import db
 from datetime import datetime
 from sqlalchemy.orm import validates
 from sqlalchemy.dialects.postgresql import JSON
+from flask_security import UserMixin, RoleMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 import json
 
-class user(db.Model):
+
+roles_users = db.Table('roles_users',
+        db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+        db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
+
+
+class Role(db.Model, RoleMixin):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    description = db.Column(db.String(255))
+
+
+class User(db.Model,UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.Text, nullable=False, unique=True)
+    firstName = db.Column(db.Text, nullable=False)
+    lastName = db.Column(db.Text, nullable=False)
+    email = db.Column(db.String(255), unique=True)
     password = db.Column(db.Text, nullable=False)
-    clearance = db.Column(db.Integer, nullable=False)
+    active = db.Column(db.Boolean(), default=True)
+    confirmed_at = db.Column(db.DateTime())
 
-    @validates('clearance')
-    def validate_clearance(self, key, clearance):
-        if not 1 <= clearance <= 3:
-            raise AssertionError(
-                'Clearance should be an int value form 1 to 3')
-        return clearance @ validates('clearance')
+    student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="SET NULL"), default=None)
+    student = db.relationship('Student', back_populates='user')
 
-    def __init__(self, username='', password='', clearance=3):
-        self.username = username
-        self.password = generate_password_hash(password).decode('utf8')
-
-    def check_password(self, password_str):
-        # return check_password_hash(self.password, password_str)
-        return self.password == password_str
-
-    def __repr__(self):
-        return '<User {}>'.format(self.username)
+    roles = db.relationship('Role', secondary=roles_users,
+                            backref=db.backref('users', lazy='dynamic'),
+                            cascade="all, delete", passive_deletes=True)
 
 
 class Dojo(db.Model):
@@ -52,19 +57,19 @@ class Dojo(db.Model):
 
 class Student(db.Model):
     __mapper_args__ = {'polymorphic_identity': 'student'}
-    # __table_args__ = (Index('my_index', "a", "b"), )
     id = db.Column(db.Integer, primary_key=True)
-    firstName = db.Column(db.Text, nullable=False)
-    lastName = db.Column(db.Text, nullable=False)
+    membership = db.Column(db.Text, unique=True, nullable=True)
+    firstName = db.Column(db.Text, nullable=True)
+    lastName = db.Column(db.Text, nullable=True)
     belt = db.Column(db.Text, nullable=True)
     lastGrading = db.Column(db.Date, nullable=True)
     active = db.Column(db.Boolean, nullable=False, default=True) # active as a student
-    membership = db.Column(db.Text, unique=True, nullable=True)
     dateOfBirth = db.Column(db.Date, nullable=True)
 
     belt_id = db.Column(db.Integer, db.ForeignKey('belt.id', ondelete="SET NULL"))
     belt = db.relationship('Belt', back_populates='student')
 
+    user = db.relationship('User', back_populates='student', cascade="all, delete", passive_deletes=True)
     enrollment = db.relationship('Enrollment', back_populates='student', cascade="all, delete", passive_deletes=True)
     studentStatus = db.relationship('StudentStatus', back_populates='student', cascade="all, delete", passive_deletes=True)
     studentRemarks = db.relationship('StudentRemarks', back_populates='student', cascade="all, delete", passive_deletes=True)
@@ -84,8 +89,6 @@ class Instructor(Student):
     __mapper_args__ = {'polymorphic_identity': 'instructor'}
     id = db.Column(db.Integer, db.ForeignKey('student.id'), primary_key=True)
     email = db.Column(db.String(255), unique=True)
-    username = db.Column(db.Text, nullable=False, unique=True)
-    # password = db.Column(db.Text, nullable=False)
 
     lesson = db.relationship('Lesson', back_populates='instructor')
     dojo = db.relationship('Dojo', back_populates='instructor')
@@ -207,3 +210,15 @@ class Belt(db.Model):
 
     def __repr__(self):
         return '<belt {}>'.format(self.beltName)
+
+# class Survey(db.Model):
+#     pass
+
+# class Question(db.Model):
+#     pass
+
+# class Survey_Question(db.Model):
+#     pass
+
+# class Answer(db.Model):
+#     pass
