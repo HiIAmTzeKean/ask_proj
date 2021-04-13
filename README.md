@@ -1,7 +1,7 @@
 # ask_proj
 Aikido Shinjukai System Add On
 
-Flask based model web application. Intent is to give easy infomation access to instructors via a web app to allow thme to function remotely and 
+Flask based model web application. Intent is to give easy infomation access to instructors via a web app to allow them to function remotely and 
 to provide a platform for parents to keep track of their child's progess. The application is currently hosted on https://ask-proj.herokuapp.com.
 If you have any enquires please drop me an email @ ngtzekean600@gmail.com
 
