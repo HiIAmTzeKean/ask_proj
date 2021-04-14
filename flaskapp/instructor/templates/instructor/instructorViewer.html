@@ -3,13 +3,8 @@
 {% block title %}Viewer{% endblock %}
 {% block content %}
 <div>
-  <table>
-    <tr>
-      <td>
-        <a href="{{ url_for('instructor.instructorSearchStudent') }}" class="btn btn-primary">Delete Student</a>
-      </td>
-    </tr>
-  </table>
+  <a href="{{ url_for('instructor.instructorSearchStudent') }}" class="btn btn-primary">Delete Student</a>
+  <a href="#" data-toggle="modal" data-target='#addStudent' class="btn btn-primary">Add New Student</a>
 </div>
 
 <table class="table">
@@ -42,4 +37,61 @@
       {% endfor %}
     </tbody>
 </table>
+
+<!--Adding new student form-->
+<!-- Modal -->
+<div class="modal fade" id="addStudent" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add New Student</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <!--Modal Body with form-->
+      <form method="POST" action="{{ url_for('attendance.attendanceAdd_DelStudent', add_del='addNew', redirectInstructor='True') }}">
+        {{ form.hidden_tag() }}
+        <div class="modal-body">
+          <table class="table">
+            <tbody>
+              <tr>
+                <th scope="col">{{ form.membership.label(class="col-sm-3 col-form-label")}}</th>
+                <td>{{ form.membership(class="form-control")}}</td>
+              </tr>
+              <tr>
+                <th scope="col">{{ form.firstName.label(class="col-form-label") }}</th>
+                <td>{{ form.firstName(placeholder='Student Surname', class="form-control") }}</td>
+              </tr>
+              <tr>
+                <th scope="col">{{ form.lastName.label(class="col-form-label") }}</th>
+                <td>{{ form.lastName(placeholder='Student Name', class="form-control") }}</td>
+              </tr>
+              <tr>
+                <th scope="col"><label class="col-form-label">Date Of Birth (month/year)</label></th>
+                <td><div class = "col-sm-5">{{ form.dateOfBirth_month(class="form-control")}}</div>
+                  <div class = "col-sm-6">{{ form.dateOfBirth_year(class="form-control")}}</div> </td>
+              </tr>
+              <tr>
+                <th scope="col">{{ form.belt_id.label(class="col-sm-3 col-form-label") }}</th>
+                <td>{{ form.belt_id(class="form-control") }}</td>
+              </tr>
+              <tr>
+                <th scope="col">{{ form.lastGrading.label(class="col-form-label") }}</th>
+                <td>{{ form.lastGrading(class="form-control") }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="position-relative top-0 start-0 btn btn-secondary"
+            data-dismiss="modal">Close</button>
+          {{ form.submit(class="position-relative start-100 btn btn-success", value='Add User') }}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!--End of adding new student form-->
 {% endblock %}

@@ -1,10 +1,7 @@
 from flaskapp import db
-from datetime import datetime
-from sqlalchemy.orm import validates
 from sqlalchemy.dialects.postgresql import JSON
 from flask_security import UserMixin, RoleMixin
-from werkzeug.security import check_password_hash, generate_password_hash
-import json
+from sqlalchemy.dialects.postgresql import JSONB
 
 
 roles_users = db.Table('roles_users',
@@ -18,16 +15,14 @@ class Role(db.Model, RoleMixin):
     description = db.Column(db.String(255))
 
 
-class User(db.Model,UserMixin):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    firstName = db.Column(db.Text, nullable=False)
-    lastName = db.Column(db.Text, nullable=False)
     email = db.Column(db.String(255), unique=True)
     password = db.Column(db.Text, nullable=False)
     active = db.Column(db.Boolean(), default=True)
     confirmed_at = db.Column(db.DateTime())
 
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="SET NULL"), default=None)
+    membership_id = db.Column(db.Text, db.ForeignKey('student.membership', ondelete="CASCADE"), default=None)
     student = db.relationship('Student', back_populates='user')
 
     roles = db.relationship('Role', secondary=roles_users,
@@ -73,6 +68,7 @@ class Student(db.Model):
     enrollment = db.relationship('Enrollment', back_populates='student', cascade="all, delete", passive_deletes=True)
     studentStatus = db.relationship('StudentStatus', back_populates='student', cascade="all, delete", passive_deletes=True)
     studentRemarks = db.relationship('StudentRemarks', back_populates='student', cascade="all, delete", passive_deletes=True)
+    answers = db.relationship('Answer', back_populates='student', cascade="all, delete", passive_deletes=True)
     
     
     def __init__(self, firstName, lastName, lastGrading, active=True):
@@ -88,17 +84,13 @@ class Student(db.Model):
 class Instructor(Student):
     __mapper_args__ = {'polymorphic_identity': 'instructor'}
     id = db.Column(db.Integer, db.ForeignKey('student.id'), primary_key=True)
-    email = db.Column(db.String(255), unique=True)
 
     lesson = db.relationship('Lesson', back_populates='instructor')
     dojo = db.relationship('Dojo', back_populates='instructor')
     studentRemarks = db.relationship('StudentRemarks', back_populates='instructor', cascade="all, delete", passive_deletes=True)
-
-    def __init__(self, username):
-        self.username = username
     
     def __repr__(self):
-        return '<Instructor {}>'.format(self.username)
+        return '<Instructor {}>'.format(self.id)
 
 
 class StudentStatus(db.Model):
@@ -211,14 +203,70 @@ class Belt(db.Model):
     def __repr__(self):
         return '<belt {}>'.format(self.beltName)
 
-# class Survey(db.Model):
-#     pass
 
-# class Question(db.Model):
-#     pass
+class Survey(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text, nullable=False)
+    isOpen = db.Column(db.Boolean, nullable=False, default=True)
+    survey_question = db.relationship('SurveyQuestion', back_populates='survey', cascade="all, delete", passive_deletes=True)
 
-# class Survey_Question(db.Model):
-#     pass
+    def __init__(self, name):
+        self.name = name
 
-# class Answer(db.Model):
-#     pass
+    def __repr__(self):
+        return '<Survey {}>'.format(self.name)
+
+
+class Question(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text, nullable=False)
+    questionType = db.Column(db.Text, nullable=False)
+    questionCategory = db.Column(db.Text, nullable=False)
+    survey_question = db.relationship('SurveyQuestion', back_populates='question', cascade="all, delete", passive_deletes=True)
+
+    def __init__(self, name, questionType):
+        self.name = name
+        self.questionType = questionType
+
+    def __repr__(self):
+        return '<Survey {}>'.format(self.name)
+
+
+class SurveyQuestion(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    survey_id = db.Column(db.Integer, db.ForeignKey('survey.id', ondelete="CASCADE"))
+    survey = db.relationship('Survey', back_populates='survey_question')
+
+    question_id = db.Column(db.Integer, db.ForeignKey('question.id', ondelete="CASCADE"))
+    question = db.relationship('Question', back_populates='survey_question')
+
+    answers = db.relationship('Answer', back_populates='survey_question')
+
+    def __init__(self, survey_id, question_id):
+        self.survey_id = survey_id
+        self.question_id = question_id
+
+    def __repr__(self):
+        return '<Survey_Question {}>'.format(self.id)
+
+
+class Answer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.Date, nullable=False)
+    studentAnswer = db.Column(JSONB, nullable=False)
+
+    membership_id = db.Column(db.Text, db.ForeignKey('student.membership', ondelete="CASCADE"))
+    student = db.relationship('Student', back_populates='answers')
+
+    survey_question_id = db.Column(db.Integer, db.ForeignKey('survey_question.id', ondelete="CASCADE"), primary_key=True)
+    survey_question = db.relationship('SurveyQuestion', back_populates='answers')
+
+    def __init__(self, date, studentAnswer, membership_id, survey_question_id):
+        self.date = date
+        self.studentAnswer = studentAnswer
+        self.membership_id = membership_id
+        self.survey_question_id = survey_question_id
+
+    def __repr__(self):
+        return '<Answer {}>'.format(self.id)
+

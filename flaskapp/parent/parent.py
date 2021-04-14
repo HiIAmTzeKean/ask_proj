@@ -1,14 +1,15 @@
 import datetime
-import base64
+# import base64
 from sqlalchemy.orm.exc import NoResultFound
-from flask import (Blueprint, flash, redirect,
+from flask import (Blueprint, flash, redirect, make_response,
                    render_template, request, url_for)
 from flask_mobility.decorators import mobile_template
 from flaskapp import db, app
-from flaskapp.models import (Student, StudentRemarks,
-                             StudentStatus, Belt, Lesson)
-from flaskapp.parent.form import formStudentIdentifier
+from flaskapp.models import (Student, StudentRemarks, Answer,
+                             StudentStatus, Belt, Lesson, Survey,SurveyQuestion,Question)
+from flaskapp.parent.form import formStudentIdentifier, formQuestions
 from flaskapp.performance.helper import helper_ChartView
+from flaskapp.parent.helper import messageEncode, messageDecode
 
 
 parent_bp = Blueprint('parent', __name__,
@@ -67,12 +68,43 @@ def parentChartView(studentID, template):
                            lessonDone=lessonDone, myRemarks=myRemarks)
 
 
-def messageEncode(message):
-    message_bytes = message.encode('ascii')
-    base64_bytes = base64.b64encode(message_bytes)
-    return base64_bytes.decode('ascii')
+@parent_bp.route('/parentFeedback', methods=('GET', 'POST'))
+def parentFeedback():
+    form = formQuestions(request.form)
 
-def messageDecode(message):
-    base64_bytes = message.encode('ascii')
-    message_bytes = base64.b64decode(base64_bytes)
-    return int(message_bytes.decode('ascii'))
+    if form.validate_on_submit():
+        date_str = '01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data)
+        birthday_data = datetime.datetime.strptime(date_str, '%d%m%Y').date()
+        # find out if student exist first
+        if db.session.query(Student).filter_by(membership=form.membership.data, dateOfBirth=birthday_data).first() != None:
+            answer_dict = {}
+            for i in request.form:
+                if 'questions' in i:
+                    answer_dict[i.lstrip('questions-')] = request.form[i]
+            record = Answer(date=form.date.data, studentAnswer=answer_dict, membership_id=form.membership.data, survey_question_id=request.cookies.get('survey_question_id'))
+            db.session.add(record)
+            db.session.commit()
+        
+            flash('Thank you for the feedback!')
+            return redirect(url_for('parent.parentIdentifyStudent'))
+        flash('Sorry, but the Membership ID does not tally with the given birthday!')
+
+    surveyRecord = db.session.query(Survey).filter_by(name = 'Parent Feedback').first()
+    question_id = db.session.query(SurveyQuestion.question_id).filter_by(survey_id = surveyRecord.id).all()
+    questionList = db.session.query(Question.id, Question.name, Question.questionType, Question.questionCategory).filter(Question.id.in_(question_id)).all()
+    questionBank = {}
+    for num,i in enumerate(questionList):
+        form.questions.append_entry()
+        form.questions[num].id = 'questions-{}'.format(i.id)
+        form.questions[num].name = 'questions-{}'.format(i.id)
+        form.questions[num].label = i.name
+        form.questions.label = i.name
+
+        if i.questionCategory in questionBank:
+            questionBank[i.questionCategory].append([i.id, i.name, i.questionType])
+        else:
+            questionBank[i.questionCategory] = [[i.id, i.name, i.questionType]]
+
+    resp = make_response(render_template('parentFeedback.html',questionBank=questionBank, form=form))
+    resp.set_cookie('survey_question_id', str(surveyRecord.survey_question[0].id))
+    return resp

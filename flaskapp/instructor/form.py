@@ -4,6 +4,8 @@ from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, InputRequired, Optional
 from flaskapp.instructor.helpers import belt_type
 import datetime
+
+
 class formEditInstructor(FlaskForm):
     membership = StringField(label='Membership ID', validators=[validators.Optional()])
     dateOfBirth_month = SelectField(validators=[validators.Optional()],choices=[i for i in range(1,13)])
@@ -14,6 +16,7 @@ class formEditInstructor(FlaskForm):
     belt_id = SelectField(label='Belt', choices='', validators=[DataRequired()])
     lastGrading = DateField(label='Last Grading Date', validators=[validators.Optional()])
     submit = SubmitField(label='Save Changes')
+
 
 class formSearchStudent(FlaskForm):
     name = StringField(label='Name', validators=[validators.Optional()])
