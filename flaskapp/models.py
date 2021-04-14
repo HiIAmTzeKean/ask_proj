@@ -255,16 +255,16 @@ class Answer(db.Model):
     date = db.Column(db.Date, nullable=False)
     studentAnswer = db.Column(JSONB, nullable=False)
 
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="CASCADE"))
+    membership_id = db.Column(db.Text, db.ForeignKey('student.membership', ondelete="CASCADE"))
     student = db.relationship('Student', back_populates='answers')
 
     survey_question_id = db.Column(db.Integer, db.ForeignKey('survey_question.id', ondelete="CASCADE"), primary_key=True)
     survey_question = db.relationship('SurveyQuestion', back_populates='answers')
 
-    def __init__(self, date, answers, student_id, survey_question_id):
+    def __init__(self, date, studentAnswer, membership_id, survey_question_id):
         self.date = date
-        self.answers = answers
-        self.student_id = student_id
+        self.studentAnswer = studentAnswer
+        self.membership_id = membership_id
         self.survey_question_id = survey_question_id
 
     def __repr__(self):

@@ -15,7 +15,7 @@
     <tbody>
         {% for user in user_list %}
         <tr id={{ user.id }}>
-            <td>{{ user.firstName }}</td>
+            <td>{{ user.student.firstName }}</td>
             <td>{{ user.email }}</td>
             <td>
                 {% for role in user.roles %}

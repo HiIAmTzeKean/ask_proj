@@ -1,0 +1,84 @@
+{% extends 'base_parent.html' %}
+
+{% block styles %}
+<link href="{{ url_for('parent.static', filename='star_label.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block title %}Feedback{% endblock %}
+
+{% block content %}
+<form action="{{ url_for('parent.parentFeedback') }}" method="POST">
+    {{ form.hidden_tag() }}
+    {{ form.errors }}
+    <div class='container'>
+        <h2>
+            Parents feedback form
+        </h2>
+
+        <p>
+            Please complete the form below by rating the overall experience your child has!
+        </p>
+
+        <hr>
+
+        <div class="form-group row">
+            {{ form.membership.label(class="col-sm-3 col-form-label")}}
+            <div class="col-sm-5">
+                {{ form.membership(class="form-control")}}
+            </div>
+        </div>
+        
+        <div class="form-group row">
+            <label for="DOB" class="col-sm-3 col-form-label">Date Of Birth (month/year)</label>
+            <div class="row col-sm-5">
+                <div class = "col-sm-5">{{ form.dateOfBirth_month(class="form-control")}}</div>
+                <div class = "col-sm-6">{{ form.dateOfBirth_year(class="form-control")}}</div> 
+            </div>
+        </div>
+
+        <div class="form-group row">
+            {{ form.date.label(class="col-sm-3 col-form-label")}}
+            <div class="col-sm-5">
+                {{ form.date(class="form-control")}}
+            </div>
+        </div>
+        
+        <hr>
+
+        {% for category in questionBank %}
+            <div>
+                <h2>{{ category|title }}</h2>
+            </div>
+
+            {% for question in questionBank[category] %}
+                
+                {% for item in form.questions %}
+
+                    {% if item.id == 'questions-{}'.format(question[0]) %}
+                        <div class="form-group row">
+                            <div class="form-group">
+                                <div class="form-label">{{ item.label }}</div>
+                                
+                                <fieldset class="rating">
+                                    {% for subfield in item | reverse %}
+                                        {{ subfield }} {{ subfield.label }}
+                                    {% endfor %}
+                                </fieldset>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+
+
+        <div class="form-row">
+            {{ form.submit(class="form-control btn btn-dark") }}
+        </div>
+
+    <hr>
+
+    <p>----End----</p>
+    </div>
+</form>
+{% endblock %}

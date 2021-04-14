@@ -5,6 +5,7 @@ from flask import (Blueprint, flash, redirect,
 from flaskapp import db
 from flaskapp.models import Student, Instructor, Belt
 from flaskapp.instructor.form import formEditInstructor, formSearchStudent
+from flaskapp.attendance.form import formAdd_DelStudent
 
 instructor_bp = Blueprint('instructor', __name__,
                            template_folder='templates', static_folder='static')
@@ -14,8 +15,13 @@ instructor_bp = Blueprint('instructor', __name__,
 @instructor_bp.route('/instructorViewer', methods=('GET', 'POST'))
 def instructorViewer():
     instructor_list = db.session.query(Instructor).all()
+
+    form = formAdd_DelStudent(dojo_id=None, belt_id=int(1))
+    belt_list = db.session.query(Belt.id, Belt.beltName).all()
+    form.belt_id.choices = [(belt.id, belt.beltName) for belt in belt_list]
+
     return render_template('instructor/instructorViewer.html',
-                           instructor_list=instructor_list)
+                           instructor_list=instructor_list, form=form)
 
 
 #todo show classes in this page as well

@@ -21,7 +21,19 @@ class formLogin(FlaskForm):
 
 
 from flask_security.forms import ConfirmRegisterForm
-
+from flaskapp.models import Student
+from wtforms.validators import ValidationError
 class ExtendedRegisterForm(ConfirmRegisterForm):
-    firstName = StringField('First Name', [DataRequired()])
-    lastName = StringField('Last Name', [DataRequired()])
+    membership_id = StringField('Membership ID', [DataRequired()])
+
+    def validate_membership_id(self, field):
+
+        # extract the membership data give
+        membership = field.data
+
+        # check against database
+        registred_student = Student.query.filter_by(membership=membership).first()
+        if registred_student is None:
+            # the "student" is not registered thus not authorized 
+            # then the given "email" is not validated
+            raise ValidationError('Membership ID does not exit, please contact HQ')

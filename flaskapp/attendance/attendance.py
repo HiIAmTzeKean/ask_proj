@@ -181,6 +181,16 @@ def attendanceAdd_DelStudent(add_del):
     if add_del == 'addNew':
         form = formAdd_DelStudent(request.form)
         try:
+            if request.args.get('redirectInstructor') == 'True':
+                record = Instructor(None,None,None)
+                form.populate_obj(record)
+                if form.dateOfBirth_month.data and form.dateOfBirth_year.data:
+                    date_str = '01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data)
+                    record.dateOfBirth = datetime.datetime.strptime(date_str, '%d%m%Y').date()
+                db.session.add(record)
+                db.session.commit()
+                return redirect(url_for('instructor.instructorViewer'))
+
             record = Student(None,None,None)
             form.populate_obj(record)
             if form.dateOfBirth_month.data and form.dateOfBirth_year.data:
@@ -189,8 +199,8 @@ def attendanceAdd_DelStudent(add_del):
             db.session.add(record)
             db.session.commit()
 
-            # Add student record to enrollemnt per dojo_id
-            insert_newEnrollment(record.id, record.dojo_id)
+            if record.dojo_id:
+                insert_newEnrollment(record.id, record.dojo_id)
         except IntegrityError as e:
             app.logger.info(str(e))
             flash('Error: membership already exist!!')
