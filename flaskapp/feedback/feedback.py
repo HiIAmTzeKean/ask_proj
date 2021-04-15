@@ -17,33 +17,41 @@ feedback_bp = Blueprint('feedback', __name__,
 def feedbackViewer():
     survey_id = 1
     questionids = db.session.query(SurveyQuestion.question_id).filter(SurveyQuestion.survey_id == survey_id).all()
-    questions = db.session.query(Question.name).filter(Question.id.in_(questionids)).all()
-    questions = [r for r, in questions]
+    questionids = [r[0] for r in questionids]
+    questions = db.session.query(Question.name,Question.id).filter(Question.id.in_(questionids)).all()
+    # questions = [r for r, in questions]
     records = db.session.query(Answer.studentAnswer).filter(Answer.survey_id==survey_id).all()
-    if records == None:
-        flash('No feed back yet!')
+
+    if records == []:
+        flash('No feedback yet!')
         return redirect(url_for('auth.authUserViewer'))
     records = next(zip(*records))
 
-    temp = []
-    for i in records:
-        counter = []
-        holder = list(i.values())
-        for j in range(1,11):
-            counter.append(holder.count(str(j)))
-        temp.append(counter)
+    # holder = {}
+    # for questionRecord in questionids:
+    #     holder[str(questionRecord.question_id)]=[]
 
+    # for record in records:
+    #     for item in holder:
+    #         holder[item].append(int(record.get(item)))
+    holder = {}
+    for record in records:
+        for questionRecordID in questionids:
+            if str(questionRecordID) not in holder:
+                holder[str(questionRecordID)]=[int(record.get(str(questionRecordID)))]
+                continue
+            holder[str(questionRecordID)].append(int(record.get(str(questionRecordID))))
+
+                
     # studentAnswer = {1:1, 2:1}
     # store each qn as {name: '', Ans: [1,2,3,4,..10] }
     answer_dict = {}
-    for ans,qn in zip(temp, questions):
-        answer_dict[qn] = ans
-    print(answer_dict)
-
+    for questionRecord in questions:
+        answer_dict[questionRecord.name] = holder.get(str(questionRecord.id))
+    
     # x axis 1-10
     # y axis count per score
     scale = [i for i in range(1,11)]
-    score = []
-    for item in answer_dict:
-        score.append(answer_dict[item])
+    questions = [r.name for r in questions]
+    
     return render_template("chart.html", scale=scale, answer_dict=answer_dict, questions=questions)

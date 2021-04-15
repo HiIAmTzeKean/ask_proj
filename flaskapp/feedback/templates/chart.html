@@ -5,26 +5,26 @@
 {% block scripts %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 <script>
-{% for question in questions %}
-    // Bar chart
-    var a{{ question|length }} = new Chart(document.getElementById('{{ question }}').getContext("2d"), {
-        type: 'bar',
-        data: {
-        labels: {{ scale }},
-        datasets: [{
-            label: "Score",
-            data: {{ answer_dict[question] }}
-            }]
-        },
-        options: {
-        legend: { display: false },
-        title: {
-            display: true,
-            text: '{{ question }}'
+    {% for question in questions %}
+        // Bar chart
+        var a{{ question|length }} = new Chart(document.getElementById('{{ question }}').getContext("2d"), {
+            type: 'bar',
+            data: {
+            labels: {{ scale }},
+            datasets: [{
+                label: "Score",
+                data: {{ answer_dict.get(question) }}
+                }]
+            },
+            options: {
+            legend: { display: false },
+            title: {
+                display: true,
+                text: '{{ question }}'
+                }
             }
-        }
-    });
-{% endfor %}
+        });
+    {% endfor %}
 </script>
 {% endblock %}
 
