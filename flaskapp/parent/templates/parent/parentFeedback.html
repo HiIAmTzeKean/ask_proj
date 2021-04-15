@@ -9,7 +9,7 @@
 {% block content %}
 <form action="{{ url_for('parent.parentFeedback') }}" method="POST">
     {{ form.hidden_tag() }}
-    {{ form.errors }}
+
     <div class='container'>
         <h2>
             Parents feedback form
@@ -17,6 +17,7 @@
 
         <p>
             Please complete the form below by rating the overall experience your child has!
+            Membership ID and date of birth is needed for verification purposes and to prevent spam entry.
         </p>
 
         <hr>
