@@ -68,6 +68,7 @@ def parentChartView(studentID, template):
                            lessonDone=lessonDone, myRemarks=myRemarks)
 
 
+# todo reset form after submit
 @parent_bp.route('/parentFeedback', methods=('GET', 'POST'))
 def parentFeedback():
     form = formQuestions(request.form)
@@ -76,16 +77,19 @@ def parentFeedback():
         date_str = '01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data)
         birthday_data = datetime.datetime.strptime(date_str, '%d%m%Y').date()
         # find out if student exist first
+
         if db.session.query(Student).filter_by(membership=form.membership.data, dateOfBirth=birthday_data).first() != None:
             answer_dict = {}
             for i in request.form:
                 if 'questions' in i:
                     answer_dict[i.lstrip('questions-')] = request.form[i]
-            record = Answer(date=form.date.data, studentAnswer=answer_dict, membership_id=form.membership.data, survey_question_id=request.cookies.get('survey_question_id'))
+            record = Answer(date=form.date.data, studentAnswer=answer_dict, membership_id=form.membership.data, survey_id=request.cookies.get('survey_id'))
             db.session.add(record)
             db.session.commit()
         
             flash('Thank you for the feedback!')
+            print(request.form)
+            request.form = {}
             return redirect(url_for('parent.parentIdentifyStudent'))
         flash('Sorry, but the Membership ID does not tally with the given birthday!')
 
@@ -105,6 +109,6 @@ def parentFeedback():
         else:
             questionBank[i.questionCategory] = [[i.id, i.name, i.questionType]]
 
-    resp = make_response(render_template('parentFeedback.html',questionBank=questionBank, form=form))
-    resp.set_cookie('survey_question_id', str(surveyRecord.survey_question[0].id))
+    resp = make_response(render_template('parentFeedback.html', questionBank=questionBank, form=form))
+    resp.set_cookie('survey_id', str(surveyRecord.id))
     return resp

@@ -210,6 +210,8 @@ class Survey(db.Model):
     isOpen = db.Column(db.Boolean, nullable=False, default=True)
     survey_question = db.relationship('SurveyQuestion', back_populates='survey', cascade="all, delete", passive_deletes=True)
 
+    answers = db.relationship('Answer', back_populates='survey')
+
     def __init__(self, name):
         self.name = name
 
@@ -240,8 +242,6 @@ class SurveyQuestion(db.Model):
     question_id = db.Column(db.Integer, db.ForeignKey('question.id', ondelete="CASCADE"))
     question = db.relationship('Question', back_populates='survey_question')
 
-    answers = db.relationship('Answer', back_populates='survey_question')
-
     def __init__(self, survey_id, question_id):
         self.survey_id = survey_id
         self.question_id = question_id
@@ -255,17 +255,17 @@ class Answer(db.Model):
     date = db.Column(db.Date, nullable=False)
     studentAnswer = db.Column(JSONB, nullable=False)
 
-    membership_id = db.Column(db.Text, db.ForeignKey('student.membership', ondelete="CASCADE"))
+    membership_id = db.Column(db.Text, db.ForeignKey('student.membership', ondelete="CASCADE"), nullable=False)
     student = db.relationship('Student', back_populates='answers')
 
-    survey_question_id = db.Column(db.Integer, db.ForeignKey('survey_question.id', ondelete="CASCADE"), primary_key=True)
-    survey_question = db.relationship('SurveyQuestion', back_populates='answers')
+    survey_id = db.Column(db.Integer, db.ForeignKey('survey.id', ondelete="CASCADE"), nullable=False)
+    survey = db.relationship('Survey', back_populates='answers')
 
-    def __init__(self, date, studentAnswer, membership_id, survey_question_id):
+    def __init__(self, date, studentAnswer, membership_id, survey_id):
         self.date = date
         self.studentAnswer = studentAnswer
         self.membership_id = membership_id
-        self.survey_question_id = survey_question_id
+        self.survey_id = survey_id
 
     def __repr__(self):
         return '<Answer {}>'.format(self.id)

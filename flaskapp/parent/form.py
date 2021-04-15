@@ -19,9 +19,9 @@ class formQuestion(FlaskForm):
 
 class formQuestions(FlaskForm):
     membership = StringField(label='Membership ID', validators=[DataRequired()])
-    dateOfBirth_month = SelectField(validators=[validators.Optional()], choices=[''] + [i for i in range(1,13)])
+    dateOfBirth_month = SelectField(validators=[validators.DataRequired()], choices=[''] + [i for i in range(1,13)])
     currentyear = int(datetime.date.today().year)
-    dateOfBirth_year = SelectField(validators=[validators.Optional()],choices=[''] + [i for i in range(currentyear,currentyear-100,-1)])
+    dateOfBirth_year = SelectField(validators=[validators.DataRequired()],choices=[''] + [i for i in range(currentyear,currentyear-100,-1)])
     date = DateField(label='Date', default=datetime.date.today(), validators=[DataRequired()])
 
     # multiple QN using field list

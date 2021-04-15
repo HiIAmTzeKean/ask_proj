@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Feedback review{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script>
+{% for question in questions %}
+    // Bar chart
+    var a{{ question|length }} = new Chart(document.getElementById('{{ question }}').getContext("2d"), {
+        type: 'bar',
+        data: {
+        labels: {{ scale }},
+        datasets: [{
+            label: "Score",
+            data: {{ answer_dict[question] }}
+            }]
+        },
+        options: {
+        legend: { display: false },
+        title: {
+            display: true,
+            text: '{{ question }}'
+            }
+        }
+    });
+{% endfor %}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex align-content-between flex-wrap">
+    {% for question in questions %}
+        <div class="p-1"><canvas id="{{question}}" width="300" height="300"></canvas></div>
+    {% endfor %}
+</div>
+
+
+{% endblock %}
