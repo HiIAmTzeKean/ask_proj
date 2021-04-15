@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
 
 {% block title %}Viewer{% endblock %}
+
 {% block content %}
 <div>
   <a href="{{ url_for('instructor.instructorSearchStudent') }}" class="btn btn-primary">Delete Student</a>
-  <a href="#" data-toggle="modal" data-target='#addStudent' class="btn btn-primary">Add New Student</a>
+  <a href="#" data-toggle="modal" data-target='#addStudent' class="btn btn-primary">Add New Instructor</a>
 </div>
+
+<hr>
 
 <table class="table">
     <thead class="thead-dark">

@@ -3,7 +3,11 @@
 {% block title %}Grade Performance{% endblock %}
 
 {% block content %}
-<h2>Grade {{ studentRecord.firstName }}</h2>
+<h3>Grade Student:</h3>
+<h3>
+  {{ studentRecord.firstName }}
+</h3>
+
 
 <form method="POST" action="{{ url_for('performance.performanceGradePerformance', student_id=studentRecord.id) }}">
 {{ form.hidden_tag() }}

@@ -28,10 +28,11 @@
           Admin Bar
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="{{ url_for('instructor.instructorViewer') }}">Instructors</a>
+          <a class="dropdown-item" href="{{ url_for('auth.authUserViewer') }}">Users</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="{{ url_for('dojo.dojoViewer') }}">Dojos</a>
-          <a class="dropdown-item" href="{{ url_for('auth.authUserViewer') }}">Users</a>
+          <a class="dropdown-item" href="{{ url_for('instructor.instructorViewer') }}">Instructors</a>
+          <a class="dropdown-item" href="{{ url_for('feedback.feedbackViewer') }}">Feedback</a>
         </div>
       </li>
       {% endif %}

@@ -59,9 +59,10 @@ def attendanceStatus():
         ### second form
         techniquesTaught = formAddTechniquesTaught()
         return render_template('attendance/attendanceStatus.html', dojoRecord=dojoRecord,
-            instructorRecord=currentLesson.instructor,
-            student_list=student_list, lessonRecord=lessonRecord, techniquesTaught=techniquesTaught,
-            catch_list=catchList(), lock_list=lockList())
+                                instructorRecord=currentLesson.instructor,
+                                student_list=student_list, lessonRecord=lessonRecord,
+                                techniquesTaught=techniquesTaught,
+                                catch_list=catchList(), lock_list=lockList())
 
     lessonRecord = Lesson(date=datetime.date.today(),
                           term=findTerm(datetime.date.today()),
@@ -149,6 +150,7 @@ def attendanceViewer():
                                     Student.membership,
                                     Student.firstName,
                                     Student.lastGrading,
+                                    Student.dateOfBirth,
                                     Belt.beltName,
                                     Enrollment.studentActive)\
             .filter(Student.belt_id == Belt.id)\
@@ -164,15 +166,14 @@ def attendanceViewer():
         lastLessonTechniques={}
 
     # ---- get number of student with null membership
-    missingMembership_list = []
+    missingBirthday = []
     for studentRecord in student_list:
-        if studentRecord.membership:
-            continue
-        missingMembership_list.append([studentRecord.id, studentRecord.firstName])
+        if not studentRecord.dateOfBirth:
+            missingBirthday.append([studentRecord.id, studentRecord.firstName])
 
     return render_template('attendance/attendanceViewer.html', student_list=student_list,
                            dojoRecord=dojoRecord, instructorRecord=dojoRecord.instructor,
-                           lastLessonTechniques=lastLessonTechniques, missingMembership_list=missingMembership_list,
+                           lastLessonTechniques=lastLessonTechniques, missingBirthday=missingBirthday,
                            form=form)
 
 

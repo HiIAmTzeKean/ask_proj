@@ -36,7 +36,9 @@
                       &#8230;
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a href="{{ url_for('performance.performanceChartView', student_id=student.id) }}" class="dropdown-item">Performance</a>
+                        {% if current_user.has_role('Admin') or current_user.has_role('HQ') %}
+                            <a href="{{ url_for('performance.performanceChartView', student_id=student.id) }}" class="dropdown-item">Performance</a>
+                        {% endif %}
                         <a href="{{ url_for('performance.performanceRemarks', student_id=student.id) }}" class="dropdown-item">Remarks</a>
                     </div>
                 </div>
