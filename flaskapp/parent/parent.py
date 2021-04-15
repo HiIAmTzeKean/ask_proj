@@ -54,11 +54,10 @@ def parentGradingDates():
 
 @parent_bp.route('/parentChartView/<studentID>', methods=['GET'])
 @mobile_template('{mobile/}parentChartView.html')
-def parentChartView(studentID, template):
+def parentChartView(studentID,template):
     studentID = messageDecode(studentID)
-
     studentRecord,technique,ukemi,discipline,coordination,knowledge,spirit,dateLabel,countdown,lessonDone,myRemarks=\
-        helper_ChartView(request.cookies.get('dojo_id'),studentID)
+        helper_ChartView(studentID)
 
     return render_template(template,
                            studentRecord=studentRecord,

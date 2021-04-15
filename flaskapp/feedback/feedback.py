@@ -38,9 +38,11 @@ def feedbackViewer():
     for record in records:
         for questionRecordID in questionids:
             if str(questionRecordID) not in holder:
-                holder[str(questionRecordID)]=[int(record.get(str(questionRecordID)))]
+                holder[str(questionRecordID)] = [0 for i in range(10)]
+                holder[str(questionRecordID)][int(record.get(str(questionRecordID)))-1]+=1
                 continue
-            holder[str(questionRecordID)].append(int(record.get(str(questionRecordID))))
+            # holder[str(questionRecordID)].append(int(record.get(str(questionRecordID))))
+            holder[str(questionRecordID)][int(record.get(str(questionRecordID)))-1]+=1
 
                 
     # studentAnswer = {1:1, 2:1}
@@ -48,7 +50,7 @@ def feedbackViewer():
     answer_dict = {}
     for questionRecord in questions:
         answer_dict[questionRecord.name] = holder.get(str(questionRecord.id))
-    
+
     # x axis 1-10
     # y axis count per score
     scale = [i for i in range(1,11)]

@@ -16,7 +16,7 @@ from flaskapp.attendance.form import (formAdd_DelStudent, formDojoSelection,
                                       formAddTechniquesTaught)
 from flaskapp.attendance.helpers import findTerm, str_to_date, catchList, lockList, drillsList
 from flaskapp.auth.auth import dojo_required
-from flask_security.decorators import login_required
+from flask_security.decorators import login_required,roles_accepted
 from flaskapp.models import (Dojo, Enrollment, Instructor, Lesson, Student,
                              StudentStatus, Belt)
 
@@ -88,6 +88,7 @@ def attendanceStatus():
 
 
 @attendance_bp.route('/attendanceStatusSummary', methods=('GET', 'POST'))
+@roles_accepted('Admin', 'HQ', 'Instructor', 'Helper')
 def attendanceStatusSummary():
     dojo_id = request.cookies.get('dojo_id')
     # appending techniques taught to db record
@@ -111,6 +112,7 @@ def attendanceStatusSummary():
 
 
 @attendance_bp.route('/attendancePresent', methods=('GET', 'POST'))
+@roles_accepted('Admin', 'HQ', 'Instructor', 'Helper')
 def attendancePresent():  # Route to change studentStatus.status
     import ast
     status = ast.literal_eval(request.form['status'])
@@ -123,6 +125,7 @@ def attendancePresent():  # Route to change studentStatus.status
 
 
 @attendance_bp.route('/attendanceLessonCancel', methods=('GET', 'POST'))
+@roles_accepted('Admin', 'HQ', 'Instructor', 'Helper')
 def attendanceLessonCancel():
     dojo_id = request.cookies.get('dojo_id')
     lessonRecord = db.session.query(Lesson).filter_by(dojo_id=dojo_id).order_by(Lesson.id.desc()).first()
@@ -178,6 +181,7 @@ def attendanceViewer():
 
 
 @attendance_bp.route('/attendanceAdd_DelStudent/<string:add_del>', methods=('GET', 'POST'))
+@roles_accepted('Admin', 'HQ', 'Instructor', 'Helper')
 def attendanceAdd_DelStudent(add_del):
     if add_del == 'addNew':
         form = formAdd_DelStudent(request.form)
@@ -214,6 +218,7 @@ def attendanceAdd_DelStudent(add_del):
 
 
 @attendance_bp.route('/attendanceRemoveStudent/<int:student_id>/<int:dojo_id>', methods=('GET', 'POST'))
+@roles_accepted('Admin', 'HQ', 'Instructor', 'Helper')
 def attendanceRemoveStudent(student_id,dojo_id):
     # remove relation student to enrollment
     delete_studentEnrollmentRecord(student_id, dojo_id)
@@ -251,6 +256,7 @@ def attendanceSearchStudent():
 
 # todo error handler for not unique membership
 @attendance_bp.route('/attendanceEditStudent/<int:student_id>', methods=('GET', 'POST'))
+@roles_accepted('Admin', 'HQ', 'Instructor', 'Helper')
 def attendanceEditStudent(student_id): 
     studentRecord = get_studentRecord(student_id)
     enrollementRecord = db.session.query(Enrollment.dojo_id).\
@@ -285,6 +291,7 @@ def attendanceEditStudent(student_id):
 
 
 @attendance_bp.route('/attendanceEditDojo/<int:dojoID>', methods=('GET', 'POST'))
+@roles_accepted('Admin', 'HQ', 'Instructor')
 def attendanceEditDojo(dojoID): # edit dojo particulars
     dojoRecord = db.session.query(Dojo).filter(Dojo.id==dojoID).first()
     form = formEditDojo(obj=dojoRecord)
@@ -301,6 +308,7 @@ def attendanceEditDojo(dojoID): # edit dojo particulars
 
 
 @attendance_bp.route('/attendanceAct_DeactEnrollment', methods=('GET', 'POST'))
+@roles_accepted('Admin', 'HQ', 'Instructor', 'Helper')
 def attendanceAct_DeactEnrollment():
     student_id = int(request.args.get('student_id'))
     dojo_id = int(request.args.get('dojo_id'))

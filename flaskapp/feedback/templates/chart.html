@@ -10,19 +10,24 @@
         var a{{ question|length }} = new Chart(document.getElementById('{{ question }}').getContext("2d"), {
             type: 'bar',
             data: {
-            labels: {{ scale }},
-            datasets: [{
-                label: "Score",
-                data: {{ answer_dict.get(question) }}
-                }]
-            },
+                labels: {{ scale }},
+                datasets: [{
+                    label: "Count",
+                    data: {{ answer_dict.get(question) }}
+                    }]
+                },
             options: {
-            legend: { display: false },
-            title: {
-                display: true,
-                text: '{{ question }}'
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: '{{ question.strip() }}'
+                    },
+                scales: {
+                        y: {
+                            min: 1
+                        }
+                    }
                 }
-            }
         });
     {% endfor %}
 </script>
