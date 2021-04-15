@@ -128,7 +128,7 @@ def performanceGradeNext(student_id):
 @mobile_template('{mobile/}performanceChartView.html')
 def performanceChartView(student_id, template):
     studentRecord,technique,ukemi,discipline,coordination,knowledge,spirit,dateLabel,countdown,lessonDone,myRemarks=\
-        helper_ChartView(request.cookies.get('dojo_id'),student_id)
+        helper_ChartView(student_id,request.cookies.get('dojo_id'))
     return render_template(template,
                            studentRecord=studentRecord,
                            technique=technique, ukemi=ukemi, discipline=discipline,

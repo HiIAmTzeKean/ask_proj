@@ -4,7 +4,7 @@ from flaskapp.models import (Lesson, Student, StudentRemarks,
 import datetime
 
 
-def helper_ChartView(dojo_id, student_id):
+def helper_ChartView(student_id, dojo_id=None):
     # ---- get student details
     studentRecord = db.session.query(Student.firstName,
                                      Student.lastGrading,
@@ -13,19 +13,33 @@ def helper_ChartView(dojo_id, student_id):
                         .filter(Student.id==student_id, Student.belt_id == Belt.id).first()
 
     # ---- get performance details
-    subquery = db.session.query(StudentStatus.technique,
-                                StudentStatus.ukemi,
-                                StudentStatus.discipline,
-                                StudentStatus.coordination,
-                                StudentStatus.knowledge,
-                                StudentStatus.spirit,
-                                Lesson.date).\
-                filter(StudentStatus.student_id == student_id,
-                        StudentStatus.status == True,
-                        StudentStatus.evaluated == True,
-                        StudentStatus.lesson_id == Lesson.id,
-                        Lesson.dojo_id == dojo_id).\
-                order_by(Lesson.date.asc()).limit(10).all()
+    if dojo_id != None:
+        subquery = db.session.query(StudentStatus.technique,
+                                    StudentStatus.ukemi,
+                                    StudentStatus.discipline,
+                                    StudentStatus.coordination,
+                                    StudentStatus.knowledge,
+                                    StudentStatus.spirit,
+                                    Lesson.date).\
+                    filter(StudentStatus.student_id == student_id,
+                            StudentStatus.status == True,
+                            StudentStatus.evaluated == True,
+                            StudentStatus.lesson_id == Lesson.id,
+                            Lesson.dojo_id == dojo_id).\
+                    order_by(Lesson.date.asc()).limit(10).all()
+    else:
+        subquery = db.session.query(StudentStatus.technique,
+                                    StudentStatus.ukemi,
+                                    StudentStatus.discipline,
+                                    StudentStatus.coordination,
+                                    StudentStatus.knowledge,
+                                    StudentStatus.spirit,
+                                    Lesson.date).\
+                    filter(StudentStatus.student_id == student_id,
+                            StudentStatus.status == True,
+                            StudentStatus.evaluated == True,
+                            StudentStatus.lesson_id == Lesson.id).\
+                    order_by(Lesson.date.asc()).limit(10).all()
 
     technique,ukemi,discipline,coordination,knowledge,spirit,dateLabel = processChartRecords(subquery)
     dateLabel = processDateLabel(dateLabel)
