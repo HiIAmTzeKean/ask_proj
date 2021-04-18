@@ -18,6 +18,6 @@ lxml
 matplotlib
 bokeh
 gunicorn
-
+django
 # pip install git+https://github.com/mattupstate/flask-security
 # security patch issue
