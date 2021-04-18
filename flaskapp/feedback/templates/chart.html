@@ -5,9 +5,11 @@
 {% block scripts %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 <script>
+    
     {% for question in questions %}
         // Bar chart
-        var a{{ question|length }} = new Chart(document.getElementById('{{ question }}').getContext("2d"), {
+        var {{ question|remove_punctuations }} = 
+        new Chart(document.getElementById('{{ question|remove_punctuations }}').getContext("2d"), {
             type: 'bar',
             data: {
                 labels: {{ scale }},
@@ -20,12 +22,7 @@
                 legend: { display: false },
                 title: {
                     display: true,
-                    text: '{{ question.strip() }}'
-                    },
-                scales: {
-                        y: {
-                            min: 1
-                        }
+                    text: '{{ question }}'
                     }
                 }
         });
@@ -33,12 +30,36 @@
 </script>
 {% endblock %}
 
-{% block content %}
-<div class="d-flex align-content-between flex-wrap">
+
+
+{% block content %}  
     {% for question in questions %}
-        <div class="p-1"><canvas id="{{question}}" width="300" height="300"></canvas></div>
+        {% if not questions|check_next(question) and questions.index(question)%2 == 0 %}
+        <div class="container">
+            <div class="row">
+                <div class="col-sm">
+                    <p>{{ question }}</p>
+                    <canvas id="{{ question|remove_punctuations }}" width="400" height="400"></canvas>
+                </div>
+                <div class="col-sm">
+                </div>
+            </div>
+        </div>
+        {% elif questions.index(question)%2 == 0 %}
+            <div class="container">
+            <div class="row">
+                <div class="col-sm">
+                    <p>{{ question }}</p>
+                    <canvas id="{{ question|remove_punctuations }}" width="400" height="400"></canvas>
+                </div>
+        {% else %}
+                <div class="col-sm">
+                    <p>{{ question }}</p>
+                    <canvas id="{{ question|remove_punctuations }}" width="400" height="400"></canvas>
+                </div>
+            </div>
+            </div>
+            <hr>   
+        {% endif %}
     {% endfor %}
-</div>
-
-
 {% endblock %}

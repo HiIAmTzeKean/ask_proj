@@ -55,5 +55,4 @@ def feedbackViewer():
     # y axis count per score
     scale = [i for i in range(1,11)]
     questions = [r.name for r in questions]
-    
     return render_template("chart.html", scale=scale, answer_dict=answer_dict, questions=questions)

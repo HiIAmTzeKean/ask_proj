@@ -25,7 +25,7 @@ db = SQLAlchemy(app)
 from flask_migrate import Migrate
 migrate = Migrate(app, db)
 
-# import models 
+# import models
 from flaskapp.models import User, Role
 
 from flaskapp.auth.form import ExtendedRegisterForm
@@ -64,13 +64,15 @@ app.register_blueprint(auth.auth_bp)
 
 app.add_url_rule('/', endpoint='security.login')
 
-from flask_mail import Message
-@app.route("/lol")
-def lol():
-    msg = Message("Hello",recipients=["ngtzekean600@gmail.com"])
-    msg.body = "Hello Flask message sent from Flask-Mail"
-    mail.send(msg)
-    return 'done'
+from .util import filters
+
+# from flask_mail import Message
+# @app.route("/lol")
+# def lol():
+#     msg = Message("Hello",recipients=["ngtzekean600@gmail.com"])
+#     msg.body = "Hello Flask message sent from Flask-Mail"
+#     mail.send(msg)
+#     return 'done'
 
 @app.errorhandler(404)
 def handle_404(e):
