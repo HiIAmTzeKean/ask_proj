@@ -8,14 +8,14 @@
   <div class="carousel-inner">
     <div class="carousel-item active">
       <span class="border border-light">
-        <img src="{{ url_for('parent.static', filename='AikidoImage1.jpg') }}" class="d-block w-100" style="height:30vh%; object-fit:cover" alt="Aikdio Image">
+        <img src="{{ url_for('static', filename='AikidoImage1.jpg') }}" class="d-block w-100" style="height:30vh%; object-fit:cover" alt="Aikdio Image">
       </span>
     </div>
 
     {% for i in range(2,11) %}
     <div class="carousel-item">
       <span class="border border-light">
-        <img src="{{ url_for('parent.static', filename='AikidoImage{}.jpg'.format(i)) }}" class="d-block w-100" style="height:30vh%; object-fit:cover" alt="Aikdio Image">
+        <img src="{{ url_for('static', filename='AikidoImage{}.jpg'.format(i)) }}" class="d-block w-100" style="height:30vh%; object-fit:cover" alt="Aikdio Image">
       </span>
     </div>
     {% endfor %}

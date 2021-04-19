@@ -6,6 +6,33 @@
 {% block content %}
 <h4>Login Portal</h4>
 
+<div id="carouselFade" class="carousel slide carousel-fade" data-ride="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <span class="border border-light">
+        <img src="{{ url_for('static', filename='AikidoImage1.jpg') }}" class="d-block w-100" style="height:30vh%; object-fit:cover" alt="Aikdio Image">
+      </span>
+    </div>
+
+    {% for i in range(2,11) %}
+    <div class="carousel-item">
+      <span class="border border-light">
+        <img src="{{ url_for('static', filename='AikidoImage{}.jpg'.format(i)) }}" class="d-block w-100" style="height:30vh%; object-fit:cover" alt="Aikdio Image">
+      </span>
+    </div>
+    {% endfor %}
+  </div>
+
+  <a class="carousel-control-prev" href="#carouselFade" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#carouselFade" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+
 <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
 <div class="container-fluid">
   {{ login_user_form.hidden_tag() }}
