@@ -155,6 +155,7 @@ def attendanceViewer():
                                     Student.lastGrading,
                                     Student.dateOfBirth,
                                     Belt.beltName,
+                                    Belt.beltColor,
                                     Enrollment.studentActive)\
             .filter(Student.belt_id == Belt.id)\
             .filter(Enrollment.dojo_id==dojo_id, Enrollment.student_id == Student.id)\
