@@ -190,6 +190,7 @@ class Lesson(db.Model):
 class Belt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     beltName = db.Column(db.Text, nullable=False)
+    beltColor = db.Column(db.Text, nullable=True)
     lessonNeeded = db.Column(db.Integer, nullable=False)
     timespanNeeded = db.Column(db.Integer, nullable=False) # months to wait
 

@@ -9,6 +9,7 @@ def helper_ChartView(student_id, dojo_id=None):
     studentRecord = db.session.query(Student.firstName,
                                      Student.lastGrading,
                                      Belt.beltName,
+                                     Belt.beltColor,
                                      Belt.timespanNeeded)\
                         .filter(Student.id==student_id, Student.belt_id == Belt.id).first()
 
