@@ -111,3 +111,29 @@ def parentFeedback():
     resp = make_response(render_template('parentFeedback.html', questionBank=questionBank, form=form))
     resp.set_cookie('survey_id', str(surveyRecord.id))
     return resp
+
+@parent_bp.route("/lol")
+def lol():
+    studentstatues = db.session.query(StudentStatus).all()
+    for i in studentstatues:
+        i.student_membership = i.student.membership
+    db.session.commit()
+    studentenrollemnt = db.session.query(Enrollment).all()
+    for i in studentenrollemnt:
+        i.student_membership = i.student.membership
+    db.session.commit()
+    Studentremarks = db.session.query(StudentRemarks).all()
+    for i in Studentremarks:
+        i.student_membership = i.student.membership
+    db.session.commit() 
+
+    instr = db.session.query(Instructor).all()
+    for i in instr:
+        i.student_membership = i.membership
+    db.session.commit()
+
+    lessons = db.session.query(Lesson).all()
+    for i in lessons:
+        i.instructor_membership = i.instructor.membership
+    db.session.commit()
+    return 'done'
