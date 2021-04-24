@@ -84,6 +84,7 @@ class Student(db.Model):
 class Instructor(Student):
     __mapper_args__ = {'polymorphic_identity': 'instructor'}
     id = db.Column(db.Integer, db.ForeignKey('student.id'), primary_key=True)
+    student_membership = db.Column(db.Text, nullable=True)
 
     lesson = db.relationship('Lesson', back_populates='instructor')
     dojo = db.relationship('Dojo', back_populates='instructor')
@@ -105,19 +106,20 @@ class StudentStatus(db.Model):
     spirit = db.Column(db.Integer,  default=5)
 
     student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="CASCADE"), primary_key=True)
+    student_membership = db.Column(db.Text, nullable=True)
     student = db.relationship('Student', back_populates='studentStatus')
 
     lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id', ondelete="CASCADE"), primary_key=True)
     lesson = db.relationship('Lesson', back_populates='studentStatus')
     
     
-    def __init__(self, status, student_id, lesson_id):
+    def __init__(self, status, student_membership, lesson_id):
         self.status = status
-        self.student_id = student_id
+        self.student_membership = student_membership
         self.lesson_id = lesson_id
 
     def __repr__(self):
-        return '<studentStatus {} {}>'.format(self.status, self.student_id)
+        return '<studentStatus {} {}>'.format(self.status, self.student_membership)
 
 
 class StudentRemarks(db.Model):
@@ -132,6 +134,7 @@ class StudentRemarks(db.Model):
     instructor = db.relationship('Instructor', back_populates='studentRemarks', foreign_keys=[instructor_id])
 
     student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="CASCADE"), primary_key=True)
+    student_membership = db.Column(db.Text, nullable=True)
     student = db.relationship('Student', back_populates='studentRemarks', foreign_keys=[student_id])
     
     def __init__(self, student_id, dojo_id, instructor_id, remarks, date):
@@ -149,6 +152,7 @@ class Enrollment(db.Model):
     studentActive = db.Column(db.Boolean, nullable=False, default=True) # active in class
     
     student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="CASCADE"), primary_key=True)
+    student_membership = db.Column(db.Text, nullable=True)
     student = db.relationship('Student', back_populates='enrollment')
 
     dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id', ondelete="CASCADE"), primary_key=True)
@@ -173,6 +177,7 @@ class Lesson(db.Model):
     dojo = db.relationship('Dojo', back_populates='lesson')
 
     instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id', ondelete="SET NULL"))
+    instructor_membership = db.Column(db.Text, nullable=True)
     instructor = db.relationship('Instructor', back_populates='lesson')
 
     studentStatus = db.relationship('StudentStatus', back_populates='lesson', cascade="all, delete", passive_deletes=True)

@@ -136,22 +136,3 @@ def performanceChartView(student_id, template):
                            spirit=spirit, dateLabel=dateLabel, countdown=countdown,
                            lessonDone=lessonDone, myRemarks=myRemarks)
 
-
-@performance_bp.route('/performanceBokeh/<student_id>', methods=('GET', 'POST'))
-def performanceBokeh(student_id):
-    from bokeh.io import output_file, show
-    from bokeh.layouts import gridplot
-    from bokeh.plotting import figure
-    import os
-    filename = os.path.join(app.root_path, str(url_for('performance.static', filename='test.html'))[1:])
-    output_file(filename)
-
-    p = figure(plot_width=400,plot_height=400,x_axis_type='datetime')
-    p.line(y =  [i for i in range(20)], x = [i for i in range(20)], color="navy")
-    p2 = figure(plot_width=400,plot_height=400,x_axis_type='datetime')
-    p2.line(y =  [i for i in range(20)], x = [i for i in range(20)], color="navy")
-    p3 = figure(plot_width=400,plot_height=400,x_axis_type='datetime')
-    p3.line(y =  [i for i in range(20)], x = [i for i in range(20)], color="navy")
-    grid = gridplot([[p, p3], [None, p2]], plot_width=250, plot_height=250)
-    show(grid)
-    return 'h'

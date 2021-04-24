@@ -5,7 +5,6 @@ from flask import (Blueprint, flash, g, make_response, redirect,
                    render_template, request, url_for)
 from flaskapp import app, db
 from flaskapp.attendance.db_method import (delete_studentEnrollmentRecord,
-                                           get_studentRecord,
                                            insert_newEnrollment,
                                            insert_studentStausRecord,
                                            update_Act_DeactEnrollment,
@@ -16,7 +15,7 @@ from flaskapp.attendance.form import (formAdd_DelStudent, formDojoSelection,
                                       formAddTechniquesTaught)
 from flaskapp.attendance.helpers import findTerm, str_to_date, catchList, lockList, drillsList
 from flaskapp.auth.auth import dojo_required
-from flask_security.decorators import login_required,roles_accepted
+from flask_security.decorators import login_required, roles_accepted
 from flaskapp.models import (Dojo, Enrollment, Instructor, Lesson, Student,
                              StudentStatus, Belt)
 
@@ -77,10 +76,10 @@ def attendanceStatus():
         form.populate_obj(lessonRecord)
         db.session.add(lessonRecord)
         db.session.commit()
-        studentId_list = db.session.query(Enrollment.student_id).\
+        studentMembership_list = db.session.query(Enrollment.student_membership).\
                         filter_by(dojo_id=dojo_id, studentActive=True).all()  # create record for all students in that dojo
-        for studentId in studentId_list:
-            insert_studentStausRecord(status=False,student_id=studentId[0],lesson_id=lessonRecord.id) # mark them all as absent
+        for studentMembership in studentMembership_list:
+            insert_studentStausRecord(status=False, student_membership=studentMembership[0], lesson_id=lessonRecord.id) # mark them all as absent
         return redirect(url_for('attendance.attendanceStatus'))
 
     return render_template('attendance/PreattendanceStatus.html',
@@ -116,10 +115,10 @@ def attendanceStatusSummary():
 def attendancePresent():  # Route to change studentStatus.status
     import ast
     status = ast.literal_eval(request.form['status'])
-    student_id = int(request.form['student_id'])
+    student_membership = int(request.form['student_membership'])
     lesson_id = int(request.form['lesson_id'])
-    update_attendancePresent(status, student_id, lesson_id)
-    studentstatus = db.session.query(StudentStatus).filter_by(lesson_id = lesson_id, student_id = student_id).first()
+    update_attendancePresent(status, student_membership, lesson_id)
+    studentstatus = db.session.query(StudentStatus).filter_by(lesson_id = lesson_id, student_membership = student_membership).first()
     lessonRecord = db.session.query(Lesson.id).filter_by(id=lesson_id).first()
     return render_template('attendance/section.html', studentstatus=studentstatus, lessonRecord=lessonRecord)
 
@@ -259,7 +258,7 @@ def attendanceSearchStudent():
 @attendance_bp.route('/attendanceEditStudent/<int:student_id>', methods=('GET', 'POST'))
 @roles_accepted('Admin', 'HQ', 'Instructor', 'Helper')
 def attendanceEditStudent(student_id): 
-    studentRecord = get_studentRecord(student_id)
+    studentRecord = db.session.query(Student).filter_by(id=student_id).first()
     enrollementRecord = db.session.query(Enrollment.dojo_id).\
                         filter_by(student_id=student_id).first()  # extract dojo student is currently from
     if studentRecord.dateOfBirth:

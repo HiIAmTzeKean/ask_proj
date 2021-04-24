@@ -66,14 +66,6 @@ app.add_url_rule('/', endpoint='security.login')
 
 from .util import filters
 
-# from flask_mail import Message
-# @app.route("/lol")
-# def lol():
-#     msg = Message("Hello",recipients=["ngtzekean600@gmail.com"])
-#     msg.body = "Hello Flask message sent from Flask-Mail"
-#     mail.send(msg)
-#     return 'done'
-
 @app.errorhandler(404)
 def handle_404(e):
     path = request.path

@@ -39,18 +39,18 @@
         </thead>
         <tbody>
             {% for studentstatus in student_list %}
-            <tr id="section{{ studentstatus.student_id }}">
+            <tr id="section{{ studentstatus.student_membership }}">
                 <td>{{ studentstatus.student.firstName }}</td>
                 <td>{{ studentstatus.status }}</td>
 
                 {% if studentstatus.status != True %}
                 <td colspan="2" class="table-danger">
-                    <button class="btn btn-success updateButton" student_id="{{ studentstatus.student_id }}"
+                    <button class="btn btn-success updateButton" student_membership="{{ studentstatus.student_membership }}"
                         lesson_id="{{ lessonRecord.id }}" status="True">Mark present</button>
                 </td>
                 {% else %}
                 <td colspan="2" class="table-success">
-                    <button class="btn btn-danger updateButton" student_id={{ studentstatus.student_id }} lesson_id={{
+                    <button class="btn btn-danger updateButton" student_membership={{ studentstatus.student_membership }} lesson_id={{
                         lessonRecord.id }} status="False">Mark absent</button>
                 </td>
                 {% endif %}
@@ -67,7 +67,7 @@
     $(document).ready(function () {
         $(document).on('click', '.updateButton', function () {
             var csrf_token = "{{ csrf_token() }}";
-            var student_id = $(this).attr('student_id');
+            var student_membership = $(this).attr('student_membership');
             var status = $(this).attr('status');
             var lesson_id = $(this).attr('lesson_id');
 
@@ -75,10 +75,10 @@
                 url: "{{ url_for('attendance.attendancePresent')}}",
                 type: "POST",
                 headers: { "X-CSRFToken": csrf_token, },
-                data: { student_id: student_id, status: status, lesson_id: lesson_id },
+                data: { student_membership: student_membership, status: status, lesson_id: lesson_id },
                 success: function (data) {
-                    $('#section' + student_id).fadeOut(100).fadeIn(100)
-                    $('#section' + student_id).html(data)
+                    $('#section' + student_membership).fadeOut(100).fadeIn(100)
+                    $('#section' + student_membership).html(data)
                 }
             });
         });
