@@ -5,7 +5,7 @@ from flask import (Blueprint, flash, redirect, make_response,
                    render_template, request, url_for)
 from flask_mobility.decorators import mobile_template
 from flaskapp import db, app
-from flaskapp.models import (Student, StudentRemarks, Answer,
+from flaskapp.models import (Student, StudentRemarks, Answer, Enrollment, Instructor,
                              StudentStatus, Belt, Lesson, Survey,SurveyQuestion,Question)
 from flaskapp.parent.form import formStudentIdentifier, formQuestions
 from flaskapp.performance.helper import helper_ChartView
@@ -23,7 +23,9 @@ def parentIdentifyStudent():
     if form.validate_on_submit():
         try:
             studentRecord = db.session.query(Student.id).\
-                filter_by(membership = form.membership.data).one()
+                filter_by(membership = form.membership.data,
+                dateOfBirth = datetime.datetime.strptime('01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data), '%d%m%Y').date()).\
+            one()
         except NoResultFound:
 
             flash('Membership ID is not valid, please contact instructor incharge!')
