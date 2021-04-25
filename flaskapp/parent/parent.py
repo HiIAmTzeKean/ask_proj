@@ -5,7 +5,7 @@ from flask import (Blueprint, flash, redirect, make_response,
                    render_template, request, url_for)
 from flask_mobility.decorators import mobile_template
 from flaskapp import db, app
-from flaskapp.models import (Student, StudentRemarks, Answer, Enrollment, Instructor,
+from flaskapp.models import (Student, StudentRemarks, Answer, Enrollment, Instructor, Dojo,
                              StudentStatus, Belt, Lesson, Survey,SurveyQuestion,Question)
 from flaskapp.parent.form import formStudentIdentifier, formQuestions
 from flaskapp.performance.helper import helper_ChartView
@@ -124,9 +124,11 @@ def lol():
     for i in studentenrollemnt:
         i.student_membership = i.student.membership
     db.session.commit()
+
     Studentremarks = db.session.query(StudentRemarks).all()
     for i in Studentremarks:
         i.student_membership = i.student.membership
+        i.instructor_membership = i.instructor.membership
     db.session.commit() 
 
     instr = db.session.query(Instructor).all()
@@ -138,4 +140,11 @@ def lol():
     for i in lessons:
         i.instructor_membership = i.instructor.membership
     db.session.commit()
+
+    Dojos = db.session.query(Dojo).all()
+    for i in Dojos:
+        i.instructor_membership = i.instructor.membership
+    db.session.commit()
+
+
     return 'done'

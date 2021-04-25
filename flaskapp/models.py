@@ -35,6 +35,7 @@ class Dojo(db.Model):
     name = db.Column(db.Text, nullable=False)
     location = db.Column(db.Text, nullable=False)
     instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id', ondelete="SET NULL"))
+    instructor_membership = db.Column(db.Text, nullable=True)
 
     instructor = db.relationship('Instructor', back_populates='dojo')
     enrollment = db.relationship('Enrollment', back_populates='dojo', cascade="all, delete", passive_deletes=True)
@@ -131,6 +132,7 @@ class StudentRemarks(db.Model):
     dojo = db.relationship('Dojo', back_populates='studentRemarks')
 
     instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id', ondelete="SET NULL"))
+    instructor_membership = db.Column(db.Text, nullable=True)
     instructor = db.relationship('Instructor', back_populates='studentRemarks', foreign_keys=[instructor_id])
 
     student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="CASCADE"), primary_key=True)
