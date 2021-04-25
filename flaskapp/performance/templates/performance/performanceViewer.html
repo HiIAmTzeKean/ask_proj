@@ -24,11 +24,11 @@
     </thead>
     <tbody>
         {% for student in student_list %}
-        <tr id={{ student.id }}>
+        <tr id={{ student.membership }}>
             <td>{{ student.firstName }}</td>
             <td>{{ student.beltName }}</td>
             <td>
-                <a href="{{ url_for('performance.performanceGradePerformance', student_id=student.id) }}" class="btn btn-primary">Grade</a>
+                <a href="{{ url_for('performance.performanceGradePerformance', student_membership=student.membership) }}" class="btn btn-primary">Grade</a>
             </td>
             <td>
                 <div class="btn-group dropleft">
@@ -37,9 +37,9 @@
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         {% if current_user.has_role('Admin') or current_user.has_role('HQ') %}
-                            <a href="{{ url_for('performance.performanceChartView', student_id=student.id) }}" class="dropdown-item">Performance</a>
+                            <a href="{{ url_for('performance.performanceChartView', student_membership=student.membership) }}" class="dropdown-item">Performance</a>
                         {% endif %}
-                        <a href="{{ url_for('performance.performanceRemarks', student_id=student.id) }}" class="dropdown-item">Remarks</a>
+                        <a href="{{ url_for('performance.performanceRemarks', student_membership=student.membership) }}" class="dropdown-item">Remarks</a>
                     </div>
                 </div>
             </td>

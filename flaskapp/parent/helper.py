@@ -8,4 +8,4 @@ def messageEncode(message):
 def messageDecode(message):
     base64_bytes = message.encode('ascii')
     message_bytes = base64.b64decode(base64_bytes)
-    return int(message_bytes.decode('ascii'))
+    return str(message_bytes.decode('ascii'))

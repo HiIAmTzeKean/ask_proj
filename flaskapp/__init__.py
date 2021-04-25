@@ -3,6 +3,7 @@ from flask import Flask, render_template, request
 from flask_wtf.csrf import CSRFProtect
 from flask_security import Security, SQLAlchemyUserDatastore
 
+
 app = Flask(__name__, instance_relative_config=True,
             template_folder='templates')
 
@@ -69,7 +70,6 @@ from .util import filters
 @app.errorhandler(404)
 def handle_404(e):
     path = request.path
-
     # # go through each blueprint to find the prefix that matches the path
     # # can't use request.blueprint since the routing didn't match anything
     # for bp_name, bp in app.blueprints.items():

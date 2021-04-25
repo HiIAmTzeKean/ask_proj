@@ -78,7 +78,7 @@
               <div class="dropdown-menu" aria-labelledby="NotificationMenuButton">
               <!-- id in href, student firstName into view -->
                 {% for studentRecord in missingBirthday %}
-                  <a class="dropdown-item" href="{{ url_for('attendance.attendanceEditStudent', student_id=studentRecord[0]) }}">Birthday missing: {{ studentRecord[1] }}</a>
+                  <a class="dropdown-item" href="{{ url_for('attendance.attendanceEditStudent', student_membership=studentRecord[0]) }}">Birthday missing: {{ studentRecord[1] }}</a>
                 {% endfor %}
               </div>
             </div>
@@ -104,9 +104,9 @@
   <tbody>
     {% for student in student_list %}
     {% if student.studentActive == False %}
-      <tr class="table-secondary" id = {{ student.id }}>
+      <tr class="table-secondary" id = {{ student.membership }}>
     {% else %}
-      <tr id = {{ student.id }}>
+      <tr id = {{ student.membership }}>
     {% endif %}
       <th scope="col">{{ loop.index }}</th>
         <td>{{ student.firstName }}</td>
@@ -118,13 +118,13 @@
               &#8230;
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <a href="{{ url_for('attendance.attendanceEditStudent', student_id=student.id) }}"
+              <a href="{{ url_for('attendance.attendanceEditStudent', student_membership=student.membership) }}"
                 class="dropdown-item">Edit</a>
               {% if student.studentActive == True %}
-              <a href="{{ url_for('attendance.attendanceAct_DeactEnrollment', student_id=student.id, dojo_id=request.cookies.get('dojo_id'), act_deact='deact') }}"
+              <a href="{{ url_for('attendance.attendanceAct_DeactEnrollment', student_membership=student.membership, dojo_id=request.cookies.get('dojo_id'), act_deact='deact') }}"
                 class="dropdown-item">Deactivate</a>
               {% else %}
-              <a href="{{ url_for('attendance.attendanceAct_DeactEnrollment', student_id=student.id, dojo_id=request.cookies.get('dojo_id'), act_deact='act') }}"
+              <a href="{{ url_for('attendance.attendanceAct_DeactEnrollment', student_membership=student.membership, dojo_id=request.cookies.get('dojo_id'), act_deact='act') }}"
                 class="dropdown-item">Activate</a>
               {% endif %}
             </div>

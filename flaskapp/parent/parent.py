@@ -23,13 +23,14 @@ def parentIdentifyStudent():
     if form.validate_on_submit():
         try:
             studentRecord = db.session.query(Student.id).\
-                filter_by(membership = form.membership.data).one()
+                filter_by(membership = form.membership.data,
+                          dateOfBirth = datetime.datetime.strptime('01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data), '%d%m%Y').date()).\
+                one()
         except NoResultFound:
-
-            flash('Membership ID is not valid, please contact instructor incharge!')
+            flash('Membership ID and Birhtday combination is not valid, please try again!')
             return redirect(url_for('parent.parentIdentifyStudent'))
 
-        return redirect(url_for('parent.parentChartView', student_id=messageEncode(str(studentRecord.id))))
+        return redirect(url_for('parent.parentChartView', student_membership=messageEncode(str(form.membership.data))))
     return render_template('parentIdentifyStudent.html',form=form)
 
 
@@ -52,12 +53,12 @@ def parentGradingDates():
     return render_template('parentGradingDates.html', processedDetails=processedDetails)
 
 
-@parent_bp.route('/parentChartView/<student_id>', methods=['GET'])
+@parent_bp.route('/parentChartView/<student_membership>', methods=['GET'])
 @mobile_template('{mobile/}parentChartView.html')
-def parentChartView(student_id, template):
-    student_id = messageDecode(student_id)
+def parentChartView(student_membership, template):
+    student_membership = messageDecode(student_membership)
     studentRecord,technique,ukemi,discipline,coordination,knowledge,spirit,dateLabel,countdown,lessonDone,myRemarks=\
-        helper_ChartView(student_id)
+        helper_ChartView(student_membership)
 
     return render_template(template,
                            studentRecord=studentRecord,
@@ -82,7 +83,7 @@ def parentFeedback():
             for i in request.form:
                 if 'questions' in i:
                     answer_dict[i.lstrip('questions-')] = request.form[i]
-            record = Answer(date=form.date.data, studentAnswer=answer_dict, membership_id=form.membership.data, survey_id=request.cookies.get('survey_id'))
+            record = Answer(date=form.date.data, studentAnswer=answer_dict, student_membership=form.membership.data, survey_id=request.cookies.get('survey_id'))
             db.session.add(record)
             db.session.commit()
         
@@ -110,6 +111,7 @@ def parentFeedback():
     resp = make_response(render_template('parentFeedback.html', questionBank=questionBank, form=form))
     resp.set_cookie('survey_id', str(surveyRecord.id))
     return resp
+
 
 @parent_bp.route("/lol")
 def lol():

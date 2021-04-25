@@ -19,7 +19,7 @@ def get_dojoInstructorId(dojo_id):
     return found_id
 
 
-def insert_studentStausRecord(status, student_membership ,lesson_id):
+def insert_studentStausRecord(status, student_membership, lesson_id):
     lastRecord = db.session.query(StudentStatus).\
                 filter(StudentStatus.student_membership==student_membership, StudentStatus.status==True).\
                 order_by(StudentStatus.lesson_id.desc()).first()
@@ -55,15 +55,15 @@ def update_Act_DeactEnrollment(student_membership, dojo_id, act_deact):
     return
 
 
-def insert_newEnrollment(student_id,dojo_id):
-    record = Enrollment(student_id,dojo_id)
+def insert_newEnrollment(student_membership, dojo_id):
+    record = Enrollment(student_membership,dojo_id)
     db.session.add(record)
     db.session.commit()
     return
 
 
-def delete_studentEnrollmentRecord(student_id,dojo_id):
-    record = db.session.query(Enrollment).filter_by(student_id=student_id, dojo_id=dojo_id).first()
+def delete_studentEnrollmentRecord(student_membership,dojo_id):
+    record = db.session.query(Enrollment).filter_by(student_membership=student_membership, dojo_id=dojo_id).first()
     db.session.delete(record)
     db.session.commit()
     return

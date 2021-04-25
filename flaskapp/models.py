@@ -84,7 +84,6 @@ class Student(db.Model):
 class Instructor(Student):
     __mapper_args__ = {'polymorphic_identity': 'instructor'}
     id = db.Column(db.Integer, db.ForeignKey('student.id'), primary_key=True)
-    student_membership = db.Column(db.Text, nullable=True)
 
     lesson = db.relationship('Lesson', back_populates='instructor')
     dojo = db.relationship('Dojo', back_populates='instructor')
@@ -105,8 +104,7 @@ class StudentStatus(db.Model):
     knowledge = db.Column(db.Integer, default=5)
     spirit = db.Column(db.Integer,  default=5)
 
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="CASCADE"), primary_key=True)
-    student_membership = db.Column(db.Text, nullable=True)
+    student_membership = db.Column(db.Integer, db.ForeignKey('student.membership', ondelete="CASCADE",onupdate="CASCADE"), primary_key=True)
     student = db.relationship('Student', back_populates='studentStatus')
 
     lesson_id = db.Column(db.Integer, db.ForeignKey('lesson.id', ondelete="CASCADE"), primary_key=True)
@@ -133,37 +131,36 @@ class StudentRemarks(db.Model):
     instructor_id = db.Column(db.Integer, db.ForeignKey('instructor.id', ondelete="SET NULL"))
     instructor = db.relationship('Instructor', back_populates='studentRemarks', foreign_keys=[instructor_id])
 
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="CASCADE"), primary_key=True)
-    student_membership = db.Column(db.Text, nullable=True)
-    student = db.relationship('Student', back_populates='studentRemarks', foreign_keys=[student_id])
+    student_membership = db.Column(db.Integer, db.ForeignKey('student.membership', ondelete="CASCADE",onupdate="CASCADE"), primary_key=True)
+    student = db.relationship('Student', back_populates='studentRemarks', foreign_keys=[student_membership])
     
-    def __init__(self, student_id, dojo_id, instructor_id, remarks, date):
-        self.student_id = student_id
+    def __init__(self, student_membership, dojo_id, instructor_id, remarks, date):
+        self.student_membership = student_membership
         self.dojo_id = dojo_id
         self.instructor_id = instructor_id
         self.remarks = remarks
         self.date = date
 
     def __repr__(self):
-        return '<studentRemark {}>'.format(self.student_id)
+        return '<studentRemark {}>'.format(self.student_membership)
 
 
 class Enrollment(db.Model):
-    studentActive = db.Column(db.Boolean, nullable=False, default=True) # active in class
+    # active in class
+    studentActive = db.Column(db.Boolean, nullable=False, default=True)
     
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete="CASCADE"), primary_key=True)
-    student_membership = db.Column(db.Text, nullable=True)
+    student_membership = db.Column(db.Integer, db.ForeignKey('student.membership', ondelete="CASCADE",onupdate="CASCADE"), primary_key=True)
     student = db.relationship('Student', back_populates='enrollment')
 
     dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id', ondelete="CASCADE"), primary_key=True)
     dojo = db.relationship('Dojo', back_populates='enrollment')
 
-    def __init__(self, student_id, dojo_id):
-        self.student_id = student_id
+    def __init__(self, student_membership, dojo_id):
+        self.student_membership = student_membership
         self.dojo_id = dojo_id
 
     def __repr__(self):
-        return '<Enrollment {} {}>'.format(self.student_id, self.dojo_id)
+        return '<Enrollment {} {}>'.format(self.student_membership, self.dojo_id)
 
 
 class Lesson(db.Model):
@@ -261,16 +258,16 @@ class Answer(db.Model):
     date = db.Column(db.Date, nullable=False)
     studentAnswer = db.Column(JSONB, nullable=False)
 
-    membership_id = db.Column(db.Text, db.ForeignKey('student.membership', ondelete="CASCADE"), nullable=False)
+    student_membership = db.Column(db.Text, db.ForeignKey('student.membership', ondelete="CASCADE", onupdate="CASCADE"), nullable=False)
     student = db.relationship('Student', back_populates='answers')
 
     survey_id = db.Column(db.Integer, db.ForeignKey('survey.id', ondelete="CASCADE"), nullable=False)
     survey = db.relationship('Survey', back_populates='answers')
 
-    def __init__(self, date, studentAnswer, membership_id, survey_id):
+    def __init__(self, date, studentAnswer, student_membership, survey_id):
         self.date = date
         self.studentAnswer = studentAnswer
-        self.membership_id = membership_id
+        self.student_membership = student_membership
         self.survey_id = survey_id
 
     def __repr__(self):

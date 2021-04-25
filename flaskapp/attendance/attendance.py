@@ -53,7 +53,7 @@ def attendanceStatus():
     if currentLesson is not None and currentLesson.completed == False:
         lessonRecord = currentLesson
         student_list = db.session.query(StudentStatus).filter_by(lesson_id=currentLesson.id).order_by(
-            StudentStatus.status.desc(), StudentStatus.student_id.desc()).all()
+            StudentStatus.status.desc(), StudentStatus.student_membership.desc()).all()
 
         ### second form
         techniquesTaught = formAddTechniquesTaught()
@@ -115,10 +115,10 @@ def attendanceStatusSummary():
 def attendancePresent():  # Route to change studentStatus.status
     import ast
     status = ast.literal_eval(request.form['status'])
-    student_membership = int(request.form['student_membership'])
+    student_membership = str(request.form['student_membership'])
     lesson_id = int(request.form['lesson_id'])
     update_attendancePresent(status, student_membership, lesson_id)
-    studentstatus = db.session.query(StudentStatus).filter_by(lesson_id = lesson_id, student_membership = student_membership).first()
+    studentstatus = db.session.query(StudentStatus).filter_by(lesson_id=lesson_id, student_membership=student_membership).first()
     lessonRecord = db.session.query(Lesson.id).filter_by(id=lesson_id).first()
     return render_template('attendance/section.html', studentstatus=studentstatus, lessonRecord=lessonRecord)
 
@@ -148,8 +148,7 @@ def attendanceViewer():
     form.belt_id.choices = [(belt.id, belt.beltName) for belt in belt_list]
 
     # get list of student to display
-    student_list = db.session.query(Student.id,
-                                    Student.membership,
+    student_list = db.session.query(Student.membership,
                                     Student.firstName,
                                     Student.lastGrading,
                                     Student.dateOfBirth,
@@ -157,7 +156,7 @@ def attendanceViewer():
                                     Belt.beltColor,
                                     Enrollment.studentActive)\
             .filter(Student.belt_id == Belt.id)\
-            .filter(Enrollment.dojo_id==dojo_id, Enrollment.student_id == Student.id)\
+            .filter(Enrollment.dojo_id==dojo_id, Enrollment.student_membership == Student.membership)\
             .order_by(Enrollment.studentActive.desc(),Student.id.asc(),).all()
     
     # get last lesson's detail
@@ -172,7 +171,7 @@ def attendanceViewer():
     missingBirthday = []
     for studentRecord in student_list:
         if not studentRecord.dateOfBirth:
-            missingBirthday.append([studentRecord.id, studentRecord.firstName])
+            missingBirthday.append([studentRecord.membership, studentRecord.firstName])
 
     return render_template('attendance/attendanceViewer.html', student_list=student_list,
                            dojoRecord=dojoRecord, instructorRecord=dojoRecord.instructor,
@@ -203,25 +202,25 @@ def attendanceAdd_DelStudent(add_del):
                 record.dateOfBirth = datetime.datetime.strptime(date_str, '%d%m%Y').date()
             db.session.add(record)
             db.session.commit()
-
+            
             if record.dojo_id:
-                insert_newEnrollment(record.id, record.dojo_id)
+                insert_newEnrollment(record.membership, form.dojo_id.data)
         except IntegrityError as e:
             app.logger.info(str(e))
             flash('Error: membership already exist!!')
             return redirect(url_for('attendance.attendanceViewer'))
     elif add_del == 'addExisting':
-        student_id = int(request.args.get('student_id'))
+        student_membership = str(request.args.get('student_membership'))
         dojo_id = int(request.args.get('dojo_id'))
-        insert_newEnrollment(student_id, dojo_id)
+        insert_newEnrollment(student_membership, dojo_id)
     return redirect(url_for('attendance.attendanceViewer'))
 
 
-@attendance_bp.route('/attendanceRemoveStudent/<int:student_id>/<int:dojo_id>', methods=('GET', 'POST'))
+@attendance_bp.route('/attendanceRemoveStudent/<string:student_membership>/<int:dojo_id>', methods=('GET', 'POST'))
 @roles_accepted('Admin', 'HQ', 'Instructor', 'Helper')
-def attendanceRemoveStudent(student_id,dojo_id):
+def attendanceRemoveStudent(student_membership,dojo_id):
     # remove relation student to enrollment
-    delete_studentEnrollmentRecord(student_id, dojo_id)
+    delete_studentEnrollmentRecord(student_membership, dojo_id)
     return redirect(url_for('attendance.attendanceViewer'))
 
 
@@ -240,13 +239,14 @@ def attendanceSearchStudent():
                 filter(Student.firstName.ilike('%{}%'.format(serachString)), Student.belt.ilike(serachBelt)).all()
     
     else:
-        notAvail_studentList = db.session.query(Enrollment.student_id).filter(Enrollment.dojo_id == dojo_id).all()
+        notAvail_studentList = db.session.query(Enrollment.student_membership).filter(Enrollment.dojo_id == dojo_id).all()
         student_list = db.session.query(Student.id,
+                                    Student.membership,
                                     Student.firstName,
                                     Student.lastName,
                                     Student.lastGrading,
                                     Belt.beltName).\
-            filter(Student.belt_id == Belt.id, Student.id.notin_(notAvail_studentList)).all()
+            filter(Student.belt_id == Belt.id, Student.membership.notin_(notAvail_studentList)).all()
 
     if form.validate_on_submit():
         serachString = form.name.data
@@ -254,13 +254,14 @@ def attendanceSearchStudent():
         return redirect(url_for('attendance.attendanceSearchStudent',searchStudent='True', serachString=serachString, serachBelt=serachBelt))
     return render_template('attendance/attendanceSearchStudent.html',student_list=student_list, form=form)
 
+
 # todo error handler for not unique membership
-@attendance_bp.route('/attendanceEditStudent/<int:student_id>', methods=('GET', 'POST'))
+@attendance_bp.route('/attendanceEditStudent/<string:student_membership>', methods=('GET', 'POST'))
 @roles_accepted('Admin', 'HQ', 'Instructor', 'Helper')
-def attendanceEditStudent(student_id): 
-    studentRecord = db.session.query(Student).filter_by(id=student_id).first()
+def attendanceEditStudent(student_membership): 
+    studentRecord = db.session.query(Student).filter_by(membership=student_membership).first()
     enrollementRecord = db.session.query(Enrollment.dojo_id).\
-                        filter_by(student_id=student_id).first()  # extract dojo student is currently from
+                        filter_by(student_membership=student_membership).first()  # extract dojo student is currently from
     if studentRecord.dateOfBirth:
         form = formEditStudent(obj=studentRecord,
                            dateOfBirth_month=int(studentRecord.dateOfBirth.month),
@@ -277,14 +278,14 @@ def attendanceEditStudent(student_id):
             db.session.commit()
         except IntegrityError as e:
             flash('Error: membership already exist!!')
-            return redirect(url_for('attendance.attendanceEditStudent', student_id=student_id))
+            return redirect(url_for('attendance.attendanceEditStudent', student_membership=form.membership.data))
         if form.dateOfBirth_month.data and form.dateOfBirth_year.data:
             date_str = '01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data)
             studentRecord.dateOfBirth = datetime.datetime.strptime(date_str, '%d%m%Y').date()
         db.session.commit()
         flash('Successfully updated {}!'.format(studentRecord.firstName))
         # return back same view page
-        return redirect(url_for('attendance.attendanceEditStudent', student_id=student_id))  
+        return redirect(url_for('attendance.attendanceEditStudent', student_membership=form.membership.data))  
 
     return render_template('attendance/attendanceEditStudent.html', studentRecord=studentRecord,
                             enrollementRecord=enrollementRecord, form=form)
@@ -310,11 +311,11 @@ def attendanceEditDojo(dojoID): # edit dojo particulars
 @attendance_bp.route('/attendanceAct_DeactEnrollment', methods=('GET', 'POST'))
 @roles_accepted('Admin', 'HQ', 'Instructor', 'Helper')
 def attendanceAct_DeactEnrollment():
-    student_id = int(request.args.get('student_id'))
+    student_membership = str(request.args.get('student_membership'))
     dojo_id = int(request.args.get('dojo_id'))
     act_deact = str(request.args.get('act_deact'))
 
-    update_Act_DeactEnrollment(student_id, dojo_id, act_deact)
+    update_Act_DeactEnrollment(student_membership, dojo_id, act_deact)
     return redirect(url_for('attendance.attendanceViewer'))
 
 

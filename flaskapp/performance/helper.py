@@ -4,14 +4,14 @@ from flaskapp.models import (Lesson, Student, StudentRemarks,
 import datetime
 
 
-def helper_ChartView(student_id, dojo_id=None):
+def helper_ChartView(student_membership, dojo_id=None):
     # ---- get student details
     studentRecord = db.session.query(Student.firstName,
                                      Student.lastGrading,
                                      Belt.beltName,
                                      Belt.beltColor,
                                      Belt.timespanNeeded)\
-                        .filter(Student.id==student_id, Student.belt_id == Belt.id).first()
+                        .filter(Student.membership==student_membership, Student.belt_id==Belt.id).first()
 
     # ---- get performance details
     if dojo_id != None:
@@ -22,7 +22,7 @@ def helper_ChartView(student_id, dojo_id=None):
                                     StudentStatus.knowledge,
                                     StudentStatus.spirit,
                                     Lesson.date).\
-                    filter(StudentStatus.student_id == student_id,
+                    filter(StudentStatus.student_membership == student_membership,
                             StudentStatus.status == True,
                             StudentStatus.evaluated == True,
                             StudentStatus.lesson_id == Lesson.id,
@@ -36,7 +36,7 @@ def helper_ChartView(student_id, dojo_id=None):
                                     StudentStatus.knowledge,
                                     StudentStatus.spirit,
                                     Lesson.date).\
-                    filter(StudentStatus.student_id == student_id,
+                    filter(StudentStatus.student_membership == student_membership,
                             StudentStatus.status == True,
                             StudentStatus.evaluated == True,
                             StudentStatus.lesson_id == Lesson.id).\
@@ -48,12 +48,12 @@ def helper_ChartView(student_id, dojo_id=None):
     # ---- get remarks
     myRemarks = db.session.query(StudentRemarks.remarks,
                                  StudentRemarks.date).\
-                        filter_by(student_id=student_id).order_by(StudentRemarks.date.asc()).all()
+                        filter_by(student_membership=student_membership).order_by(StudentRemarks.date.asc()).all()
 
     # ---- get number of days to grading
     countdown = daysToGrading(studentRecord)
 
-    lessonDone=lessonAfterGrading(student_id)
+    lessonDone=lessonAfterGrading(student_membership)
 
     return (studentRecord,
             technique, ukemi, discipline,
@@ -62,20 +62,20 @@ def helper_ChartView(student_id, dojo_id=None):
             lessonDone, myRemarks)
 
 
-def lessonAfterGrading(student_id):
+def lessonAfterGrading(student_membership):
     # get last grading date
-    lastGradingDate = db.session.query(Student.lastGrading).filter(Student.id == student_id).scalar()
+    lastGradingDate = db.session.query(Student.lastGrading).filter(Student.membership == student_membership).scalar()
     if lastGradingDate:
         # get lesson id after lastGrading date
         lessonID_start = db.session.query(Lesson.id).filter(Lesson.date>lastGradingDate).order_by(Lesson.id.asc()).first()
         # count number of records student have
         if lessonID_start:
-            lessonsDone = db.session.query(StudentStatus.status).filter(StudentStatus.student_id == student_id,StudentStatus.lesson_id>lessonID_start,StudentStatus.status==True).count()
+            lessonsDone = db.session.query(StudentStatus.status).filter(StudentStatus.student_membership == student_membership,StudentStatus.lesson_id>lessonID_start,StudentStatus.status==True).count()
             return lessonsDone
         else:
             return 0
     else:
-        lessonsDone = db.session.query(StudentStatus.status).filter(StudentStatus.student_id == student_id,StudentStatus.status==True).count()
+        lessonsDone = db.session.query(StudentStatus.status).filter(StudentStatus.student_membership == student_membership,StudentStatus.status==True).count()
         return lessonsDone
 
 

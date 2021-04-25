@@ -39,7 +39,7 @@
         </thead>
         <tbody>
             {% for studentstatus in student_list %}
-            <tr id="section{{ studentstatus.student_membership }}">
+            <tr id="section{{ studentstatus.student_membership|remove_spaces }}">
                 <td>{{ studentstatus.student.firstName }}</td>
                 <td>{{ studentstatus.status }}</td>
 
@@ -50,8 +50,8 @@
                 </td>
                 {% else %}
                 <td colspan="2" class="table-success">
-                    <button class="btn btn-danger updateButton" student_membership={{ studentstatus.student_membership }} lesson_id={{
-                        lessonRecord.id }} status="False">Mark absent</button>
+                    <button class="btn btn-danger updateButton" student_membership="{{ studentstatus.student_membership }}"
+                        lesson_id="{{ lessonRecord.id }}" status="False">Mark absent</button>
                 </td>
                 {% endif %}
             </tr>
@@ -72,13 +72,15 @@
             var lesson_id = $(this).attr('lesson_id');
 
             $.ajax({
-                url: "{{ url_for('attendance.attendancePresent')}}",
+                url: "{{ url_for('attendance.attendancePresent') }}",
                 type: "POST",
                 headers: { "X-CSRFToken": csrf_token, },
                 data: { student_membership: student_membership, status: status, lesson_id: lesson_id },
                 success: function (data) {
-                    $('#section' + student_membership).fadeOut(100).fadeIn(100)
-                    $('#section' + student_membership).html(data)
+                    // Some of the Membership ID has spaces in it. To remove all spaces for uniformity
+                    console.log('#section' + student_membership.toString().replace(/\s+/g, ''));
+                    $('#section' + student_membership.toString().replace(/\s+/g, '')).fadeOut(100).fadeIn(100);
+                    $('#section' + student_membership.toString().replace(/\s+/g, '')).html(data);
                 }
             });
         });

@@ -9,7 +9,7 @@
 </h3>
 
 
-<form method="POST" action="{{ url_for('performance.performanceGradePerformance', student_id=studentRecord.id) }}">
+<form method="POST" action="{{ url_for('performance.performanceGradePerformance', student_membership=studentRecord.membership) }}">
 {{ form.hidden_tag() }}
 <table class="table">
   <tbody>
@@ -57,12 +57,12 @@
       var csrf_token = "{{ csrf_token() }}";
       var formData = $(form).serializeArray();
       $.ajax({
-        url: "{{ url_for('performance.performanceGradeNext', student_id=studentRecord.id) }}",
+        url: "{{ url_for('performance.performanceGradeNext', student_membership=studentRecord.membership) }}",
         type: "POST",
         headers: { "X-CSRFToken": csrf_token, },
         data: formData,
         success: function (data) {
-          location.replace(data)
+          location.replace(data);
         }
       });
     };
