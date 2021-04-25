@@ -5,6 +5,7 @@ from flask import (Blueprint, flash, redirect, make_response,
                    render_template, request, url_for)
 from flask_mobility.decorators import mobile_template
 from flaskapp import db, app
+
 from flaskapp.models import (Student, StudentRemarks, Answer, Enrollment,Instructor,
                              StudentStatus, Belt, Lesson, Survey,SurveyQuestion,Question)
 from flaskapp.parent.form import formStudentIdentifier, formQuestions
@@ -26,6 +27,7 @@ def parentIdentifyStudent():
                 filter_by(membership = form.membership.data,
                           dateOfBirth = datetime.datetime.strptime('01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data), '%d%m%Y').date()).\
                 one()
+
         except NoResultFound:
             flash('Membership ID and Birhtday combination is not valid, please try again!')
             return redirect(url_for('parent.parentIdentifyStudent'))
@@ -126,18 +128,19 @@ def lol():
     Studentremarks = db.session.query(StudentRemarks).all()
     for i in Studentremarks:
         i.student_membership = i.student.membership
+        i.instructor_membership = i.instructor.membership
     db.session.commit() 
 
     instr = db.session.query(Instructor).all()
     for i in instr:
-        i.student_membership = i.membership
+        i.mymembership = i.membership
     db.session.commit()
 
     lessons = db.session.query(Lesson).all()
     for i in lessons:
         i.instructor_membership = i.instructor.membership
     db.session.commit()
-    return 'done'
+
 
 @parent_bp.route("/lol2")
 def lol2():
@@ -148,3 +151,4 @@ def lol2():
             i.techniquesTaught = json.loads(i.techniquesTaught)
     db.session.commit()
     return 'done'
+

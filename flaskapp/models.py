@@ -29,7 +29,7 @@ class User(db.Model, UserMixin):
                             backref=db.backref('users', lazy='dynamic'),
                             cascade="all, delete", passive_deletes=True)
 
-
+    
 class Student(db.Model):
     __mapper_args__ = {'polymorphic_identity': 'student'}
     id = db.Column(db.Integer, primary_key=True)
@@ -136,6 +136,7 @@ class StudentRemarks(db.Model):
 
     student_membership = db.Column(db.Text, db.ForeignKey('student.membership', ondelete="CASCADE",onupdate="CASCADE"), primary_key=True)
     student = db.relationship('Student', back_populates='studentRemarks', foreign_keys=[student_membership])
+
     
     def __init__(self, student_membership, dojo_id, instructor_id, remarks, date):
         self.student_membership = student_membership
@@ -152,6 +153,7 @@ class Enrollment(db.Model):
     # active in class
     studentActive = db.Column(db.Boolean, nullable=False, default=True)
     
+
     student_membership = db.Column(db.Text, db.ForeignKey('student.membership', ondelete="CASCADE",onupdate="CASCADE"), primary_key=True)
     student = db.relationship('Student', back_populates='enrollment')
 
@@ -175,6 +177,7 @@ class Lesson(db.Model):
 
     dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id', ondelete="CASCADE",onupdate="CASCADE"), nullable=False)
     dojo = db.relationship('Dojo', back_populates='lesson')
+
 
     instructor_membership = db.Column(db.Text, db.ForeignKey('instructor.mymembership', ondelete="SET NULL",onupdate="CASCADE"))
     instructor = db.relationship('Instructor', back_populates='lesson')
