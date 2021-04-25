@@ -45,6 +45,7 @@ class Student(db.Model):
     belt = db.relationship('Belt', back_populates='student')
 
     user = db.relationship('User', back_populates='student', cascade="all, delete", passive_deletes=True)
+    instructor = db.relationship('Instructor', back_populates='student', cascade="all, delete", passive_deletes=True)
     enrollment = db.relationship('Enrollment', back_populates='student', cascade="all, delete", passive_deletes=True)
     studentStatus = db.relationship('StudentStatus', back_populates='student', cascade="all, delete", passive_deletes=True)
     studentRemarks = db.relationship('StudentRemarks', back_populates='student', cascade="all, delete", passive_deletes=True)
@@ -63,14 +64,15 @@ class Student(db.Model):
 
 class Instructor(Student):
     __mapper_args__ = {'polymorphic_identity': 'instructor'}
-    membership = db.Column(db.String, db.ForeignKey('student.membership'), primary_key=True, unique=True)
+    mymembership = db.Column(db.String, db.ForeignKey('student.membership',ondelete="CASCADE",onupdate="CASCADE"), primary_key=True, unique=True)
 
+    student = db.relationship('Student', back_populates='instructor')
     lesson = db.relationship('Lesson', back_populates='instructor')
     dojo = db.relationship('Dojo', back_populates='instructor')
     studentRemarks = db.relationship('StudentRemarks', back_populates='instructor', cascade="all, delete", passive_deletes=True)
     
     def __repr__(self):
-        return '<Instructor {}>'.format(self.id)
+        return '<Instructor {}>'.format(self.mymembership)
 
 
 class Dojo(db.Model):
@@ -78,7 +80,7 @@ class Dojo(db.Model):
     name = db.Column(db.Text, nullable=False)
     location = db.Column(db.Text, nullable=False)
     
-    instructor_membership = db.Column(db.Text, db.ForeignKey('instructor.membership', ondelete="SET NULL",onupdate="CASCADE"))
+    instructor_membership = db.Column(db.Text, db.ForeignKey('instructor.mymembership', ondelete="SET NULL",onupdate="CASCADE"))
     instructor = db.relationship('Instructor', back_populates='dojo')
 
     enrollment = db.relationship('Enrollment', back_populates='dojo', cascade="all, delete", passive_deletes=True)
@@ -129,7 +131,7 @@ class StudentRemarks(db.Model):
     dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id', ondelete="SET NULL"))
     dojo = db.relationship('Dojo', back_populates='studentRemarks')
 
-    instructor_membership = db.Column(db.Text, db.ForeignKey('instructor.membership', ondelete="SET NULL",onupdate="CASCADE"))
+    instructor_membership = db.Column(db.Text, db.ForeignKey('instructor.mymembership', ondelete="SET NULL",onupdate="CASCADE"))
     instructor = db.relationship('Instructor', back_populates='studentRemarks', foreign_keys=[instructor_membership])
 
     student_membership = db.Column(db.Text, db.ForeignKey('student.membership', ondelete="CASCADE",onupdate="CASCADE"), primary_key=True)
@@ -174,7 +176,7 @@ class Lesson(db.Model):
     dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id', ondelete="CASCADE",onupdate="CASCADE"), nullable=False)
     dojo = db.relationship('Dojo', back_populates='lesson')
 
-    instructor_membership = db.Column(db.Text, db.ForeignKey('instructor.membership', ondelete="SET NULL",onupdate="CASCADE"))
+    instructor_membership = db.Column(db.Text, db.ForeignKey('instructor.mymembership', ondelete="SET NULL",onupdate="CASCADE"))
     instructor = db.relationship('Instructor', back_populates='lesson')
 
     studentStatus = db.relationship('StudentStatus', back_populates='lesson', cascade="all, delete", passive_deletes=True)

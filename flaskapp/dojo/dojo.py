@@ -16,7 +16,7 @@ dojo_bp = Blueprint('dojo', __name__,
 @dojo_bp.route('/dojoViewer', methods=('GET', 'POST'))
 @roles_accepted('Admin', 'HQ')
 def dojoViewer():
-    dojo_list = db.session.query(Dojo).all()
+    dojo_list = db.session.query(Dojo).order_by(Dojo.name.desc()).all()
     return render_template('dojo/dojoViewer.html', dojo_list=dojo_list)
 
 

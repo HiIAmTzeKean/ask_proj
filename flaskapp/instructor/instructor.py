@@ -36,10 +36,16 @@ def instructorEditInstructor(instructor_membership):
         form = formEditInstructor(obj=instructorRecord)  # load values into form
     belt_list = db.session.query(Belt.id, Belt.beltName).all()
     form.belt_id.choices = [(belt.id, belt.beltName) for belt in belt_list]
-
+    
     # update record in database if valid
-    if form.validate_on_submit():  
+    if form.validate_on_submit():
+        # Update membership id if there are changes first
+        if form.membership.data != instructorRecord.membership:
+            updates = Student.query.filter_by(membership=instructorRecord.membership).update(dict(membership=form.membership.data))
+            db.session.commit()
+        form = formEditInstructor(request.form)
         form.populate_obj(instructorRecord)
+
         if form.dateOfBirth_month.data:
             date_str = '01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data)
             instructorRecord.dateOfBirth = datetime.datetime.strptime(date_str, '%d%m%Y').date()
