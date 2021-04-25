@@ -85,7 +85,7 @@ class Student(db.Model):
 class Instructor(Student):
     __mapper_args__ = {'polymorphic_identity': 'instructor'}
     id = db.Column(db.Integer, db.ForeignKey('student.id'), primary_key=True)
-    student_membership = db.Column(db.Text, nullable=True)
+    membership = db.Column(db.Text, nullable=True)
 
     lesson = db.relationship('Lesson', back_populates='instructor')
     dojo = db.relationship('Dojo', back_populates='instructor')
