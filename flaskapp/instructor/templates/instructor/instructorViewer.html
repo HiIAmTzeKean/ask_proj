@@ -22,7 +22,7 @@
     </thead>
     <tbody>
       {% for instructor in instructor_list %}
-      <tr id={{ instructor.id }}>
+      <tr id={{ instructor.membership }}>
         <td>{{ instructor.firstName }}</td>
         <td>{{ instructor.belt.beltName }}</td>
         <td>
@@ -32,7 +32,7 @@
         </td>
         <td>{{ instructor.active }}</td>
         <td>
-            <a href="{{ url_for('instructor.instructorEditInstructor', instructor_id=instructor.id) }}"
+            <a href="{{ url_for('instructor.instructorEditInstructor', instructor_membership=instructor.membership) }}"
                 class="btn btn-success">
                 Edit</a>
         </td>

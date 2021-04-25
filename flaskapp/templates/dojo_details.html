@@ -1,0 +1,17 @@
+<div id="Dojo_details">
+    <div class="d-flex flex-row">
+      <div class="p-2">
+        <h4>Class of {{ dojoRecord.name}}</h4>
+      </div>
+    </div>
+  
+    <div class="d-flex flex-row">
+      <div class="p-2">
+        {% if instructorRecord.firstName %}
+          <h4>Instructor: {{ instructorRecord.firstName }}</h4>
+        {% else %}
+          <h4>Instructor: Nil</h4>
+        {% endif %}
+      </div>
+    </div>
+</div>

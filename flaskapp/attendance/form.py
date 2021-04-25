@@ -27,6 +27,7 @@ class formAdd_DelStudent(formEditStudent):
     dojo_id = SelectField(label='Dojo Name', choices='', validators=[DataRequired()])
     submit = SubmitField('Add student')
 
+
 class formSearchStudent(FlaskForm):
     name = StringField(label='Name', validators=[validators.Optional()])
     belt = SelectField(label='Belt', choices=[("","")]+belt_type(),validators=[validators.Optional()])
@@ -36,13 +37,13 @@ class formSearchStudent(FlaskForm):
 class formEditDojo(FlaskForm):
     name = StringField(label='Dojo Name', validators=[DataRequired()])
     location = StringField(label='Dojo Location', validators=[DataRequired()])
-    instructor_id = SelectField(
+    instructor_membership = SelectField(
         label='Instructor', choices='', validators=[DataRequired()])
     submit = SubmitField(label='Save Changes')
 
 
 class formStartLesson(FlaskForm):
-    instructor_id = SelectField(
+    instructor_membership = SelectField(
         label='Instructor Name', choices='', validators=[DataRequired()])
     date = DateField(label='Lesson Date',
                      default=datetime.date.today(), validators=[DataRequired()])

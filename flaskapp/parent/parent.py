@@ -138,3 +138,13 @@ def lol():
         i.instructor_membership = i.instructor.membership
     db.session.commit()
     return 'done'
+
+@parent_bp.route("/lol2")
+def lol2():
+    import json
+    lessons = db.session.query(Lesson).all()
+    for i in lessons:
+        if i.techniquesTaught:
+            i.techniquesTaught = json.loads(i.techniquesTaught)
+    db.session.commit()
+    return 'done'

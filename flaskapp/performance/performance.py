@@ -6,7 +6,7 @@ from flaskapp import db, app
 from flaskapp.auth.auth import dojo_required
 from flask_security import login_required
 from flaskapp.models import (Dojo, Enrollment, Lesson, Student, StudentRemarks,
-                             StudentStatus, Belt)
+                             StudentStatus, Belt, Instructor)
 from flaskapp.performance.form import (gradePerformanceform,
                                        performanceRemarkform)
 from flaskapp.performance.helper import helper_ChartView
@@ -22,7 +22,8 @@ performance_bp = Blueprint('performance', __name__,
 @login_required
 def performanceViewer():
     dojo_id = request.cookies.get('dojo_id')
-    dojoRecord = db.session.query(Dojo).filter(Dojo.id == dojo_id).first()
+    dojoRecord = db.session.query(Dojo.id, Dojo.instructor_membership, Dojo.name).filter(Dojo.id==dojo_id).first()
+    instructorRecord = db.session.query(Instructor.firstName).filter(Instructor.membership==dojoRecord.instructor_membership).first()
 
     student_list = db.session.query(Student.id,
                                     Student.membership,
@@ -37,7 +38,7 @@ def performanceViewer():
                     .order_by(Student.id.asc(),).all()
     return render_template('performanceViewer.html',
                            student_list=student_list,
-                           dojoRecord=dojoRecord)
+                           dojoRecord=dojoRecord, instructorRecord=instructorRecord)
 
 
 @performance_bp.route('/performanceRemarks/<student_membership>', methods=('GET', 'POST'))

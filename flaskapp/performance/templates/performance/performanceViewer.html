@@ -3,14 +3,8 @@
 {% block title %}Viewer{% endblock %}
 
 {% block content %}
-<div id="Dojo_details">
-    <div>
-      <h4>Class of {{ dojoRecord.name }}</h4>
-    </div>
-    <div>
-      <h4>Instructor: {{ dojoRecord.instructor.firstName }}</h4>
-    </div>
-</div>
+{% include 'dojo_details.html' %}
+
 <hr>
 
 <table class="table" id="students">

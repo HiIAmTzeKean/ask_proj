@@ -25,9 +25,9 @@ def instructorViewer():
 
 
 #todo show classes in this page as well
-@instructor_bp.route('/instructorEditInstructor/<int:instructor_id>', methods=('GET', 'POST'))
-def instructorEditInstructor(instructor_id):
-    instructorRecord = db.session.query(Instructor).filter_by(id=instructor_id).first()
+@instructor_bp.route('/instructorEditInstructor/<string:instructor_membership>', methods=('GET', 'POST'))
+def instructorEditInstructor(instructor_membership):
+    instructorRecord = db.session.query(Instructor).filter_by(membership=instructor_membership).first()
     if instructorRecord.dateOfBirth:
         form = formEditInstructor(obj=instructorRecord,
                            dateOfBirth_month=int(instructorRecord.dateOfBirth.month),
@@ -40,8 +40,9 @@ def instructorEditInstructor(instructor_id):
     # update record in database if valid
     if form.validate_on_submit():  
         form.populate_obj(instructorRecord)
-        date_str = '01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data)
-        instructorRecord.dateOfBirth = datetime.datetime.strptime(date_str, '%d%m%Y').date()
+        if form.dateOfBirth_month.data:
+            date_str = '01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data)
+            instructorRecord.dateOfBirth = datetime.datetime.strptime(date_str, '%d%m%Y').date()
         db.session.commit()
         flash('Successfully updated {}!'.format(instructorRecord.firstName))
         return redirect(url_for('instructor.instructorViewer'))
