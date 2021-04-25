@@ -133,7 +133,7 @@ def lol():
 
     instr = db.session.query(Instructor).all()
     for i in instr:
-        i.student_membership = i.membership
+        i.mymembership = i.membership
     db.session.commit()
 
     lessons = db.session.query(Lesson).all()
