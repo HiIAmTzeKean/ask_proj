@@ -7,7 +7,7 @@
 
 <hr>
 
-<form method="POST" action="{{ url_for('attendance.attendanceEditStudent', student_id=studentRecord.id) }}">
+<form method="POST" action="{{ url_for('attendance.attendanceEditStudent', student_membership=studentRecord.membership) }}">
   {{ form.hidden_tag() }}
   
   <div class="container-fluid">
@@ -70,7 +70,7 @@
           {{ form.submit(class="btn btn-success") }}
         </div>
         <div class="p-2">
-          <a href="{{ url_for('attendance.attendanceRemoveStudent', student_id=studentRecord.id, dojo_id=enrollementRecord.dojo_id) }}"
+          <a href="{{ url_for('attendance.attendanceRemoveStudent', student_membership=studentRecord.membership, dojo_id=enrollementRecord.dojo_id) }}"
             class="btn btn-success">Remove Student</a>
         </div>
   </div>

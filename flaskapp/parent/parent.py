@@ -5,7 +5,8 @@ from flask import (Blueprint, flash, redirect, make_response,
                    render_template, request, url_for)
 from flask_mobility.decorators import mobile_template
 from flaskapp import db, app
-from flaskapp.models import (Student, StudentRemarks, Answer, Enrollment, Instructor, Dojo,
+
+from flaskapp.models import (Student, StudentRemarks, Answer, Enrollment,Instructor,
                              StudentStatus, Belt, Lesson, Survey,SurveyQuestion,Question)
 from flaskapp.parent.form import formStudentIdentifier, formQuestions
 from flaskapp.performance.helper import helper_ChartView
@@ -24,14 +25,14 @@ def parentIdentifyStudent():
         try:
             studentRecord = db.session.query(Student.id).\
                 filter_by(membership = form.membership.data,
-                dateOfBirth = datetime.datetime.strptime('01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data), '%d%m%Y').date()).\
-            one()
-        except NoResultFound:
+                          dateOfBirth = datetime.datetime.strptime('01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data), '%d%m%Y').date()).\
+                one()
 
-            flash('Membership ID is not valid, please contact instructor incharge!')
+        except NoResultFound:
+            flash('Membership ID and Birhtday combination is not valid, please try again!')
             return redirect(url_for('parent.parentIdentifyStudent'))
 
-        return redirect(url_for('parent.parentChartView', studentID=messageEncode(str(studentRecord.id))))
+        return redirect(url_for('parent.parentChartView', student_membership=messageEncode(str(form.membership.data))))
     return render_template('parentIdentifyStudent.html',form=form)
 
 
@@ -51,15 +52,15 @@ def parentGradingDates():
     processedDetails =[[],[],[]]
     for no,date in enumerate(details):
         processedDetails[no//4].append(date)
-    return render_template('parentGradingDates.html',processedDetails=processedDetails)
+    return render_template('parentGradingDates.html', processedDetails=processedDetails)
 
 
-@parent_bp.route('/parentChartView/<studentID>', methods=['GET'])
+@parent_bp.route('/parentChartView/<student_membership>', methods=['GET'])
 @mobile_template('{mobile/}parentChartView.html')
-def parentChartView(studentID,template):
-    studentID = messageDecode(studentID)
+def parentChartView(student_membership, template):
+    student_membership = messageDecode(student_membership)
     studentRecord,technique,ukemi,discipline,coordination,knowledge,spirit,dateLabel,countdown,lessonDone,myRemarks=\
-        helper_ChartView(studentID)
+        helper_ChartView(student_membership)
 
     return render_template(template,
                            studentRecord=studentRecord,
@@ -84,12 +85,11 @@ def parentFeedback():
             for i in request.form:
                 if 'questions' in i:
                     answer_dict[i.lstrip('questions-')] = request.form[i]
-            record = Answer(date=form.date.data, studentAnswer=answer_dict, membership_id=form.membership.data, survey_id=request.cookies.get('survey_id'))
+            record = Answer(date=form.date.data, studentAnswer=answer_dict, student_membership=form.membership.data, survey_id=request.cookies.get('survey_id'))
             db.session.add(record)
             db.session.commit()
         
             flash('Thank you for the feedback!')
-            print(request.form)
             request.form = {}
             return redirect(url_for('parent.parentIdentifyStudent'))
         flash('Sorry, but the Membership ID does not tally with the given birthday!')
@@ -114,6 +114,7 @@ def parentFeedback():
     resp.set_cookie('survey_id', str(surveyRecord.id))
     return resp
 
+
 @parent_bp.route("/lol")
 def lol():
     studentstatues = db.session.query(StudentStatus).all()
@@ -124,7 +125,6 @@ def lol():
     for i in studentenrollemnt:
         i.student_membership = i.student.membership
     db.session.commit()
-
     Studentremarks = db.session.query(StudentRemarks).all()
     for i in Studentremarks:
         i.student_membership = i.student.membership
@@ -141,10 +141,14 @@ def lol():
         i.instructor_membership = i.instructor.membership
     db.session.commit()
 
-    Dojos = db.session.query(Dojo).all()
-    for i in Dojos:
-        i.instructor_membership = i.instructor.membership
+
+@parent_bp.route("/lol2")
+def lol2():
+    import json
+    lessons = db.session.query(Lesson).all()
+    for i in lessons:
+        if i.techniquesTaught:
+            i.techniquesTaught = json.loads(i.techniquesTaught)
     db.session.commit()
-
-
     return 'done'
+

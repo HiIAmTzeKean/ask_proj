@@ -25,9 +25,9 @@ def instructorViewer():
 
 
 #todo show classes in this page as well
-@instructor_bp.route('/instructorEditInstructor/<int:instructor_id>', methods=('GET', 'POST'))
-def instructorEditInstructor(instructor_id):
-    instructorRecord = db.session.query(Instructor).filter_by(id=instructor_id).first()
+@instructor_bp.route('/instructorEditInstructor/<string:instructor_membership>', methods=('GET', 'POST'))
+def instructorEditInstructor(instructor_membership):
+    instructorRecord = db.session.query(Instructor).filter_by(membership=instructor_membership).first()
     if instructorRecord.dateOfBirth:
         form = formEditInstructor(obj=instructorRecord,
                            dateOfBirth_month=int(instructorRecord.dateOfBirth.month),
@@ -36,12 +36,19 @@ def instructorEditInstructor(instructor_id):
         form = formEditInstructor(obj=instructorRecord)  # load values into form
     belt_list = db.session.query(Belt.id, Belt.beltName).all()
     form.belt_id.choices = [(belt.id, belt.beltName) for belt in belt_list]
-
+    
     # update record in database if valid
-    if form.validate_on_submit():  
+    if form.validate_on_submit():
+        # Update membership id if there are changes first
+        if form.membership.data != instructorRecord.membership:
+            updates = Student.query.filter_by(membership=instructorRecord.membership).update(dict(membership=form.membership.data))
+            db.session.commit()
+        form = formEditInstructor(request.form)
         form.populate_obj(instructorRecord)
-        date_str = '01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data)
-        instructorRecord.dateOfBirth = datetime.datetime.strptime(date_str, '%d%m%Y').date()
+
+        if form.dateOfBirth_month.data:
+            date_str = '01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data)
+            instructorRecord.dateOfBirth = datetime.datetime.strptime(date_str, '%d%m%Y').date()
         db.session.commit()
         flash('Successfully updated {}!'.format(instructorRecord.firstName))
         return redirect(url_for('instructor.instructorViewer'))

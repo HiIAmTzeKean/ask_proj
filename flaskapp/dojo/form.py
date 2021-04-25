@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired, InputRequired, Optional
 class formEditDojo(FlaskForm):
     name = StringField(label='Dojo Name', validators=[DataRequired()])
     location = StringField(label='Dojo Location', validators=[DataRequired()])
-    instructor_id = SelectField(
+    instructor_membership = SelectField(
         label='Instructor', choices='', validators=[DataRequired()])
     submit = SubmitField(label='Save Changes')
 

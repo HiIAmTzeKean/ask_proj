@@ -3,24 +3,36 @@
 {% block title %}Status{% endblock %}
 
 {% block content %}
+{% include 'dojo_details.html' %}
+
+<hr>
+
 <div>
-  <div>
-    <h2>Class of {{ dojoName }}</h2>
-  </div>
-  <div>
-    <h2>Instructor: {{ instructorName }}</h2>
-  </div>
-  <hr>
-  <div>
-    <p><strong>Number of students present is:</strong> {{ presentCount }}</p>
-    <p><strong>Number of students absent is:</strong> {{ absentCount }}</p>
-  </div>
-  <div>
-    <a href="{{ url_for('attendance.attendanceStatus') }}" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Head back to attendance view">
-      Back
-    </a>
-    <a href="{{ url_for('performance.performanceViewer') }}" class="btn btn-primary">Grade Performance</a>
-  </div>
+  <p><strong>Number of students present is:</strong> {{ presentCount }}</p>
+  <p><strong>Number of students absent is:</strong> {{ absentCount }}</p>
+
+  <br>
+
+  <p><strong>Techniques taught are:</strong></p>
+  {% for technique in technique_taught %}
+    <li>{{ technique_taught[technique] }}</li>
+  {% endfor %}
+</div>
+
+<hr>
+
+<div>
+  <a href="{{ url_for('attendance.attendanceStatus') }}" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Head back to attendance view">
+    Back
+  </a>
+
+  <a href="{{ url_for('attendance.attendanceViewer') }}" class="btn btn-primary">
+    Class summary
+  </a>
+
+  <a href="{{ url_for('performance.performanceViewer') }}" class="btn btn-primary">
+    Grade Performance
+  </a>
 </div>
 {% endblock %}
 

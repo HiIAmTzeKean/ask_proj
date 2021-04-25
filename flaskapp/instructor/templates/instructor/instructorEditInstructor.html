@@ -5,7 +5,7 @@
 {% block content %}
 <h2>Update {{ instructorRecord.firstName }} Particulars</h2>
 
-<form method="POST" action="{{ url_for('instructor.instructorEditInstructor', instructor_id=instructorRecord.id) }}">
+<form method="POST" action="{{ url_for('instructor.instructorEditInstructor', instructor_membership=instructorRecord.membership) }}">
 {{ form.hidden_tag() }}
 <!--{{ form.errors.items() }}-->
 

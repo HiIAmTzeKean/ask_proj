@@ -10,3 +10,11 @@ def check_next(myList, element):
     if myList.index(element) == len(myList)-1:
         return False
     else: return True
+
+@app.template_filter('remove_spaces')
+def remove_spaces(text):
+    return text.replace(' ','')
+
+@app.template_filter('concat_string_withoutspaces')
+def concat_string_withoutspaces(text1,text2):
+    return text1.replace(' ','-') + text2.replace(' ','-')

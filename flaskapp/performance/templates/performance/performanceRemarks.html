@@ -7,7 +7,7 @@
 
 
 <div>
-    <form method="POST" action="{{ url_for('performance.performanceRemarks', student_id=studentRecord.id) }}">
+    <form method="POST" action="{{ url_for('performance.performanceRemarks', student_membership=studentRecord.membership) }}">
 {{ form.hidden_tag() }}
 <div>
     {{ form.date.label(class="col-form-label") }}

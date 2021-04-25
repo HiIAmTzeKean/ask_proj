@@ -27,13 +27,6 @@ def feedbackViewer():
         return redirect(url_for('auth.authUserViewer'))
     records = next(zip(*records))
 
-    # holder = {}
-    # for questionRecord in questionids:
-    #     holder[str(questionRecord.question_id)]=[]
-
-    # for record in records:
-    #     for item in holder:
-    #         holder[item].append(int(record.get(item)))
     holder = {}
     for record in records:
         for questionRecordID in questionids:

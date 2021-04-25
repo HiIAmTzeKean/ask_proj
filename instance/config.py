@@ -24,6 +24,7 @@ class Config:
     SECURITY_RECOVERABLE = True
     SECURITY_PASSWORD_SALT = '3d6f45a5fc12445dbac2f59c3b6c7cb1'
 
+
 class ProductionConfig(Config):
     ENV = 'production'
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
@@ -35,6 +36,7 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     TEMPLATES_AUTO_RELOAD = True
     DEBUG = True
+
 
 class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
