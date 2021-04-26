@@ -41,7 +41,7 @@ class Student(db.Model):
     active = db.Column(db.Boolean, nullable=False, default=True) # active as a student
     dateOfBirth = db.Column(db.Date, nullable=True)
 
-    belt_id = db.Column(db.Integer, db.ForeignKey('belt.id', ondelete="SET NULL"))
+    belt_id = db.Column(db.Integer, db.ForeignKey('belt.id', ondelete="SET NULL",onupdate="CASCADE"))
     belt = db.relationship('Belt', back_populates='student')
 
     user = db.relationship('User', back_populates='student', cascade="all, delete", passive_deletes=True)
@@ -79,6 +79,8 @@ class Dojo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
     location = db.Column(db.Text, nullable=False)
+    region = db.Column(db.Text, nullable=True)
+    isHQ = db.Column(db.Boolean, nullable=True, default=True)
     
     instructor_membership = db.Column(db.Text, db.ForeignKey('instructor.mymembership', ondelete="SET NULL",onupdate="CASCADE"))
     instructor = db.relationship('Instructor', back_populates='dojo')
@@ -100,12 +102,12 @@ class StudentStatus(db.Model):
     status = db.Column(db.Boolean, nullable=False, default=True)
     evaluated = db.Column(db.Boolean, default=False)
 
-    technique = db.Column(db.Integer,  default=5)
-    ukemi = db.Column(db.Integer,  default=5)
-    discipline = db.Column(db.Integer, default=5)
-    coordination = db.Column(db.Integer, default=5)
-    knowledge = db.Column(db.Integer, default=5)
-    spirit = db.Column(db.Integer,  default=5)
+    technique = db.Column(db.Integer,nullable=False, default=5)
+    ukemi = db.Column(db.Integer, nullable=False, default=5)
+    discipline = db.Column(db.Integer, nullable=False, default=5)
+    coordination = db.Column(db.Integer, nullable=False, default=5)
+    knowledge = db.Column(db.Integer, nullable=False, default=5)
+    spirit = db.Column(db.Integer, nullable=False,  default=5)
 
     student_membership = db.Column(db.Text, db.ForeignKey('student.membership', ondelete="CASCADE",onupdate="CASCADE"), primary_key=True)
     student = db.relationship('Student', back_populates='studentStatus')
@@ -157,7 +159,7 @@ class Enrollment(db.Model):
     student_membership = db.Column(db.Text, db.ForeignKey('student.membership', ondelete="CASCADE",onupdate="CASCADE"), primary_key=True)
     student = db.relationship('Student', back_populates='enrollment')
 
-    dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id', ondelete="CASCADE"), primary_key=True)
+    dojo_id = db.Column(db.Integer, db.ForeignKey('dojo.id', ondelete="CASCADE",onupdate="CASCADE"), primary_key=True)
     dojo = db.relationship('Dojo', back_populates='enrollment')
 
     def __init__(self, student_membership, dojo_id):

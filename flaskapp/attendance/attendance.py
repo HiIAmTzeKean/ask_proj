@@ -16,6 +16,7 @@ from flaskapp.attendance.form import (formAdd_DelStudent, formDojoSelection,
 from flaskapp.attendance.helpers import findTerm, str_to_date, catchList, lockList, drillsList
 from flaskapp.auth.auth import dojo_required
 from flask_security.decorators import login_required, roles_accepted
+from flask_security.core import current_user
 from flaskapp.models import (Dojo, Enrollment, Instructor, Lesson, Student,
                              StudentStatus, Belt)
 
@@ -27,12 +28,16 @@ attendance_bp = Blueprint('attendance', __name__,
 @login_required
 def attendanceDojoSelect():
     form = formDojoSelection()
-    dojo_list = db.session.query(Dojo.id, Dojo.name).all()
-    form.dojo_id.choices = [(dojo.id, dojo.name) for dojo in dojo_list]
+    if current_user.has_role('Admin') or current_user.has_role('HQ'):
+        dojo_list = db.session.query(Dojo.id, Dojo.name).all()
+        form.dojo_id.choices = [(dojo.id, dojo.name) for dojo in dojo_list]
+    else:
+        dojo_list = db.session.query(Dojo.id, Dojo.name).filter_by(instructor_membership=current_user.student_membership).all()
+        form.dojo_id.choices = [(dojo.id, dojo.name) for dojo in dojo_list]
+
     if form.validate_on_submit():  # remove and load cookies
         resp = make_response(redirect(url_for('attendance.attendanceStatus')))
         resp.set_cookie('dojo_id', str(form.dojo_id.data))
-        resp.set_cookie('lesson_id', str(0))
         return resp
     return render_template('attendance/attendanceDojoSelect.html',
                            dojo_list=dojo_list,
