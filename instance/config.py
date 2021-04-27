@@ -23,6 +23,7 @@ class Config:
     SECURITY_REGISTERABLE = True
     SECURITY_RECOVERABLE = True
     SECURITY_PASSWORD_SALT = '3d6f45a5fc12445dbac2f59c3b6c7cb1'
+    CLIENT_REPORT = "flaskapp/static/client/report"
 
 
 class ProductionConfig(Config):

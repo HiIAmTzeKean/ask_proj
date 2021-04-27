@@ -54,7 +54,7 @@ def helper_ChartView(student_membership, dojo_id=None):
     countdown = daysToGrading(studentRecord)
 
     lessonDone=lessonAfterGrading(student_membership)
-
+    print(studentRecord.lastGrading)
     return (studentRecord,
             technique, ukemi, discipline,
             coordination, knowledge,

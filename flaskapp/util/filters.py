@@ -18,3 +18,7 @@ def remove_spaces(text):
 @app.template_filter('concat_string_withoutspaces')
 def concat_string_withoutspaces(text1,text2):
     return text1.replace(' ','-') + text2.replace(' ','-')
+
+@app.template_filter('date_formatter')
+def date_formatter(date,formatter="%d %b %Y"):    
+    return date.strftime(formatter)

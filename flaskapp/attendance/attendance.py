@@ -2,7 +2,7 @@ import datetime
 import json
 from sqlalchemy.exc import IntegrityError, DataError
 from flask import (Blueprint, flash, g, make_response, redirect,
-                   render_template, request, url_for)
+                   render_template, request, url_for, send_from_directory)
 from flaskapp import app, db
 from flaskapp.attendance.db_method import (delete_studentEnrollmentRecord,
                                            insert_newEnrollment,
@@ -191,6 +191,33 @@ def attendanceViewer():
                            dojoRecord=dojoRecord, instructorRecord=instructorRecord,
                            lastLessonTechniques=lastLessonTechniques, missingBirthday=missingBirthday,
                            form=form)
+
+
+@attendance_bp.route('/attendanceReport', methods=('GET', 'POST'))
+@roles_accepted('Admin', 'HQ', 'Instructor', 'Helper')
+def attendanceReport():
+    import pandas as pd
+    import pathlib
+    import os
+    dojo_id = request.cookies.get('dojo_id')
+    dojoRecord = db.session.query(Dojo.id, Dojo.instructor_membership, Dojo.name).filter(Dojo.id==dojo_id).first()
+    student_list = db.session.query(Student.membership,
+                                    Student.firstName,
+                                    Student.lastGrading,
+                                    Student.dateOfBirth,
+                                    Belt.beltName,
+                                    Enrollment.studentActive)\
+            .filter(Student.belt_id == Belt.id)\
+            .filter(Enrollment.dojo_id==dojo_id, Enrollment.student_membership == Student.membership)\
+            .order_by(Enrollment.studentActive.desc(),Student.id.asc(),).all()
+    df = pd.DataFrame (student_list, columns=['Membership','FirstName','LastGrading','DOB','Belt','Enrollment'])
+    print(pathlib.Path().absolute())
+    print(os.path.join(pathlib.Path().absolute(), app.config['CLIENT_REPORT'], "output.csv"))
+    
+    df.to_csv(os.path.join(pathlib.Path().absolute(), app.config['CLIENT_REPORT'], "output.csv"), index=False)
+
+    return send_from_directory(os.path.join(pathlib.Path().absolute(), app.config['CLIENT_REPORT']), filename="output.csv", as_attachment=True)
+
 
 
 @attendance_bp.route('/attendanceAdd_DelStudent/<string:add_del>', methods=('GET', 'POST'))
