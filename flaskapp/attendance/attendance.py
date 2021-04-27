@@ -2,7 +2,7 @@ import datetime
 import json
 from sqlalchemy.exc import IntegrityError, DataError
 from flask import (Blueprint, flash, g, make_response, redirect,
-                   render_template, request, url_for)
+                   render_template, request, url_for, send_from_directory)
 from flaskapp import app, db
 from flaskapp.attendance.db_method import (delete_studentEnrollmentRecord,
                                            insert_newEnrollment,
@@ -16,6 +16,7 @@ from flaskapp.attendance.form import (formAdd_DelStudent, formDojoSelection,
 from flaskapp.attendance.helpers import findTerm, str_to_date, catchList, lockList, drillsList
 from flaskapp.auth.auth import dojo_required
 from flask_security.decorators import login_required, roles_accepted
+from flask_security.core import current_user
 from flaskapp.models import (Dojo, Enrollment, Instructor, Lesson, Student,
                              StudentStatus, Belt)
 
@@ -27,12 +28,16 @@ attendance_bp = Blueprint('attendance', __name__,
 @login_required
 def attendanceDojoSelect():
     form = formDojoSelection()
-    dojo_list = db.session.query(Dojo.id, Dojo.name).all()
-    form.dojo_id.choices = [(dojo.id, dojo.name) for dojo in dojo_list]
+    if current_user.has_role('Admin') or current_user.has_role('HQ'):
+        dojo_list = db.session.query(Dojo.id, Dojo.name).all()
+        form.dojo_id.choices = [(dojo.id, dojo.name) for dojo in dojo_list]
+    else:
+        dojo_list = db.session.query(Dojo.id, Dojo.name).filter_by(instructor_membership=current_user.student_membership).all()
+        form.dojo_id.choices = [(dojo.id, dojo.name) for dojo in dojo_list]
+
     if form.validate_on_submit():  # remove and load cookies
         resp = make_response(redirect(url_for('attendance.attendanceStatus')))
         resp.set_cookie('dojo_id', str(form.dojo_id.data))
-        resp.set_cookie('lesson_id', str(0))
         return resp
     return render_template('attendance/attendanceDojoSelect.html',
                            dojo_list=dojo_list,
@@ -186,6 +191,33 @@ def attendanceViewer():
                            dojoRecord=dojoRecord, instructorRecord=instructorRecord,
                            lastLessonTechniques=lastLessonTechniques, missingBirthday=missingBirthday,
                            form=form)
+
+
+@attendance_bp.route('/attendanceReport', methods=('GET', 'POST'))
+@roles_accepted('Admin', 'HQ', 'Instructor', 'Helper')
+def attendanceReport():
+    import pandas as pd
+    import pathlib
+    import os
+    dojo_id = request.cookies.get('dojo_id')
+    dojoRecord = db.session.query(Dojo.id, Dojo.instructor_membership, Dojo.name).filter(Dojo.id==dojo_id).first()
+    student_list = db.session.query(Student.membership,
+                                    Student.firstName,
+                                    Student.lastGrading,
+                                    Student.dateOfBirth,
+                                    Belt.beltName,
+                                    Enrollment.studentActive)\
+            .filter(Student.belt_id == Belt.id)\
+            .filter(Enrollment.dojo_id==dojo_id, Enrollment.student_membership == Student.membership)\
+            .order_by(Enrollment.studentActive.desc(),Student.id.asc(),).all()
+    df = pd.DataFrame (student_list, columns=['Membership','FirstName','LastGrading','DOB','Belt','Enrollment'])
+    print(pathlib.Path().absolute())
+    print(os.path.join(pathlib.Path().absolute(), app.config['CLIENT_REPORT'], "output.csv"))
+    
+    df.to_csv(os.path.join(pathlib.Path().absolute(), app.config['CLIENT_REPORT'], "output.csv"), index=False)
+
+    return send_from_directory(os.path.join(pathlib.Path().absolute(), app.config['CLIENT_REPORT']), filename="output.csv", as_attachment=True)
+
 
 
 @attendance_bp.route('/attendanceAdd_DelStudent/<string:add_del>', methods=('GET', 'POST'))

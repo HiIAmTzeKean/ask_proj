@@ -51,6 +51,10 @@
             class="btn btn-primary">Add New Student</a>
           </div>
           <div class="p-2">
+            <a href="{{ url_for('attendance.attendanceReport') }}"
+            class="btn btn-primary">attendance Report</a>
+          </div>
+          <div class="p-2">
             <div class="dropdown">
               <button class="btn btn-primary dropdown-toggle" type="button" id="NotificationMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Notifications <span class="badge badge-light">{{ missingBirthday|length  }}</span>

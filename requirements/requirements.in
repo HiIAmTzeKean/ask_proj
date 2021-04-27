@@ -17,6 +17,7 @@ requests
 lxml
 matplotlib
 bokeh
+pandas
 gunicorn
 django
 # pip install git+https://github.com/mattupstate/flask-security

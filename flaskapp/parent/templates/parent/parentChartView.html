@@ -352,7 +352,7 @@
                <h5 class="mb-0">
                     <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
                          aria-controls="collapseOne">
-                         Grading Eligible
+                         Grading Eligibility
                     </button>
                </h5>
           </div>
@@ -363,14 +363,6 @@
                     <p>Lessons taken after grading: {{ lessonDone }}</p>
                     <hr>
                     <p>Pre Requisites for next grading: {{ studentRecord.timespanNeeded }} months practice needed before eligible for grading</p>
-                    {% if countdown %}
-                         {% if countdown<0 %}
-                         <p>You are eligible for grading!</p>
-                         {% else %}
-                         <p>You will then need to wait {{ countdown }} months more</p>
-                         {% endif %}
-                    {% endif %}
-                    
                </div>
           </div>
      </div>

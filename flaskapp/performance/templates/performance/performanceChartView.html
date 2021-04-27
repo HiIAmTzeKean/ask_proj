@@ -352,25 +352,21 @@
                <h5 class="mb-0">
                     <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
                          aria-controls="collapseOne">
-                         Grading Eligible
+                         Grading Eligibility
                     </button>
                </h5>
           </div>
 
           <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                <div class="card-body">
-                    <p>Last grading date: {{ studentRecord.lastGrading }}</p>
+                    {% if studentRecord.lastGrading %}
+                         <p>Last grading date: {{ studentRecord.lastGrading|date_formatter }}</p>
+                    {% else %}
+                         <p>Last grading date: NIL</p>
+                    {% endif %}
                     <p>Lessons taken after grading: {{ lessonDone }}</p>
                     <hr>
                     <p>Pre Requisites for next grading: {{ studentRecord.timespanNeeded }} months practice needed before eligible for grading</p>
-                    {% if countdown %}
-                         {% if countdown<0 %}
-                         <p>You are eligible for grading!</p>
-                         {% else %}
-                         <p>You will then need to wait {{ countdown }} months more</p>
-                         {% endif %}
-                    {% endif %}
-                    
                </div>
           </div>
      </div>
@@ -411,7 +407,7 @@
           <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
                <div class="card-body">
                     {% for remark in myRemarks %}
-                         <p>Date: {{ remark.date }}</p>
+                         <p>Date: {{ remark.date|date_formatter }}</p>
                          <p>Remark: {{ remark.remarks }}</p>
                          <hr>
                     {% endfor %}
