@@ -115,7 +115,7 @@ numpy==1.19.5
     #   pandas
 packaging==20.9
     # via bokeh
-pandas==1.2.4
+pandas==1.1.5
     # via -r requirements.in
 passlib==1.7.4
     # via flask-security
