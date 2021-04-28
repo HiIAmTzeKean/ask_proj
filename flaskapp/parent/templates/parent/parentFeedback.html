@@ -70,7 +70,11 @@
                 {% endfor %}
             {% endfor %}
         {% endfor %}
-
+        
+        <div class="form-group row">
+            {{ form.comments.label(class="col-form-label") }}
+            {{ form.comments(class="form-control", cols="35", rows="5") }}
+        </div>
 
         <div class="form-row">
             {{ form.submit(class="form-control btn btn-dark") }}

@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, validators, SubmitField, SelectField, FieldList, FormField, RadioField
+from wtforms import StringField, validators, SubmitField, SelectField, FieldList, FormField, RadioField, TextAreaField
+from wtforms.widgets import TextArea
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, Optional
 import datetime
@@ -26,4 +27,5 @@ class formQuestions(FlaskForm):
 
     # multiple QN using field list
     questions = FieldList(RadioField(choices=[i for i in range(1,11)], default=1))
+    comments = TextAreaField(label='Comments', widget=TextArea(), validators=[DataRequired()])
     submit = SubmitField(label='Submit')
