@@ -7,29 +7,43 @@
 
 <form method="POST" action="{{ url_for('dojo.dojoEditDojo', dojo_id=dojoRecord.id) }}">
 {{ form.hidden_tag() }}
-<table class="table">
-  <tbody>
     {% for field, errors in form.errors.items() %}
       {{ form.field.label }}: {{ ', '.join(errors) }}
     {% endfor %}
-    <tr>
-      <th scope="row">{{ form.name.label(class="col-form-label")}}</th>
-      <td colspan="2">{{ form.name(placeholder='NSCC,GPCC...', class="form-control")}}</td>
-    </tr>
-    <tr>
-      <th scope="row">{{ form.location.label(class="col-form-label") }}</th>
-      <td colspan="2">{{ form.location(class="form-control") }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{{ form.instructor_membership.label(class="col-form-label") }}</th>
-      <td colspan="2">{{ form.instructor_membership(class="form-control") }}</td>
-    </tr>
-  </tbody>
-</table>
 
-<a href="{{ url_for('dojo.dojoViewer') }}" class="btn btn-danger">Back</a>
-{{ form.submit(class="btn btn-success") }}
-<a href="#" data-target="#theModal" data-toggle="modal" class="btn btn-danger">Delete Dojo</a>
+    <div class="form-group row">
+      {{ form.name.label(class="col-form-label")}}
+      {{ form.name(placeholder='NSCC,GPCC...', class="form-control")}}
+    </div>
+
+    <div class="form-group row">
+      {{ form.location.label(class="col-form-label") }}
+      {{ form.location(class="form-control") }}
+    </div>
+
+    <div class="form-group row">
+      {{ form.region.label(class="col-form-label") }}
+      {{ form.region(class="form-control") }}
+    </div>
+
+    <div class="form-group row">
+      
+      <div class="form-check">
+        {{ form.isHQ(class="form-check-input") }}
+      </div>
+      {{ form.isHQ.label(class="form-check-label") }}
+    </div>
+
+    <div class="form-group row">
+      {{ form.instructor_membership.label(class="col-form-label") }}
+      {{ form.instructor_membership(class="form-control") }}
+    </div>
+      
+    <div class="form-group row">
+      <a href="{{ url_for('dojo.dojoViewer') }}" class="btn btn-danger">Back</a>
+      {{ form.submit(class="btn btn-success") }}
+      <a href="#" data-target="#theModal" data-toggle="modal" class="btn btn-danger">Delete Dojo</a>
+    </div>
 </form>
 
 

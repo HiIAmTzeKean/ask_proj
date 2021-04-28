@@ -1,0 +1,30 @@
+{% extends 'base_parent.html' %}
+
+{% block title %}Parent Testimonial{% endblock %}
+
+{% block content %}
+<form action="{{ url_for('parent.parentTestimonialSave') }}" method="POST">
+    {{ form.hidden_tag() }}
+  
+    <div class="form-group row">
+        {{ form.membership.label(class="form-label")}}
+        {{ form.membership(class="form-control")}}
+    </div>
+
+    <div class="form-group row">
+        {{ form.date.label(class="form-label")}}
+        {{ form.date(class="form-control")}}
+    </div>
+    
+    <div class="form-group row">
+        {{ form.testimonial.label(class="form-label") }}
+        {{ form.testimonial(class="form-control", cols="35", rows="5") }}
+    </div>
+
+  
+    <div class="form-group row">
+        {{ form.submit(class_="form-control btn btn-dark") }}
+    </div>
+
+</form>
+{% endblock %}

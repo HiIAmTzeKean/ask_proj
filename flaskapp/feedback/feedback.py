@@ -3,8 +3,8 @@ import datetime
 from flask import (Blueprint, flash, redirect,
                    render_template, request, url_for)
 from flaskapp import db
-from flaskapp.models import SurveyQuestion, Answer, Question
-
+from flaskapp.models import SurveyQuestion, Answer, Question, Student
+from flaskapp.feedback.form import formMembership
 
 feedback_bp = Blueprint('feedback', __name__,
                            template_folder='templates',
@@ -49,3 +49,20 @@ def feedbackViewer():
     scale = [i for i in range(1,11)]
     questions = [r.name for r in questions]
     return render_template("chart.html", scale=scale, answer_dict=answer_dict, questions=questions)
+
+@feedback_bp.route('/feedbackGenerateTestimonial', methods=('GET', 'POST'))
+def feedbackGenerateTestimonial():
+    from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+    form = formMembership()
+    if form.validate_on_submit():
+        # need to validate membership exist 
+        studentRecord = db.session.query(Student.firstName).filter_by(membership=form.membership.data).first()
+        if not studentRecord:
+            flash('Membership ID does not exist')
+            return redirect(url_for('feedback.feedbackGenerateTestimonial', form=form))
+
+        s = Serializer('WEBSITE_SECRET_KEY', 60*60) # 60 secs by 30 mins
+        token = s.dumps({'membership': form.membership.data}).decode('utf-8') # encode user id 
+        link="https://ask-proj.herokuapp.com/parent/parentTestimonial/" + str(token)
+        return render_template('feedbackGenerateTestimonial.html', form=form, link=link)
+    return render_template('feedbackGenerateTestimonial.html', form=form)

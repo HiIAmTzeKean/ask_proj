@@ -29,3 +29,10 @@ class formQuestions(FlaskForm):
     questions = FieldList(RadioField(choices=[i for i in range(1,11)], default=1))
     comments = TextAreaField(label='Comments', widget=TextArea(), validators=[DataRequired()])
     submit = SubmitField(label='Submit')
+
+
+class formTesimonial(FlaskForm):
+    membership = StringField(label='Membership ID', validators=[DataRequired()], render_kw={'readonly': True})
+    date = DateField(label='Date', default=datetime.date.today(), validators=[DataRequired()], render_kw={'readonly': True})
+    testimonial = TextAreaField(label='Testimonial', widget=TextArea(), validators=[DataRequired()])
+    submit = SubmitField(label='Submit')
