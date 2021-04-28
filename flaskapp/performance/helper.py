@@ -51,14 +51,14 @@ def helper_ChartView(student_membership, dojo_id=None):
                         filter_by(student_membership=student_membership).order_by(StudentRemarks.date.asc()).all()
 
     # ---- get number of days to grading
-    countdown = daysToGrading(studentRecord)
+    values = ['technique','ukemi','discipline','coordination','knowledge','spirit']
 
     lessonDone=lessonAfterGrading(student_membership)
-    print(studentRecord.lastGrading)
+    
     return (studentRecord,
             technique, ukemi, discipline,
             coordination, knowledge,
-            spirit, dateLabel, countdown,
+            spirit, dateLabel, values,
             lessonDone, myRemarks)
 
 
@@ -80,13 +80,14 @@ def lessonAfterGrading(student_membership):
 
 
 def processDateLabel(dateLabel):
-    # print(dateLabel)
     if dateLabel == []:
         return []
-    elif len(dateLabel)<5:
-        return dateLabel
     else:
-        return [label if (i+1)%(len(dateLabel)//5)==0 else '' for i,label in enumerate(dateLabel)]
+    #elif len(dateLabel)<5:
+        dateLabel = [i.strftime("%m - %b") for i in dateLabel]
+        return dateLabel
+    # else:
+    #     return [label if (i+1)%(len(dateLabel)//5)==0 else '' for i,label in enumerate(dateLabel)]
 
 
 def processChartRecords(subquery):

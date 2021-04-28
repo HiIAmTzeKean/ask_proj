@@ -59,14 +59,14 @@ def parentGradingDates():
 @mobile_template('{mobile/}parentChartView.html')
 def parentChartView(student_membership, template):
     student_membership = messageDecode(student_membership)
-    studentRecord,technique,ukemi,discipline,coordination,knowledge,spirit,dateLabel,countdown,lessonDone,myRemarks=\
+    studentRecord,technique,ukemi,discipline,coordination,knowledge,spirit,dateLabel,values,lessonDone,myRemarks=\
         helper_ChartView(student_membership)
 
     return render_template(template,
                            studentRecord=studentRecord,
                            technique=technique, ukemi=ukemi, discipline=discipline,
                            coordination=coordination, knowledge=knowledge,
-                           spirit=spirit, dateLabel=dateLabel, countdown=countdown,
+                           spirit=spirit, dateLabel=dateLabel, values=values,
                            lessonDone=lessonDone, myRemarks=myRemarks)
 
 
