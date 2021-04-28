@@ -4,335 +4,66 @@
 {% block scripts %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 
-<script> // technique
-     var chartData = {
-          labels: [{% for item in dateLabel %}
-                         "{{item}}",
-                    {% endfor %}],
-          datasets: [{
-               label: 'technique',
-               borderJoinStyle: 'miter',
-               pointBorderColor: "rgba(75,192,192,1)",
-               pointBackgroundColor: "#fff",
-               pointBorderWidth: 1,
-               pointHoverRadius: 5,
-               pointHoverBackgroundColor: "rgba(75,192,192,1)",
-               pointHoverBorderColor: "rgba(220,220,220,1)",
-               pointHoverBorderWidth: 2,
-               pointRadius: 1,
-               pointHitRadius: 10,
-               data: {{ technique }},
-               spanGaps: false,
-               backgroundColor: ['red'],
-          }]
-     }
-     // get chart canvas
-     var ctx = document.getElementById("technique").getContext("2d");
-
-     // create the chart using the chart canvas
-     var technique = new Chart(ctx, {
-          type: 'line',
-          data: chartData,
-          options: {
-               responsive: true,
-               scales: {
-                    xAxes: [{
-                            display: true,
-                            scaleLabel: {
-                                display: true,
-                            }
-                         }],
-                    yAxes: [{
-                            display: true,
-                            ticks: {
-                                suggestedMin: 1,
-                                steps: 1,
-                                stepValue: 1,
-                                max: 10
-                            }
-                         }]
-               },
-               title: {
-                    display: true,
-                    text: 'technique',
+<script> //consolidated
+     {% for value in values %}
+          var chartData = {
+               labels: [{% for item in dateLabel %}
+                              "{{item}}",
+                         {% endfor %}],
+               datasets: [{
+                    label: "{{ value }}",
+                    borderJoinStyle: 'miter',
+                    pointBorderColor: "rgba(75,192,192,1)",
+                    pointBackgroundColor: "#fff",
+                    pointBorderWidth: 1,
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                    pointHoverBorderColor: "rgba(220,220,220,1)",
+                    pointHoverBorderWidth: 2,
+                    pointRadius: 1,
+                    pointHitRadius: 10,
+                    data: {{ technique }},
+                    spanGaps: false,
+                    backgroundColor: ['green'],
+                    }]
                }
-          }
-     });
-</script>
-<script> // ukemi
-     var chartData = {
-          labels: [{% for item in dateLabel %}
-                         "{{item}}",
-                    {% endfor %}],
-     datasets: [{
-          label: 'ukemi',
-          borderJoinStyle: 'miter',
-          pointBorderColor: "rgba(75,192,192,1)",
-          pointBackgroundColor: "#fff",
-          pointBorderWidth: 1,
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: "rgba(75,192,192,1)",
-          pointHoverBorderColor: "rgba(220,220,220,1)",
-          pointHoverBorderWidth: 2,
-          pointRadius: 1,
-          pointHitRadius: 10,
-          data: {{ ukemi }}, // Performance score
-          spanGaps: false,
-          backgroundColor: ['red'],
-        }]
-       }
-     // get chart canvas
-     var ctx = document.getElementById("ukemi").getContext("2d");
-
-     // create the chart using the chart canvas
-     var ukemi = new Chart(ctx, {
-          type: 'line',
-          data: chartData,
-          options: {
-               responsive: true,
-               scales: {
-                    xAxes: [{
-                            display: true,
-                            scaleLabel: {
-                                display: true,
-                            }
-                         }],
-                    yAxes: [{
-                            display: true,
-                            ticks: {
-                                suggestedMin: 1,
-                                steps: 1,
-                                stepValue: 1,
-                                max: 10
-                            }
-                         }]
-               },
-               title: {
-                    display: true,
-                    text: 'Ukemi',
+          // get chart canvas
+          var ctx = document.getElementById("{{ value }}").getContext("2d");
+     
+          // create the chart using the chart canvas
+          var {{ value }} = new Chart(ctx, {
+               type: 'line',
+               data: chartData,
+               options: {
+                    responsive: true,
+                    scales: {
+                         xAxes: [{
+                              display: true,
+                              scaleLabel: {
+                                   display: true,
+                                   },
+                              ticks: {
+                                   maxRotation: 90,
+                                   minRotation: 90
+                                 }
+                              }],
+                         yAxes: [{
+                              display: true,
+                              ticks: {
+                                   suggestedMin: 1,
+                                   steps: 1,
+                                   stepValue: 1,
+                                   max: 10
+                                   }
+                              }]
+                    },
+                    title: {
+                         display: true,
+                         text: '{{ value }}',
+                    }
                }
-          }
-     });
-</script>
-<script> // discipline
-     var chartData = {
-          labels: [{% for item in dateLabel %}
-                    "{{item}}",
-                    {% endfor %}],
-     datasets: [{
-          label: 'discipline',
-          borderJoinStyle: 'miter',
-          pointBorderColor: "rgba(75,192,192,1)",
-          pointBackgroundColor: "#fff",
-          pointBorderWidth: 1,
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: "rgba(75,192,192,1)",
-          pointHoverBorderColor: "rgba(220,220,220,1)",
-          pointHoverBorderWidth: 2,
-          pointRadius: 1,
-          pointHitRadius: 10,
-          data: {{ discipline }}, // Performance score
-          spanGaps: false,
-          backgroundColor: ['red'],
-        }]
-       }
-     // get chart canvas
-     var ctx = document.getElementById("discipline").getContext("2d");
-
-     // create the chart using the chart canvas
-     var discipline = new Chart(ctx, {
-          type: 'line',
-          data: chartData,
-          options: {
-               responsive: true,
-               scales: {
-                    xAxes: [{
-                            display: true,
-                            scaleLabel: {
-                                display: true,
-                            }
-                         }],
-                    yAxes: [{
-                            display: true,
-                            ticks: {
-                                suggestedMin: 1,
-                                steps: 1,
-                                stepValue: 1,
-                                max: 10
-                            }
-                         }]
-               },
-               title: {
-                    display: true,
-                    text: 'Discipline',
-               }
-          }
-     });
-</script>
-<script> // coordination
-     var chartData = {
-          labels: [{% for item in dateLabel %}
-     "{{item}}",
-          {% endfor %}],
-     datasets: [{
-          label: 'coordination',
-          borderJoinStyle: 'miter',
-          pointBorderColor: "rgba(75,192,192,1)",
-          pointBackgroundColor: "#fff",
-          pointBorderWidth: 1,
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: "rgba(75,192,192,1)",
-          pointHoverBorderColor: "rgba(220,220,220,1)",
-          pointHoverBorderWidth: 2,
-          pointRadius: 1,
-          pointHitRadius: 10,
-          data: {{ coordination }}, // Performance score
-          spanGaps: false,
-          backgroundColor: ['red'],
-        }]
-       }
-     // get chart canvas
-     var ctx = document.getElementById("coordination").getContext("2d");
-
-     // create the chart using the chart canvas
-     var coordination = new Chart(ctx, {
-          type: 'line',
-          data: chartData,
-          options: {
-               responsive: true,
-               scales: {
-                    xAxes: [{
-                            display: true,
-                            scaleLabel: {
-                                display: true,
-                            }
-                         }],
-                    yAxes: [{
-                            display: true,
-                            ticks: {
-                                suggestedMin: 1,
-                                steps: 1,
-                                stepValue: 1,
-                                max: 10
-                            }
-                         }]
-               },
-               title: {
-                    display: true,
-                    text: 'Coordination',
-               }
-          }
-     });
-</script>
-<script> // knowledge
-     var chartData = {
-          labels: [{% for item in dateLabel %}
-     "{{item}}",
-          {% endfor %}],
-     datasets: [{
-          label: 'knowledge',
-          borderJoinStyle: 'miter',
-          pointBorderColor: "rgba(75,192,192,1)",
-          pointBackgroundColor: "#fff",
-          pointBorderWidth: 1,
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: "rgba(75,192,192,1)",
-          pointHoverBorderColor: "rgba(220,220,220,1)",
-          pointHoverBorderWidth: 2,
-          pointRadius: 1,
-          pointHitRadius: 10,
-          data: {{ knowledge }}, // Performance score
-          spanGaps: false,
-          backgroundColor: ['red'],
-        }]
-       }
-     // get chart canvas
-     var ctx = document.getElementById("knowledge").getContext("2d");
-
-     // create the chart using the chart canvas
-     var knowledge = new Chart(ctx, {
-          type: 'line',
-          data: chartData,
-          options: {
-               responsive: true,
-               scales: {
-                    xAxes: [{
-                            display: true,
-                            scaleLabel: {
-                                display: true,
-                            }
-                         }],
-                    yAxes: [{
-                            display: true,
-                            ticks: {
-                                suggestedMin: 1,
-                                steps: 1,
-                                stepValue: 1,
-                                max: 10
-                            }
-                         }]
-               },
-               title: {
-                    display: true,
-                    text: 'knowledge',
-               }
-          }
-     });
-</script>
-<script> // spirit
-     var chartData = {
-          labels: [{% for item in dateLabel %}
-     "{{item}}",
-          {% endfor %}],
-     datasets: [{
-          label: 'spirit',
-          borderJoinStyle: 'miter',
-          pointBorderColor: "rgba(75,192,192,1)",
-          pointBackgroundColor: "#fff",
-          pointBorderWidth: 1,
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: "rgba(75,192,192,1)",
-          pointHoverBorderColor: "rgba(220,220,220,1)",
-          pointHoverBorderWidth: 2,
-          pointRadius: 1,
-          pointHitRadius: 10,
-          data: {{ spirit }}, // Performance score
-          spanGaps: false,
-          backgroundColor: ['red'],
-        }]
-       }
-     // get chart canvas
-     var ctx = document.getElementById("spirit").getContext("2d");
-
-     // create the chart using the chart canvas
-     var spirit = new Chart(ctx, {
-          type: 'line',
-          data: chartData,
-          options: {
-               responsive: true,
-               scales: {
-                    xAxes: [{
-                            display: true,
-                            scaleLabel: {
-                                display: true,
-                            }
-                         }],
-                    yAxes: [{
-                            display: true,
-                            ticks: {
-                                suggestedMin: 1,
-                                steps: 1,
-                                stepValue: 1,
-                                max: 10
-                            }
-                         }]
-               },
-               title: {
-                    display: true,
-                    text: 'spirit',
-               }
-          }
-     });
+          });
+     {% endfor %}
 </script>
 {% endblock %}
 

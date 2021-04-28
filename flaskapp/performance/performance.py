@@ -131,11 +131,12 @@ def performanceGradeNext(student_membership):
 @performance_bp.route('/performanceChartView/<student_membership>', methods=['GET'])
 @mobile_template('{mobile/}performanceChartView.html')
 def performanceChartView(student_membership, template):
-    studentRecord,technique,ukemi,discipline,coordination,knowledge,spirit,dateLabel,countdown,lessonDone,myRemarks=\
+    studentRecord,technique,ukemi,discipline,coordination,knowledge,spirit,dateLabel,values,lessonDone,myRemarks=\
         helper_ChartView(student_membership,request.cookies.get('dojo_id'))
-    return render_template(template,
+
+    return render_template(template, values=values,
                            studentRecord=studentRecord,
                            technique=technique, ukemi=ukemi, discipline=discipline,
                            coordination=coordination, knowledge=knowledge,
-                           spirit=spirit, dateLabel=dateLabel, countdown=countdown,
+                           spirit=spirit, dateLabel=dateLabel,
                            lessonDone=lessonDone, myRemarks=myRemarks)
