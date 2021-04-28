@@ -1,11 +1,11 @@
 import datetime
 # import base64
 from sqlalchemy.orm.exc import NoResultFound
+from flask_mail import Message
 from flask import (Blueprint, flash, redirect, make_response,
                    render_template, request, url_for)
 from flask_mobility.decorators import mobile_template
-from flaskapp import db, app
-
+from flaskapp import db, app, mail
 from flaskapp.models import (Student, StudentRemarks, Answer, Enrollment,Instructor,
                              StudentStatus, Belt, Lesson, Survey,SurveyQuestion,Question)
 from flaskapp.parent.form import formStudentIdentifier, formQuestions
@@ -91,6 +91,10 @@ def parentFeedback():
         
             flash('Thank you for the feedback!')
             request.form = {}
+
+            msg = Message("Parents Feedback",recipients=["zhugejing505@gmail.com"])
+            msg.body = form.comments.data
+            mail.send(msg)
             return redirect(url_for('parent.parentIdentifyStudent'))
         flash('Sorry, but the Membership ID does not tally with the given birthday!')
 
