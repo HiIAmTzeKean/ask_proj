@@ -8,7 +8,7 @@ from flask_mobility.decorators import mobile_template
 from flaskapp import db, app, mail
 from flaskapp.models import (Student, StudentRemarks, Answer, Enrollment,Instructor,
                              StudentStatus, Belt, Lesson, Survey,SurveyQuestion,Question)
-from flaskapp.parent.form import formStudentIdentifier, formQuestions
+from flaskapp.parent.form import formStudentIdentifier, formQuestions, formTesimonial
 from flaskapp.performance.helper import helper_ChartView
 from flaskapp.parent.helper import messageEncode, messageDecode
 
@@ -68,6 +68,26 @@ def parentChartView(student_membership, template):
                            coordination=coordination, knowledge=knowledge,
                            spirit=spirit, dateLabel=dateLabel, values=values,
                            lessonDone=lessonDone, myRemarks=myRemarks)
+
+
+@parent_bp.route('/parentTestimonial/<token>', methods=('GET', 'POST'))
+def parentTestimonial(token):
+    from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+    s = Serializer('WEBSITE_SECRET_KEY')
+    try:
+        membership = s.loads(token)['membership']
+        form = formTesimonial(membership=membership)
+    except:
+        return redirect(url_for('parent.parentIdentifyStudent'))
+    return render_template('parentTestimonial.html', form=form)
+
+
+@parent_bp.route('/parentTestimonialSave', methods=('GET', 'POST'))
+def parentTestimonialSave():
+    form = formTesimonial(request.form)
+    print(form.testimonial.data)
+    # add to db
+    return redirect(url_for('parent.parentIdentifyStudent'))
 
 
 # todo reset form after submit
