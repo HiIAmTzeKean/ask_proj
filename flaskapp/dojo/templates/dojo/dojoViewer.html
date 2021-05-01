@@ -7,9 +7,6 @@
   <a href="{{ url_for('dojo.dojoAddDojo') }}" class="btn btn-primary">Add Dojo</a>
 </div>
 
-<div id="includedContent"></div>
-
-
 <table class="table">
     <thead class="thead-dark">
       <tr>
@@ -33,12 +30,4 @@
     <tbody>
     </tbody>
 </table>
-{% endblock %}
-
-{% block scripts %}
-<script> 
-  $(function(){
-    $("#includedContent").load("{{ url_for('dojo.static', filename='testtry.html') }}"); 
-  });
-</script> 
 {% endblock %}

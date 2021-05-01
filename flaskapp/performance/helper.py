@@ -44,7 +44,7 @@ def helper_ChartView(student_membership, dojo_id=None):
 
     technique,ukemi,discipline,coordination,knowledge,spirit,dateLabel = processChartRecords(subquery)
     dateLabel = processDateLabel(dateLabel)
-
+    
     # ---- get remarks
     myRemarks = db.session.query(StudentRemarks.remarks,
                                  StudentRemarks.date).\
@@ -54,11 +54,67 @@ def helper_ChartView(student_membership, dojo_id=None):
     values = ['technique','ukemi','discipline','coordination','knowledge','spirit']
 
     lessonDone=lessonAfterGrading(student_membership)
-    
+
     return (studentRecord,
             technique, ukemi, discipline,
             coordination, knowledge,
             spirit, dateLabel, values,
+            lessonDone, myRemarks)
+
+
+def helper_RadarView(student_membership, dojo_id=None):
+    # ---- get student details
+    studentRecord = db.session.query(Student.firstName,
+                                     Student.lastGrading,
+                                     Belt.beltName,
+                                     Belt.beltColor,
+                                     Belt.timespanNeeded)\
+                        .filter(Student.membership==student_membership, Student.belt_id==Belt.id).first()
+
+    # ---- get performance details
+    if dojo_id != None:
+        subquery = db.session.query(StudentStatus.technique,
+                                    StudentStatus.ukemi,
+                                    StudentStatus.discipline,
+                                    StudentStatus.coordination,
+                                    StudentStatus.knowledge,
+                                    StudentStatus.spirit,
+                                    Lesson.date).\
+                    filter(StudentStatus.student_membership == student_membership,
+                            StudentStatus.status == True,
+                            StudentStatus.evaluated == True,
+                            StudentStatus.lesson_id == Lesson.id,
+                            Lesson.dojo_id == dojo_id).\
+                    order_by(Lesson.date.asc()).limit(10).all()
+    else:
+        subquery = db.session.query(StudentStatus.technique,
+                                    StudentStatus.ukemi,
+                                    StudentStatus.discipline,
+                                    StudentStatus.coordination,
+                                    StudentStatus.knowledge,
+                                    StudentStatus.spirit,
+                                    Lesson.date).\
+                    filter(StudentStatus.student_membership == student_membership,
+                            StudentStatus.status == True,
+                            StudentStatus.evaluated == True,
+                            StudentStatus.lesson_id == Lesson.id).\
+                    order_by(Lesson.date.asc()).limit(10).all()
+
+    radar_data,dateLabel = processChartRecords_Radar(subquery)
+    dateLabel = processDateLabel(dateLabel)
+
+    # ---- get remarks
+    myRemarks = db.session.query(StudentRemarks.remarks,
+                                 StudentRemarks.date).\
+                        filter_by(student_membership=student_membership).order_by(StudentRemarks.date.asc()).all()
+
+    # ---- get number of days to grading
+    values = ['Technique','Ukemi','Discipline','Coordination','Knowledge','Spirit']
+
+    lessonDone=lessonAfterGrading(student_membership)
+    
+    return (studentRecord,radar_data,
+            dateLabel, values,
             lessonDone, myRemarks)
 
 
@@ -83,18 +139,23 @@ def processDateLabel(dateLabel):
     if dateLabel == []:
         return []
     else:
-    #elif len(dateLabel)<5:
-        dateLabel = [i.strftime("%m - %b") for i in dateLabel]
+        dateLabel = [i.strftime("%d-%b") for i in dateLabel]
         return dateLabel
-    # else:
-    #     return [label if (i+1)%(len(dateLabel)//5)==0 else '' for i,label in enumerate(dateLabel)]
 
 
 def processChartRecords(subquery):
     if subquery == []:
         return [], [], [], [], [], [], []
     return [list(i) for i in zip(*subquery)]
-        
+
+
+def processChartRecords_Radar(subquery):
+    if subquery == []:
+        return [], []
+    temp = [list(i) for i in zip(*subquery)]
+    print(temp)
+    return temp[0:-1],temp[-1]   
+
 
 def daysToGrading(studentRecord):
     if studentRecord.lastGrading:

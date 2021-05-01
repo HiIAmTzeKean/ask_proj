@@ -2,15 +2,80 @@
 
 {% block scripts %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
-<script src="{{ url_for('static', filename='js/radar_chart.js') }}"></script>
-<script src="{{ url_for('static', filename='js/line_chart.js') }}"></script>
 
-<script> //button script
+<script> //consolidated
+function drawLineChart() {
+     {% for value in values %}
+          var chartData = {
+               labels: [{% for item in dateLabel %}
+                              "{{item}}",
+                         {% endfor %}],
+               datasets: [{
+                    label: "{{ value }}",
+                    borderJoinStyle: 'miter',
+                    pointBorderColor: "rgba(75,192,192,1)",
+                    pointBackgroundColor: "#fff",
+                    pointBorderWidth: 1,
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: "rgba(75,192,192,1)",
+                    pointHoverBorderColor: "rgba(220,220,220,1)",
+                    pointHoverBorderWidth: 2,
+                    pointRadius: 1,
+                    pointHitRadius: 10,
+                    data: {{ lines_data.get(value) }},
+                    spanGaps: false,
+                    backgroundColor: ['green'],
+                    }]
+               }
+          // get chart canvas
+          var ctx = document.getElementById("{{ value }}").getContext("2d");
+     
+          // create the chart using the chart canvas
+          var {{ value }} = new Chart(ctx, {
+               type: 'line',
+               data: chartData,
+               options: {
+                    responsive: true,
+                    scales: {
+                         xAxes: [{
+                              display: true,
+                              scaleLabel: {
+                                   display: true,
+                                   },
+                              ticks: {
+                                   maxRotation: 90,
+                                   minRotation: 90
+                                   }
+                              }],
+                         yAxes: [{
+                              display: true,
+                              ticks: {
+                                   suggestedMin: 1,
+                                   steps: 1,
+                                   stepValue: 1,
+                                   max: 10
+                                   }
+                              }]
+                    },
+                    title: {
+                         display: true,
+                         text: '{{ value }}',
+                    }
+               }
+          });
+     {% endfor %}
+};
+</script>
+
+<script>
+     // For crafting of radar chart
+     var radar_data = {{ radar_data }}
+
      $(document).on("click","#0",function(){
-          document.getElementById("Charts").innerHTML = "<div class='p-2'>\
-                                                       <canvas id='chart'></canvas>\
+          document.getElementById("Charts").innerHTML = "<div style='width: 1000px;height:600px'>\
+                                                       <canvas id='chart' width='100' height='100'></canvas>\
                                                        </div>";
-          drawRadarChart({{ radar_data }});
+          drawRadarChart();
      });
      
      $(document).on("click","#1",function(){
@@ -20,23 +85,16 @@
                                                        <div class='p-2'><canvas id='coordination' width='300' height='300'></canvas></div>\
                                                        <div class='p-2'><canvas id='knowledge' width='300' height='300'></canvas></div>\
                                                        <div class='p-2'><canvas id='spirit' width='300' height='300'></canvas></div>";
-          drawLineChart()
+          drawLineChart();
      });
 </script>
-<script>
-     $(document).ready(function(){
-          var dateLabel = [{% for item in dateLabel %}"{{item}}",{% endfor %}];
-          {% for value in values %}
-          var {{ value }} = drawOneLineChart(dateLabel, "{{ value }}", {{ lines_data.get(value) }});
-          {% endfor %}
-     });
 
-     function drawLineChart(){
-          var dateLabel = [{% for item in dateLabel %}"{{item}}",{% endfor %}];
-          {% for value in values %}
-          var {{ value }} = drawOneLineChart(dateLabel, "{{ value }}", {{ lines_data.get(value) }});
-          {% endfor %}
-     };
+<script src="{{ url_for('static', filename='js/radar_chart.js') }}"></script>
+
+<script> //dafault chart
+     $(document).ready(function() {
+          drawLineChart();
+     });
 </script>
 {% endblock %}
 
