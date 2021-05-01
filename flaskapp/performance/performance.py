@@ -133,10 +133,11 @@ def performanceGradeNext(student_membership):
 def performanceChartView(student_membership, template):
     studentRecord,technique,ukemi,discipline,coordination,knowledge,spirit,dateLabel,values,lessonDone,myRemarks=\
         helper_ChartView(student_membership,request.cookies.get('dojo_id'))
-
-    return render_template(template, values=values,
-                           studentRecord=studentRecord,
-                           technique=technique, ukemi=ukemi, discipline=discipline,
-                           coordination=coordination, knowledge=knowledge,
-                           spirit=spirit, dateLabel=dateLabel,
+    from statistics import mean
+    radar_data = [mean(i) for i in [technique,ukemi,discipline,coordination,knowledge,spirit]]
+    lines_data = {'technique':technique,'ukemi':ukemi,'discipline':discipline,'coordination':coordination,'knowledge':knowledge,'spirit':spirit}
+    return render_template(template,
+                           studentRecord=studentRecord, 
+                           radar_data=radar_data,lines_data=lines_data,
+                           dateLabel=dateLabel, values=values,
                            lessonDone=lessonDone, myRemarks=myRemarks)

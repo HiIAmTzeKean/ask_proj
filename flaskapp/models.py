@@ -89,10 +89,10 @@ class Dojo(db.Model):
     lesson = db.relationship('Lesson', back_populates='dojo', cascade="all, delete", passive_deletes=True)
     studentRemarks = db.relationship('StudentRemarks', back_populates='dojo', cascade="all, delete", passive_deletes=True)
 
-    def __init__(self, name, location,instructor_id):
+    def __init__(self, name, region, isHQ=True):
         self.name = name
-        self.location = location
-        self.instructor_id = instructor_id
+        self.region = region
+        self.isHQ = isHQ
 
     def __repr__(self):
         return '<Dojo {}>'.format(self.name)

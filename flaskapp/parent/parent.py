@@ -9,7 +9,7 @@ from flaskapp import db, app, mail
 from flaskapp.models import (Student, StudentRemarks, Answer, Enrollment,Instructor,
                              StudentStatus, Belt, Lesson, Survey,SurveyQuestion,Question)
 from flaskapp.parent.form import formStudentIdentifier, formQuestions, formTesimonial
-from flaskapp.performance.helper import helper_ChartView
+from flaskapp.performance.helper import helper_ChartView,helper_RadarView
 from flaskapp.parent.helper import messageEncode, messageDecode
 
 
@@ -27,12 +27,10 @@ def parentIdentifyStudent():
                 filter_by(membership = form.membership.data,
                           dateOfBirth = datetime.datetime.strptime('01{}{}'.format(form.dateOfBirth_month.data.zfill(2),form.dateOfBirth_year.data), '%d%m%Y').date()).\
                 one()
-
+            return redirect(url_for('parent.parentChartView', student_membership=messageEncode(str(form.membership.data))))
         except NoResultFound:
             flash('Membership ID and Birhtday combination is not valid, please try again!')
-            return redirect(url_for('parent.parentIdentifyStudent'))
-
-        return redirect(url_for('parent.parentChartView', student_membership=messageEncode(str(form.membership.data))))
+ 
     return render_template('parentIdentifyStudent.html',form=form)
 
 
@@ -61,12 +59,25 @@ def parentChartView(student_membership, template):
     student_membership = messageDecode(student_membership)
     studentRecord,technique,ukemi,discipline,coordination,knowledge,spirit,dateLabel,values,lessonDone,myRemarks=\
         helper_ChartView(student_membership)
-
+    from statistics import mean
+    radar_data = [mean(i) for i in [technique,ukemi,discipline,coordination,knowledge,spirit]]
+    lines_data = {'technique':technique,'ukemi':ukemi,'discipline':discipline,'coordination':coordination,'knowledge':knowledge,'spirit':spirit}
     return render_template(template,
-                           studentRecord=studentRecord,
-                           technique=technique, ukemi=ukemi, discipline=discipline,
-                           coordination=coordination, knowledge=knowledge,
-                           spirit=spirit, dateLabel=dateLabel, values=values,
+                           studentRecord=studentRecord, radar_data=radar_data,lines_data=lines_data,
+                           dateLabel=dateLabel, values=values,
+                           lessonDone=lessonDone, myRemarks=myRemarks)
+
+
+@parent_bp.route('/parentYearEndReport/<student_membership>', methods=['GET'])
+@mobile_template('{mobile/}parentYearEndReport.html')
+def parentYearEndReport(student_membership, template):
+    student_membership = messageDecode(student_membership)
+    studentRecord,radar_data,dateLabel,values,lessonDone,myRemarks=helper_RadarView(student_membership)
+    from statistics import mean
+    radar_data = [mean(i) for i in radar_data]
+    return render_template(template,
+                           studentRecord=studentRecord, radar_data=radar_data,
+                           dateLabel=dateLabel, values=values,
                            lessonDone=lessonDone, myRemarks=myRemarks)
 
 
@@ -90,7 +101,6 @@ def parentTestimonialSave():
     return redirect(url_for('parent.parentIdentifyStudent'))
 
 
-# todo reset form after submit
 @parent_bp.route('/parentFeedback', methods=('GET', 'POST'))
 def parentFeedback():
     form = formQuestions(request.form)

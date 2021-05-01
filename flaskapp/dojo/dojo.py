@@ -38,7 +38,7 @@ def dojoEditDojo(dojo_id):
 @dojo_bp.route('/dojoAddDojo', methods=('GET', 'POST'))
 @roles_accepted('Admin', 'HQ')
 def dojoAddDojo():
-    dojoRecord = Dojo(None,None,None)
+    dojoRecord = Dojo(None,None)
     form = formEditDojo(obj=dojoRecord)
     instructor_list = Instructor.query.all()
     form.instructor_membership.choices = [(instructor.membership, instructor.firstName) for instructor in instructor_list]

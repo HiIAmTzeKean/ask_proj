@@ -5,21 +5,9 @@
 
 {% block content %}
 {% include "security/_messages.html" %}
-<h4>{{ _('Register') }}</h4>
-
-<div class="container-fluid">
+<h1>{{ _('Register') }}</h1>
 <form action="{{ url_for_security('register') }}" method="POST" name="register_user_form">
   {{ register_user_form.hidden_tag() }}
-
-  <div>
-    {% for item,errors in register_user_form.errors.items() %}
-      {% for error in errors %}
-        <span style="color:red">*{{ item }}: {{ error }}</span>
-        <br>
-      {% endfor %}
-    {% endfor %}
-  </div>
-
   <div class="form-group row">
     {{ register_user_form.membership_id.label(class="col-form-label")}}
     {{ register_user_form.membership_id(class="form-control")}}
@@ -33,11 +21,18 @@
     {{ register_user_form.password(class="form-control")}}
   </div>
 
-  <div class="form-group row">
+  <div class="form-group">
     {{ register_user_form.submit(class="btn btn-primary")}}
   </div>
+  {{ render_field_with_errors(register_user_form.membership_id) }}
+  {{ render_field_with_errors(register_user_form.email) }}
+  {{ render_field_with_errors(register_user_form.password) }}
+  {% if register_user_form.password_confirm %}
+    {{ render_field_with_errors(register_user_form.password_confirm) }}
+  {% endif %}
+  {{ render_field(register_user_form.submit) }}
 </form>
-</div>
+
 <p>Already signed up? Please 
   <a href="{{ url_for('security.login') }}">log in</a>.
 </p>

@@ -36,4 +36,4 @@ class ExtendedRegisterForm(ConfirmRegisterForm):
         if registred_student is None:
             # the "student" is not registered thus not authorized 
             # then the given "email" is not validated
-            raise ValidationError('Membership ID does not exit, please contact HQ')
+            raise ValidationError('Membership ID does not exist, please contact HQ')
