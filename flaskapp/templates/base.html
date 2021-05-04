@@ -17,6 +17,19 @@
 
   <!-- Custom Page Specific CSS -->
   {% block styles %}{% endblock %}
+
+  <!-- Custom site API -->
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+  <script>
+    window.OneSignal = window.OneSignal || [];
+    OneSignal.push(function() {
+      OneSignal.init({
+        appId: "6e7599e5-25ca-4bbd-bcce-487bc996403a",
+      });
+    });
+  </script>
+  {% block APIScripts%}{% endblock %}
 </head>
 
 <header>
