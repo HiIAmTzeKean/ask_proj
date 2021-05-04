@@ -131,11 +131,8 @@ def performanceGradeNext(student_membership):
 @performance_bp.route('/performanceChartView/<student_membership>', methods=['GET'])
 @mobile_template('{mobile/}performanceChartView.html')
 def performanceChartView(student_membership, template):
-    studentRecord,technique,ukemi,discipline,coordination,knowledge,spirit,dateLabel,values,lessonDone,myRemarks=\
+    studentRecord,radar_data,lines_data,dateLabel,values,lessonDone,myRemarks=\
         helper_ChartView(student_membership,request.cookies.get('dojo_id'))
-    from statistics import mean
-    radar_data = [mean(i) for i in [technique,ukemi,discipline,coordination,knowledge,spirit]]
-    lines_data = {'technique':technique,'ukemi':ukemi,'discipline':discipline,'coordination':coordination,'knowledge':knowledge,'spirit':spirit}
     return render_template(template,
                            studentRecord=studentRecord, 
                            radar_data=radar_data,lines_data=lines_data,

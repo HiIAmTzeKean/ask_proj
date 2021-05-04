@@ -1,0 +1,37 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script src="{{ url_for('static', filename='js/radar_chart.js') }}"></script>
+<script src="{{ url_for('static', filename='js/line_chart.js') }}"></script>
+
+<script> //button script
+     $(document).on("click","#0",function(){
+          document.getElementById("Charts").innerHTML = "<div class='p-2'>\
+                                                       <canvas id='chart'></canvas>\
+                                                       </div>";
+          drawRadarChart({{ radar_data }});
+     });
+     
+     $(document).on("click","#1",function(){
+          document.getElementById("Charts").innerHTML = "<div class='p-2'><canvas id='Technique' width='300' height='300'></canvas></div>\
+                                                       <div class='p-2'><canvas id='Ukemi' width='300' height='300'></canvas></div>\
+                                                       <div class='p-2'><canvas id='Discipline' width='300' height='300'></canvas></canvas></div>\
+                                                       <div class='p-2'><canvas id='Coordination' width='300' height='300'></canvas></div>\
+                                                       <div class='p-2'><canvas id='Knowledge' width='300' height='300'></canvas></div>\
+                                                       <div class='p-2'><canvas id='Spirit' width='300' height='300'></canvas></div>";
+          drawLineChart()
+     });
+</script>
+<script>
+     $(document).ready(function(){
+          var dateLabel = [{% for item in dateLabel %}"{{item}}",{% endfor %}];
+          {% for value in values %}
+          var {{ value }} = drawOneLineChart(dateLabel, "{{ value }}", {{ lines_data.get(value) }});
+          {% endfor %}
+     });
+
+     function drawLineChart(){
+          var dateLabel = [{% for item in dateLabel %}"{{item}}",{% endfor %}];
+          {% for value in values %}
+          var {{ value }} = drawOneLineChart(dateLabel, "{{ value }}", {{ lines_data.get(value) }});
+          {% endfor %}
+     };
+</script>
