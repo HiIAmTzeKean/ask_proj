@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 from flask_wtf.csrf import CSRFProtect
 from flask_security import Security, SQLAlchemyUserDatastore
 
@@ -66,6 +66,14 @@ app.register_blueprint(auth.auth_bp)
 app.add_url_rule('/', endpoint='security.login')
 
 from .util import filters
+
+@app.route("/OneSignalSDKWorker.js")
+def OneSignalSDKWorker():
+    return send_from_directory('',filename='OneSignalSDKWorker.js')
+
+@app.route("/OneSignalSDKUpdaterWorker.js")
+def OneSignalSDKUpdaterWorker():
+    return send_from_directory('',filename='OneSignalSDKUpdaterWorker.js')
 
 @app.errorhandler(404)
 def handle_404(e):
