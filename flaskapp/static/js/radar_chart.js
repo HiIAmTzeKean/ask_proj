@@ -3,7 +3,7 @@ function drawRadarChart(radar_data_passed) {
      const config = {
           type: 'radar',
           data: {
-          labels: ['technique','ukemi','discipline','coordination','knowledge','spirit'],
+          labels: ['Technique','Ukemi','Discipline','Coordination','Knowledge','Spirit'],
           datasets: [{
                fillColor: "rgba(0,120,0,0.2)",
                strokeColor: "rgba(0,120,0,1)",

@@ -1,0 +1,77 @@
+<div id="student_details">
+     <h4>Name: {{ studentRecord.firstName }}</h4>
+     <h4>Belt: {{ studentRecord.beltName }} - {{ studentRecord.beltColor }}</h4>
+</div>
+
+<hr>
+
+<div id="accordion">
+     <div class="card">
+          <div class="card-header" id="headingOne">
+               <h5 class="mb-0">
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                         aria-controls="collapseOne">
+                         Grading Eligibility
+                    </button>
+               </h5>
+          </div>
+
+          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+               <div class="card-body">
+                    {% if studentRecord.lastGrading %}
+                         <p>Last grading date: {{ studentRecord.lastGrading|date_formatter }}</p>
+                    {% else %}
+                         <p>Last grading date: NIL</p>
+                    {% endif %}
+                    <p>Lessons taken after grading: {{ lessonDone }}</p>
+                    <hr>
+                    <p>Pre Requisites for next grading: {{ studentRecord.timespanNeeded }} months practice needed before eligible for grading</p>
+               </div>
+          </div>
+     </div>
+     <div class="card">
+          <div class="card-header" id="headingTwo">
+               <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo"
+                         aria-expanded="false" aria-controls="collapseTwo">
+                         Performance Charts
+                    </button>
+               </h5>
+          </div>
+          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+               <div class="card-body">
+                    <div class="row">
+                         <button id="0" type="button" class='btn btn-success'>Hexa-analysis</button>
+                         <button id="1" type="button" class='btn btn-success'>Warrior's Progress</button>
+                    </div>
+                    <div class="d-flex align-content-between flex-wrap" id="Charts">
+                         <div class="p-2"><canvas id="Technique" width="300" height="300"></canvas></div>
+                         <div class="p-2"><canvas id="Ukemi" width="300" height="300"></canvas></div>
+                         <div class="p-2"><canvas id="Discipline" width="300" height="300"></canvas></canvas></div>
+                         <div class="p-2"><canvas id="Coordination" width="300" height="300"></canvas></div>
+                         <div class="p-2"><canvas id="Knowledge" width="300" height="300"></canvas></div>
+                         <div class="p-2"><canvas id="Spirit" width="300" height="300"></canvas></div>
+                    </div>
+               </div>
+          </div>
+     </div>
+     <div class="card">
+          <div class="card-header" id="headingThree">
+               <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree"
+                         aria-expanded="false" aria-controls="collapseThree">
+                         Remarks
+                    </button>
+               </h5>
+          </div>
+          <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+               <div class="card-body">
+                    {% for remark in myRemarks %}
+                         <p>Date: {{ remark.date|date_formatter }}</p>
+                         <p>Remark: {{ remark.remarks }}</p>
+                         <hr>
+                    {% endfor %}
+               </div>
+          </div>
+     </div>
+</div>

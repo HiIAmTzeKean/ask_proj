@@ -25,6 +25,9 @@ function drawOneLineChart(dateLabel_passed,aikidovalue_passed,line_data_passed) 
     };
     var option = {
             responsive: true,
+            legend: {
+                display: false
+                },
             scales: {
                 xAxes: [{
                         display: true,

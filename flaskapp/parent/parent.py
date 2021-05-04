@@ -57,11 +57,8 @@ def parentGradingDates():
 @mobile_template('{mobile/}parentChartView.html')
 def parentChartView(student_membership, template):
     student_membership = messageDecode(student_membership)
-    studentRecord,technique,ukemi,discipline,coordination,knowledge,spirit,dateLabel,values,lessonDone,myRemarks=\
+    studentRecord,radar_data,lines_data,dateLabel,values,lessonDone,myRemarks=\
         helper_ChartView(student_membership)
-    from statistics import mean
-    radar_data = [mean(i) for i in [technique,ukemi,discipline,coordination,knowledge,spirit]]
-    lines_data = {'technique':technique,'ukemi':ukemi,'discipline':discipline,'coordination':coordination,'knowledge':knowledge,'spirit':spirit}
     return render_template(template,
                            studentRecord=studentRecord, radar_data=radar_data,lines_data=lines_data,
                            dateLabel=dateLabel, values=values,

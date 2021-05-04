@@ -51,14 +51,15 @@ def helper_ChartView(student_membership, dojo_id=None):
                         filter_by(student_membership=student_membership).order_by(StudentRemarks.date.asc()).all()
 
     # ---- get number of days to grading
-    values = ['technique','ukemi','discipline','coordination','knowledge','spirit']
+    values = ['Technique','Ukemi','Discipline','Coordination','Knowledge','Spirit']
+    from statistics import mean
+    radar_data = [mean(i) for i in [technique,ukemi,discipline,coordination,knowledge,spirit]]
+    lines_data = {'Technique':technique,'Ukemi':ukemi,'Discipline':discipline,'Coordination':coordination,'Knowledge':knowledge,'Spirit':spirit}
 
     lessonDone=lessonAfterGrading(student_membership)
 
     return (studentRecord,
-            technique, ukemi, discipline,
-            coordination, knowledge,
-            spirit, dateLabel, values,
+            radar_data, lines_data, dateLabel, values,
             lessonDone, myRemarks)
 
 
