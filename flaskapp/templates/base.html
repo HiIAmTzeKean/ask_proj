@@ -19,13 +19,23 @@
   {% block styles %}{% endblock %}
 
   <!-- Custom site API -->
-  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
   <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
   <script>
     window.OneSignal = window.OneSignal || [];
     OneSignal.push(function() {
       OneSignal.init({
         appId: "6e7599e5-25ca-4bbd-bcce-487bc996403a",
+        notifyButton: {
+          /* Your other Subscription Bell settings here ... */
+          enable: true,
+           displayPredicate: function() {
+              return OneSignal.isPushNotificationsEnabled()
+                  .then(function(isPushEnabled) {
+                      /* The user is subscribed, so we want to return "false" to hide the Subscription Bell */
+                      return !isPushEnabled;
+                  });
+          },
+        },
       });
     });
   </script>
