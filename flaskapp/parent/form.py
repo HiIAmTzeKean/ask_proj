@@ -35,4 +35,5 @@ class formTesimonial(FlaskForm):
     membership = StringField(label='Membership ID', validators=[DataRequired()], render_kw={'readonly': True})
     date = DateField(label='Date', default=datetime.date.today(), validators=[DataRequired()], render_kw={'readonly': True})
     testimonial = TextAreaField(label='Testimonial', widget=TextArea(), validators=[DataRequired()])
+    rating = RadioField(label='Rating', choices=[i for i in range(1,6)], default=1)
     submit = SubmitField(label='Submit')

@@ -93,8 +93,8 @@ def parentTestimonial(token):
 @parent_bp.route('/parentTestimonialSave', methods=('GET', 'POST'))
 def parentTestimonialSave():
     form = formTesimonial(request.form)
-    print(form.testimonial.data)
-    # add to db
+    print(form.data)
+    
     return redirect(url_for('parent.parentIdentifyStudent'))
 
 
