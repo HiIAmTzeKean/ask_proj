@@ -6,29 +6,29 @@
 <h2>Update {{ dojoRecord.name }} Particulars</h2>
 
 <form method="POST" action="{{ url_for('attendance.attendanceEditDojo', dojoID=dojoRecord.id) }}">
-{{ form.hidden_tag() }}
-<table class="table">
-  <tbody>
-    {% for field, errors in form.errors.items() %}
-    {{ form.field.label }}: {{ ', '.join(errors) }}
-    {% endfor %}
-    <tr>
-      <th scope="row">{{ form.name.label(class="col-form-label")}}</th>
-      <td colspan="2">{{ form.name(class="form-control")}}</td>
-    </tr>
-    <tr>
-      <th scope="row">{{ form.location.label(class="col-form-label") }}</th>
-      <td colspan="2">{{ form.location(class="form-control") }}</td>
-    </tr>
-    <tr>
-      <th scope="row">{{ form.instructor_membership.label(class="col-form-label") }}</th>
-      <td colspan="2">{{ form.instructor_membership(class="form-control") }}</td>
-    </tr>
-    <tr>
-      <td><a href="{{ url_for('attendance.attendanceViewer') }}" class="btn btn-danger">Back</a></td>
-      <td>{{ form.submit(class="btn btn-success") }}</td>
-    </tr>
-  </tbody>
-</table>
+	{{ form.hidden_tag() }}
+	<table class="table">
+		<tbody>
+			{% for field, errors in form.errors.items() %}
+			{{ form.field.label }}: {{ ', '.join(errors) }}
+			{% endfor %}
+			<tr>
+				<th scope="row">{{ form.name.label(class="col-form-label")}}</th>
+				<td colspan="2">{{ form.name(class="form-control")}}</td>
+			</tr>
+			<tr>
+				<th scope="row">{{ form.location.label(class="col-form-label") }}</th>
+				<td colspan="2">{{ form.location(class="form-control") }}</td>
+			</tr>
+			<tr>
+				<th scope="row">{{ form.instructor_membership.label(class="col-form-label") }}</th>
+				<td colspan="2">{{ form.instructor_membership(class="form-control") }}</td>
+			</tr>
+			<tr>
+				<td><a href="{{ url_for('attendance.attendanceViewer') }}" class="btn btn-danger">Back</a></td>
+				<td>{{ form.submit(class="btn btn-success") }}</td>
+			</tr>
+		</tbody>
+	</table>
 </form>
 {% endblock %}
